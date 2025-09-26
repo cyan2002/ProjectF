@@ -12,7 +12,7 @@ public class PlayerMovement : MonoBehaviour
     public string facing = "right";
     public string tankFace;
     [SerializeField] private Rigidbody2D rb;
-    [SerializeField] private Animator animation;
+    [SerializeField] private new Animator animation;
     
     //Getting input from user running the move function and flip function.
     void Update()

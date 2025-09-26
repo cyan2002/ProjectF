@@ -964,9 +964,8 @@ GameObject:
   - component: {fileID: 1796535891}
   - component: {fileID: 1796535890}
   - component: {fileID: 1796535893}
-  - component: {fileID: 1796535894}
-  - component: {fileID: 1796535895}
   - component: {fileID: 1796535896}
+  - component: {fileID: 1796535897}
   m_Layer: 8
   m_Name: Player
   m_TagString: Player
@@ -1095,8 +1094,22 @@ MonoBehaviour:
   facing: right
   tankFace: 
   rb: {fileID: 1796535892}
-  animation: {fileID: 1796535894}
---- !u!95 &1796535894
+  animation: {fileID: 1796535897}
+--- !u!114 &1796535896
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1796535888}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a1a645b03efa4c67a6f8a725674078f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tankObj: {fileID: 1544765692}
+  player: {fileID: 1796535888}
+--- !u!95 &1796535897
 Animator:
   serializedVersion: 5
   m_ObjectHideFlags: 0
@@ -1117,36 +1130,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!111 &1796535895
-Animation:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1796535888}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Animation: {fileID: 7400000, guid: 97bc0df01d3874a8aa48234e15d9dc3a, type: 2}
-  m_Animations:
-  - {fileID: 7400000, guid: 97bc0df01d3874a8aa48234e15d9dc3a, type: 2}
-  m_WrapMode: 0
-  m_PlayAutomatically: 1
-  m_AnimatePhysics: 0
-  m_CullingType: 0
---- !u!114 &1796535896
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1796535888}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8a1a645b03efa4c67a6f8a725674078f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  tankObj: {fileID: 1544765692}
-  player: {fileID: 1796535888}
 --- !u!1 &2087009638
 GameObject:
   m_ObjectHideFlags: 0

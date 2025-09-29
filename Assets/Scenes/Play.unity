@@ -891,10 +891,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 1796535888}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4b834295fdbc141b59d12f8f8faf7c84, type: 3}
+  m_Script: {fileID: 11500000, guid: 56601d6222e2d0f46add455023536218, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 4
+  speed: 3
   facing: right
   tankFace: 
   rb: {fileID: 1796535892}
@@ -908,7 +908,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1796535888}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8a1a645b03efa4c67a6f8a725674078f, type: 3}
+  m_Script: {fileID: 11500000, guid: 4e6113d37f9e1674ea08afa1747fad6c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   tankObj: {fileID: 4770050486736668593, guid: fe1ffce668db3c7478d504dda8014db2, type: 3}

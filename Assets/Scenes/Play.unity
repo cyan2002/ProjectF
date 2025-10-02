@@ -755,6 +755,7 @@ Transform:
   m_Father: {fileID: 2087009640}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+<<<<<<< HEAD
 --- !u!1 &1410957453
 GameObject:
   m_ObjectHideFlags: 0
@@ -786,6 +787,8 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+=======
+>>>>>>> parent of ab859be (Testing Revert Function)
 --- !u!1 &1421136135
 GameObject:
   m_ObjectHideFlags: 0

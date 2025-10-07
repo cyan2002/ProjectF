@@ -12,8 +12,13 @@ public class NPCRandomMovement : MonoBehaviour
     public float resetTimer = 0f;
     public float pauseTimer = 0f;
 
+    private SpriteRenderer spriteRenderer;
+    private Rigidbody2D rb;
+
     private void Start()
     {
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        rb = GetComponent<Rigidbody2D>();
         decideInitialDirection();
     }
 
@@ -26,7 +31,7 @@ public class NPCRandomMovement : MonoBehaviour
         {
             if (direction == "up")
             {
-                transform.position += Vector3.up * speed * Time.deltaTime;
+                rb.AddForce(new Vector2(0, 1));
                 if (checkForBarrier())
                 {
                     decideDirection();
@@ -34,7 +39,7 @@ public class NPCRandomMovement : MonoBehaviour
             }
             else if (direction == "down")
             {
-                transform.position += -Vector3.up * speed * Time.deltaTime;
+                rb.AddForce(new Vector2(0, -1));
                 if (checkForBarrier())
                 {
                     decideDirection();
@@ -42,17 +47,19 @@ public class NPCRandomMovement : MonoBehaviour
             }
             else if (direction == "right")
             {
-                transform.position += Vector3.right * speed * Time.deltaTime;
+                rb.AddForce(new Vector2(1, 0));
                 if (checkForBarrier())
                 {
+                    print("hi");
                     decideDirection();
                 }
             }
             else if (direction == "left")
             {
-                transform.position += -Vector3.right * speed * Time.deltaTime;
+                rb.AddForce(new Vector2(-1, 0));
                 if (checkForBarrier())
                 {
+                    print("bye");
                     decideDirection();
                 }
             }

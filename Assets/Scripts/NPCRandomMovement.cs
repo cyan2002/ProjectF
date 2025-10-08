@@ -11,6 +11,8 @@ public class NPCRandomMovement : MonoBehaviour
 
     public float resetTimer = 0f;
     public float pauseTimer = 0f;
+    private float checkPause;
+    private float stayPause;
 
     private SpriteRenderer spriteRenderer;
     private Rigidbody2D rb;
@@ -20,6 +22,8 @@ public class NPCRandomMovement : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
         rb = GetComponent<Rigidbody2D>();
         decideInitialDirection();
+        checkPause = Random.Range(5f, 20f);
+        stayPause = Random.Range(5f, 20f);
     }
 
     void Update()
@@ -31,7 +35,7 @@ public class NPCRandomMovement : MonoBehaviour
         {
             if (direction == "up")
             {
-                rb.AddForce(new Vector2(0, 1));
+                transform.position += Vector3.up * speed * Time.deltaTime;
                 if (checkForBarrier())
                 {
                     decideDirection();
@@ -39,7 +43,7 @@ public class NPCRandomMovement : MonoBehaviour
             }
             else if (direction == "down")
             {
-                rb.AddForce(new Vector2(0, -1));
+                transform.position += -Vector3.up * speed * Time.deltaTime;
                 if (checkForBarrier())
                 {
                     decideDirection();
@@ -47,7 +51,8 @@ public class NPCRandomMovement : MonoBehaviour
             }
             else if (direction == "right")
             {
-                rb.AddForce(new Vector2(1, 0));
+                transform.position += Vector3.right * speed * Time.deltaTime;
+                transform.rotation = Quaternion.Euler(0, 180, 0);
                 if (checkForBarrier())
                 {
                     print("hi");
@@ -56,7 +61,8 @@ public class NPCRandomMovement : MonoBehaviour
             }
             else if (direction == "left")
             {
-                rb.AddForce(new Vector2(-1, 0));
+                transform.position += -Vector3.right * speed * Time.deltaTime;
+                transform.rotation = Quaternion.Euler(0, 0, 0);
                 if (checkForBarrier())
                 {
                     print("bye");
@@ -86,7 +92,8 @@ public class NPCRandomMovement : MonoBehaviour
 
         //timer that is randomized so NPC sometimes takes pauses, anywhere between 5 to 20 seconds it can pause
         //pause can happen on non-grid spaces (between 0.5f)
-        if (pauseTimer >= Random.Range(5f, 20f))
+        //random.range happens everytime... NEEDS TO BE FIXED
+        if (pauseTimer >= checkPause)
         {
             pause = true;
             pauseTimer = 0f;
@@ -96,8 +103,10 @@ public class NPCRandomMovement : MonoBehaviour
         {
             pauseTimer += Time.deltaTime;
             //only pauses for about 5-7 seconds
-            if (pauseTimer >= Random.Range(5f, 7f))
+            if (pauseTimer >= stayPause)
             {
+                checkPause = Random.Range(5f, 20f);
+                stayPause = Random.Range(5f, 20f);
                 pause = false;
                 pauseTimer = 0f;
             }

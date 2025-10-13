@@ -27,7 +27,7 @@ public class NPC_Controller : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.P))
         {
             leaving = true;
         }
@@ -66,7 +66,6 @@ public class NPC_Controller : MonoBehaviour
             {
                 checkPause = Random.Range(5f, 20f);
                 stayPause = Random.Range(5f, 20f);
-                Debug.Log("pause!");
                 pause = false;
                 pauseTimer = 0f;
             }
@@ -80,6 +79,12 @@ public class NPC_Controller : MonoBehaviour
     //this function heads towards the dictated path set by the AStar script. When the path is completed is creates a new randomized path.
     public void CreatePath()
     {
+        //if the path is invalid, recreate a new path then re run the create path function
+        if(path == null)
+        {
+            RecalculatePath();
+        }
+
         if (path.Count > 0)
         {
             int x = 0;
@@ -94,13 +99,21 @@ public class NPC_Controller : MonoBehaviour
         else
         {
             Node[] nodes = FindObjectsOfType<Node>();
-            while(path == null || path.Count == 0)
+            while (path == null || path.Count == 0)
             {
                 //this is where we create a new randomized path when the old one has finished.
                 //where you can decide where to take a break or head to the register. 
                 path = AStarManager.instance.GeneratePath(currentNode, nodes[Random.Range(0, nodes.Length)]);
             }
         }
+    }
+
+    //Called when the map changes and the NPC must recalculate it's path
+    public void RecalculatePath()
+    {
+        Node[] nodes = FindObjectsOfType<Node>();
+        path = AStarManager.instance.GeneratePath(currentNode, nodes[Random.Range(0, nodes.Length)]);
+        CreatePath();
     }
 
     //function to leave the store. If the NPC is currently in the middle of the route, it will finish it's route and head to exit thereafter. 
@@ -120,14 +133,24 @@ public class NPC_Controller : MonoBehaviour
         else
         {
             //need a check to see if at store door, if so LEAVE
-
             Node[] nodes = FindObjectsOfType<Node>();
-            while (path == null || path.Count == 0)
+            path = AStarManager.instance.GeneratePath(currentNode, StoreDoor);
+            //if the path is invalid, recreate a new path then re run the create path function
+            if (path == null)
             {
-                //this is where we create a new randomized path when the old one has finished.
-                //where you can decide where to take a break or head to the register. 
-                path = AStarManager.instance.GeneratePath(currentNode, StoreDoor);
+                //choose what happens to NPC when they can't leave
+                //whether if that's continue to randomly wander or disappear...
+                print("Invalid Path to Exit!");
             }
+        }
+    }
+
+    //if the NPC hits a object collider recalcuate another path
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if(collision.tag == "pickObject")
+        {
+            RecalculatePath();
         }
     }
 }

@@ -94,7 +94,7 @@ public class PlayerMovement : MonoBehaviour
     }
 
     //checks for tank in front of player, in the direction they are facing
-    public bool checkForTank()
+    public GameObject checkForTank()
     {
         //playing around with raycast
         RaycastHit2D[] hit;
@@ -125,13 +125,12 @@ public class PlayerMovement : MonoBehaviour
         {
             if (hit[i].collider.tag == "pickObject")
             {
-                //remove object
-                Destroy(hit[i].collider.gameObject);
-                return true;
+                //return object to remove
+                return hit[i].collider.gameObject;
             }
         }
 
-        return false;
+        return null;
     }
 
     public string getDirection()

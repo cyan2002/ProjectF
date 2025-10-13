@@ -30,7 +30,6 @@ public class NPC_Controller : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space))
         {
             leaving = true;
-            print("here");
         }
 
         if (leaving)

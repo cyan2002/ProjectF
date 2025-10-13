@@ -8,6 +8,7 @@ TagManager:
   - Scene
   - NPC
   - Button
+  - Node
   layers:
   - Default
   - TransparentFX
@@ -22,7 +23,7 @@ TagManager:
   - Fish
   - Barrier
   - NPC
-  - 
+  - Invisible
   - 
   - 
   - 

@@ -1,3 +1,5 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
@@ -13,7 +15,7 @@ public class PlayerMovement : MonoBehaviour
     public string tankFace;
     [SerializeField] private Rigidbody2D rb;
     [SerializeField] private new Animator animation;
-    
+
     //Getting input from user running the move function and flip function.
     void Update()
     {
@@ -118,17 +120,18 @@ public class PlayerMovement : MonoBehaviour
             hit = Physics2D.RaycastAll(transform.position, -Vector2.right, 1.5f);
             tankFace = "left";
         }
+        
+        for(int i = 0; i < hit.Length; i++)
+        {
+            if (hit[i].collider.tag == "pickObject")
+            {
+                //remove object
+                Destroy(hit[i].collider.gameObject);
+                return true;
+            }
+        }
 
-        if (hit[1] && hit[1].collider.tag == "pickObject")
-        {
-            //remove object
-            Destroy(hit[1].collider.gameObject);
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        return false;
     }
 
     public string getDirection()

@@ -11,10 +11,12 @@ public class TankPlacement : MonoBehaviour
     //will need to change when tank types change
     private bool isHoldingTank = false;
 
+    public Node[] allNodes;
+
     // Start is called before the first frame update
     void Start()
     {
-        
+        allNodes = FindObjectsOfType<Node>();
     }
 
     // Update is called once per frame
@@ -23,9 +25,12 @@ public class TankPlacement : MonoBehaviour
         //detects if the space key is pressed and thus place tank
         if (Input.GetKeyDown("space"))
         {
-            //holding tank - should place down tank
+            //Need to update the Grid for NPC movement
+            
+            //holding tank - should place down tank. NEED TO FIX - can't place down tank on same square as another tank
             if(isHoldingTank){
                 Spawn();
+                updateGrid();
                 //should be if suceed change variable to not holding
                 isHoldingTank = false;
             }
@@ -34,9 +39,18 @@ public class TankPlacement : MonoBehaviour
                 //checks for if a tank is in the way. If so it picks it up
                 if(player.GetComponent<PlayerMovement>().checkForTank()){
                     isHoldingTank = true;
+                    updateGrid();
                 }
             }
             
+        }
+    }
+
+    private void updateGrid()
+    {
+        for(int i = 0; i < allNodes.Length; i++)
+        {
+            allNodes[i].resetNodeConnections();
         }
     }
 

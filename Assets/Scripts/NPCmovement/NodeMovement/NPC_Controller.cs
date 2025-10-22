@@ -3,24 +3,34 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+//fix issue with making it to register then going to checkout...
 public class NPC_Controller : MonoBehaviour
 {
     public Node currentNode;
     public List<Node> path = new List<Node>();
     public Node StoreDoor;
+    public Node Register;
 
     public float pauseTimer = 0f;
     private float checkPause;
     private float stayPause;
+
     private bool pause = false;
     private bool leaving = false;
 
+    //varaible used to  
+    private bool once = true;
+
     public float speed = 1f;
+
+    //tracks which stage NPC is on, browsing, checking out, or leaving
+    private int trackCount = 0;
 
     private void Start()
     {
         StoreDoor = GameObject.Find("StartNode").GetComponent<Node>();
         currentNode = GameObject.Find("StartNode").GetComponent<Node>();
+        Register = GameObject.Find("Register").GetComponent<Node>();
         checkPause = Random.Range(5f, 10f);
         stayPause = Random.Range(5f, 10f);
     }
@@ -34,7 +44,30 @@ public class NPC_Controller : MonoBehaviour
 
         if (leaving)
         {
-            LeaveStore();
+            if(trackCount == 0)
+            {
+                if (once)
+                {
+                    //need edge case of incase path is null
+                    once = false;
+                    SetPath(Register);
+                }
+                HeadTarget(Register);
+            }
+            else if(trackCount == 1)
+            {
+                if (once)
+                {
+                    //need edge case incase path is null
+                    once = false;
+                    SetPath(StoreDoor);
+                }
+                HeadTarget(StoreDoor);
+            }
+            else
+            {
+                print("error");
+            }
         }
         else
         {
@@ -79,12 +112,6 @@ public class NPC_Controller : MonoBehaviour
     //this function heads towards the dictated path set by the AStar script. When the path is completed is creates a new randomized path.
     public void CreatePath()
     {
-        //if the path is invalid, recreate a new path then re run the create path function
-        if(path == null)
-        {
-            RecalculatePath();
-        }
-
         if (path.Count > 0)
         {
             int x = 0;
@@ -117,7 +144,7 @@ public class NPC_Controller : MonoBehaviour
     }
 
     //function to leave the store. If the NPC is currently in the middle of the route, it will finish it's route and head to exit thereafter. 
-    public void LeaveStore()
+    public void HeadTarget(Node target)
     {
         if (path.Count > 0)
         {
@@ -130,19 +157,23 @@ public class NPC_Controller : MonoBehaviour
                 path.RemoveAt(x);
             }
         }
-        else
+        else if(trackCount == 0)
         {
-            //need a check to see if at store door, if so LEAVE
-            Node[] nodes = FindObjectsOfType<Node>();
-            path = AStarManager.instance.GeneratePath(currentNode, StoreDoor);
-            //if the path is invalid, recreate a new path then re run the create path function
-            if (path == null)
-            {
-                //choose what happens to NPC when they can't leave
-                //whether if that's continue to randomly wander or disappear...
-                print("Invalid Path to Exit!");
-            }
+            trackCount = 1;
+            once = true;
         }
+        else if(trackCount == 1)
+        {
+            //finally reached the end point
+            //CHANGE HERE HOW TO HANDLE NPC LEAVING THE STORE
+            print("exit!");
+        }
+    }
+
+    private void SetPath(Node target)
+    {
+        Node[] nodes = FindObjectsOfType<Node>();
+        path = AStarManager.instance.GeneratePath(currentNode, target);
     }
 
     //if the NPC hits a object collider recalcuate another path

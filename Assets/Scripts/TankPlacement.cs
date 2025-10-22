@@ -24,6 +24,9 @@ public class TankPlacement : MonoBehaviour
         if (Input.GetKeyDown("space"))
         {
             //holding tank - should place down tank.
+            //need to check if placing down tank will block an exit or register.
+            //we can check if any NPC is blocked from reigster and exit OR if the register or exit is blocked from each other
+            //Obviously if we check based on every NPC - this would make a lot of computing power
             if(isHoldingTank){
                 Spawn();
             }

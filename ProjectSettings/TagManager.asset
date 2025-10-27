@@ -16,8 +16,8 @@ TagManager:
   - 
   - Water
   - UI
+  - Floor
   - BackGround
-  - ForeGround
   - Player
   - Object
   - Fish
@@ -45,4 +45,19 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Walls
+    uniqueID: 2686267319
+    locked: 0
+  - name: Floor
+    uniqueID: 1695209963
+    locked: 0
+  - name: NPCs
+    uniqueID: 2568286157
+    locked: 0
+  - name: Player
+    uniqueID: 3433016167
+    locked: 0
+  - name: Tank
+    uniqueID: 1878214669
     locked: 0

@@ -6,8 +6,9 @@ using TMPro;
 using System;
 using UnityEngine.EventSystems;
 
+//THIS SCRIPT DETECTS INPUTS AND HOLDS THE EVENTS THEN TELLS THE SUBSCRIBERS OF THOSE EVENTS TO DO SOMETHING (IT DOESN'T KNOW WHAT)
 //detects events but doesn't know what to do with events -> tells other scripts that events happen
-public class UIInventoryItem : MonoBehaviour
+public class UIInventoryItem : MonoBehaviour, IPointerClickHandler
 {
     //image we are going to use to display our item
     [SerializeField]
@@ -38,20 +39,17 @@ public class UIInventoryItem : MonoBehaviour
         Deselect();
     }
 
-    //right click and left click 
+    //detects when there is a right click and left click 
     //passes data of object but also which button was used to click on this object
-    public void OnPointerClick(BaseEventData data)
+    public void OnPointerClick(PointerEventData eventData)
     {
-        if (empty)
-            return;
-        PointerEventData pointerData = (PointerEventData)data;
-        if (pointerData.button == PointerEventData.InputButton.Right)
-        {
-            OnRightMouseBtnClick?.Invoke(this);
-        }
-        else
+        if (eventData.button == PointerEventData.InputButton.Left)
         {
             OnItemClicked?.Invoke(this);
+        }
+        else if (eventData.button == PointerEventData.InputButton.Right)
+        {
+            OnRightMouseBtnClick?.Invoke(this);
         }
     }
 

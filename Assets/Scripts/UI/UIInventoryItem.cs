@@ -8,7 +8,7 @@ using UnityEngine.EventSystems;
 
 //THIS SCRIPT DETECTS INPUTS AND HOLDS THE EVENTS THEN TELLS THE SUBSCRIBERS OF THOSE EVENTS TO DO SOMETHING (IT DOESN'T KNOW WHAT)
 //detects events but doesn't know what to do with events -> tells other scripts that events happen
-public class UIInventoryItem : MonoBehaviour, IPointerClickHandler
+public class UIInventoryItem : MonoBehaviour
 {
     //image we are going to use to display our item
     [SerializeField]
@@ -41,13 +41,16 @@ public class UIInventoryItem : MonoBehaviour, IPointerClickHandler
 
     //detects when there is a right click and left click 
     //passes data of object but also which button was used to click on this object
-    public void OnPointerClick(PointerEventData eventData)
+    public void OnPointerClick(BaseEventData data)
     {
-        if (eventData.button == PointerEventData.InputButton.Left)
+        if (empty)
+            return;
+        PointerEventData pointerData = (PointerEventData)data;
+        if (pointerData.button == PointerEventData.InputButton.Left)
         {
             OnItemClicked?.Invoke(this);
         }
-        else if (eventData.button == PointerEventData.InputButton.Right)
+        else if (pointerData.button == PointerEventData.InputButton.Right)
         {
             OnRightMouseBtnClick?.Invoke(this);
         }

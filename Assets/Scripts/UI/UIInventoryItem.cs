@@ -43,8 +43,6 @@ public class UIInventoryItem : MonoBehaviour
     //passes data of object but also which button was used to click on this object
     public void OnPointerClick(BaseEventData data)
     {
-        if (empty)
-            return;
         PointerEventData pointerData = (PointerEventData)data;
         if (pointerData.button == PointerEventData.InputButton.Left)
         {

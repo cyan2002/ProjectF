@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class UIInventoryPage : MonoBehaviour
 {
@@ -11,39 +10,49 @@ public class UIInventoryPage : MonoBehaviour
 
     [SerializeField]
     private RectTransform contentPanel;
-
-    //used making a description for the item
+    
+    //for item description
     //[SerializeField]
     //private UIInventoryDescription itemDescription;
 
     [SerializeField]
     private MouseFollower mouseFollower;
 
-    //list of items in your inventory
+    //list of items to keep track for the UI
     List<UIInventoryItem> listOfUIItems = new List<UIInventoryItem>();
 
-    public Sprite image, image2;
-    public int quantity;
-    public string title;
-
     private int currentlyDraggedItemIndex = -1;
+
+    public event Action<int> OnDescriptionRequested,
+            OnItemActionRequested,
+            OnStartDragging;
+
+    public event Action<int, int> OnSwapItems;
 
     private void Awake()
     {
         Hide();
         mouseFollower.Toggle(false);
+        //descriptiojn script
+        //itemDescription.ResetDescription();
     }
 
-    //creates a number of items in the inventory
+    //setting up initial inventory UI
     public void InitializeInventoryUI(int inventorysize)
     {
         for (int i = 0; i < inventorysize; i++)
         {
-            UIInventoryItem uiItem = Instantiate(itemPrefab, Vector3.zero, Quaternion.identity);
+            //creating a new prefab with the UI item slot
+            //this includes, border, image (which will be the item), text, and backdrop
+            UIInventoryItem uiItem =
+                Instantiate(itemPrefab, Vector3.zero, Quaternion.identity);
+            //sets parent for the instantiated object so that it lines up in rows. "Grid layout"
             uiItem.transform.SetParent(contentPanel);
+            //adds the prefab the UI list
             listOfUIItems.Add(uiItem);
-            uiItem.transform.localScale = new Vector3(1, 1, 1);
 
+            //Makes the prefab a subscriber of the event system
+            //name on the right is the action method (what happens after event has occured)
             uiItem.OnItemClicked += HandleItemSelection;
             uiItem.OnItemBeginDrag += HandleBeginDrag;
             uiItem.OnItemDroppedOn += HandleSwap;
@@ -52,14 +61,31 @@ public class UIInventoryPage : MonoBehaviour
         }
     }
 
+    internal void UpdateDescription(int itemIndex, Sprite itemImage, string name, string description)
+    {
+        //description script
+        //itemDescription.SetDescription(itemImage, name, description);
+        DeselectAllItems();
+        listOfUIItems[itemIndex].Select();
+    }
+
+    public void UpdateData(int itemIndex,
+        Sprite itemImage, int itemQuantity)
+    {
+        if (listOfUIItems.Count > itemIndex)
+        {
+            listOfUIItems[itemIndex].SetData(itemImage, itemQuantity);
+        }
+    }
+
     private void HandleShowItemActions(UIInventoryItem inventoryItemUI)
     {
-        
+
     }
 
     private void HandleEndDrag(UIInventoryItem inventoryItemUI)
     {
-        mouseFollower.Toggle(false);
+        ResetDraggedItem();
     }
 
     private void HandleSwap(UIInventoryItem inventoryItemUI)
@@ -67,18 +93,15 @@ public class UIInventoryPage : MonoBehaviour
         int index = listOfUIItems.IndexOf(inventoryItemUI);
         if (index == -1)
         {
-            mouseFollower.Toggle(false);
-            currentlyDraggedItemIndex = -1;
             return;
         }
-        listOfUIItems[currentlyDraggedItemIndex]
-            .SetData(index == 0 ? image : image2, quantity);
-        listOfUIItems[index]
-            .SetData(currentlyDraggedItemIndex == 0 ? image : image2, quantity);
+        OnSwapItems?.Invoke(currentlyDraggedItemIndex, index);
+    }
 
+    private void ResetDraggedItem()
+    {
         mouseFollower.Toggle(false);
         currentlyDraggedItemIndex = -1;
-
     }
 
     private void HandleBeginDrag(UIInventoryItem inventoryItemUI)
@@ -87,28 +110,50 @@ public class UIInventoryPage : MonoBehaviour
         if (index == -1)
             return;
         currentlyDraggedItemIndex = index;
-
-        mouseFollower.Toggle(true);
-        mouseFollower.SetData(index == 0 ? image : image2, quantity);
+        HandleItemSelection(inventoryItemUI);
+        OnStartDragging?.Invoke(index);
     }
 
+    public void CreateDraggedItem(Sprite sprite, int quantity)
+    {
+        mouseFollower.Toggle(true);
+        mouseFollower.SetData(sprite, quantity);
+    }
+
+    //when OnItemClicked action has occured this plays
+    //
     private void HandleItemSelection(UIInventoryItem inventoryItemUI)
     {
-        listOfUIItems[0].Select();
+        int index = listOfUIItems.IndexOf(inventoryItemUI);
+        if (index == -1)
+            return;
+        OnDescriptionRequested?.Invoke(index);
     }
 
-    //opens the inventory
     public void Show()
     {
         gameObject.SetActive(true);
-
-        listOfUIItems[0].SetData(image, quantity);
-        listOfUIItems[1].SetData(image2, quantity);
+        ResetSelection();
     }
 
-    //closes the inventory
+    public void ResetSelection()
+    {
+        //Description Script
+        //itemDescription.ResetDescription();
+        DeselectAllItems();
+    }
+
+    private void DeselectAllItems()
+    {
+        foreach (UIInventoryItem item in listOfUIItems)
+        {
+            item.Deselect();
+        }
+    }
+
     public void Hide()
     {
         gameObject.SetActive(false);
+        ResetDraggedItem();
     }
 }

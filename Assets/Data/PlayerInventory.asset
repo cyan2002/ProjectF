@@ -12,5 +12,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 67d62b6ffc8dcbc49a355d4c45d917dd, type: 3}
   m_Name: PlayerInventory
   m_EditorClassIdentifier: 
-  inventoryItems: []
+  inventoryItems:
+  - quantity: 1
+    item: {fileID: 11400000, guid: f3f7b4b524d717f4bab57b1231655335, type: 2}
+  - quantity: 0
+    item: {fileID: 0}
+  - quantity: 1
+    item: {fileID: 11400000, guid: 9fb3aa0989695f34480992708c5e12b7, type: 2}
+  - quantity: 0
+    item: {fileID: 0}
+  - quantity: 0
+    item: {fileID: 0}
+  - quantity: 0
+    item: {fileID: 0}
+  - quantity: 0
+    item: {fileID: 0}
+  - quantity: 0
+    item: {fileID: 0}
+  - quantity: 0
+    item: {fileID: 0}
+  - quantity: 0
+    item: {fileID: 0}
   <Size>k__BackingField: 10

@@ -5415,6 +5415,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   inventoryUI: {fileID: 1151477204}
   inventoryData: {fileID: 11400000, guid: f18037ace660ed144a3ca980f885af02, type: 2}
+  initialItems:
+  - quantity: 1
+    item: {fileID: 11400000, guid: f3f7b4b524d717f4bab57b1231655335, type: 2}
+  - quantity: 1
+    item: {fileID: 11400000, guid: 9fb3aa0989695f34480992708c5e12b7, type: 2}
+  - quantity: 1
+    item: {fileID: 11400000, guid: 91b5e1376fdafe546af1c6b84f0d540d, type: 2}
 --- !u!4 &1840294492 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6718817820983613798, guid: 07001a69e8c74ad4ca6836d9115ac99b, type: 3}

@@ -45,6 +45,7 @@ namespace Inventory.UI
 
         //detects when there is a right click and left click 
         //passes data of object but also which button was used to click on this object
+        //see below for further explainations of events and etc
         public void OnPointerClick(BaseEventData data)
         {
             PointerEventData pointerData = (PointerEventData)data;
@@ -83,14 +84,18 @@ namespace Inventory.UI
         }
 
         //on selection of our item, highlight it with the border
+        //called from UIInventoryPage
         public void Select()
         {
             borderImage.enabled = true;
         }
 
-        //clicked and starting to drag event
-        //if item is empty then return (nothing happens)
-        //if there is an item tell another function about "this"
+        //THIS EVENT IS NOT A BUILT-IN METHOD BY UNITY. connected via EventTrigger
+        //It would be if I used the IdragHandler on the class, but I did not (cause it did not work for me)
+        //This is connected to a component in the inspector called "Event Trigger". What this event trigger can do is basically take those built in functions in unity and apply them to your own methods
+        //This avoids the IDragHandler addition to the class (slower, but easier for me to understand)
+        //This is connected to Begin drag event in Event Trigger. Therefore it is called when the item UI (UI element) is dragged. ONLY WHEN THIS SPECIFIC UI ELEMENT IS DRAGGED
+        //If called and it's not on an empty object, the OnItemBegin Drag is invoked passing this item UI object
         public void OnBeginDrag()
         {
             if (empty)
@@ -98,12 +103,21 @@ namespace Inventory.UI
             OnItemBeginDrag?.Invoke(this);
         }
 
-        //when you drop an item on another item (inform UI)
+        //THIS EVENT IS NOT A BUILT-IN METHOD BY UNITY. connected via EventTrigger
+        //Drop is the event that OnDrop is connected to.
+        //This event is called whenever you have another object being dragged and released over it (using unity's drag system)
+        //when the item is dropped OVER ANOTHER ITEM it triggers the OnItemDroppedOn event.
+        //Only triggers when dropped over another item - meaning it only drops when its over another object that can receive the drop - meaning only drops when its over another item with the TriggerEvent (or IdragHandler etc etc)
+        //It then invokes the OnItemDropped sending the object (item) itself
         public void OnDrop()
         {
             OnItemDroppedOn?.Invoke(this);
         }
 
+        //THIS EVENT IS NOT A BUILT-IN METHOD BY UNITY. connected via EventTrigger
+        //Connected to the end drag event.
+        //plays when the drag has ended regardless of another object is there or not.
+        //It then invokes the OnItemEndDrag Action sending the object (item) itself
         public void OnEndDrag()
         {
             OnItemEndDrag?.Invoke(this);

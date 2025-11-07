@@ -15,10 +15,10 @@ MonoBehaviour:
   inventoryItems:
   - quantity: 1
     item: {fileID: 11400000, guid: f3f7b4b524d717f4bab57b1231655335, type: 2}
-  - quantity: 0
-    item: {fileID: 0}
   - quantity: 1
     item: {fileID: 11400000, guid: 9fb3aa0989695f34480992708c5e12b7, type: 2}
+  - quantity: 1
+    item: {fileID: 11400000, guid: 91b5e1376fdafe546af1c6b84f0d540d, type: 2}
   - quantity: 0
     item: {fileID: 0}
   - quantity: 0
@@ -33,4 +33,4 @@ MonoBehaviour:
     item: {fileID: 0}
   - quantity: 0
     item: {fileID: 0}
-  <Size>k__BackingField: 10
+  <Size>k__BackingField: 20

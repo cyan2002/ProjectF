@@ -79,7 +79,7 @@ namespace Inventory
             inventoryUI.CreateDraggedItem(inventoryItem.item.ItemImage, inventoryItem.quantity);
         }
 
-        //This method plays when the items are swapped.
+        //This method plays when the items are swapped. - comes from UI input
         //This just tells the scriptable object inventory to swap the two items that need to be swapped.
         private void HandleSwapItems(int itemIndex_1, int itemIndex_2)
         {

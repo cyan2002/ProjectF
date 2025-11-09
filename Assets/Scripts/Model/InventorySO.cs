@@ -55,6 +55,7 @@ namespace Inventory.Model
                     return quantity;
                 }
             }
+            //if quantity = 0, items are fully stacked
             quantity = AddStackableItem(item, quantity);
             InformAboutChange();
             return quantity;
@@ -111,12 +112,14 @@ namespace Inventory.Model
                     if (quantity > amountPossibleToTake)
                     {
                         //.Change Quantity returns an item with the new quantity
+                        //if you have more collected than you can store in that stack, max that stack and change the amount collected to whatever is left
                         inventoryItems[i] = inventoryItems[i]
                             .ChangeQuantity(inventoryItems[i].item.MaxStackSize);
                         quantity -= amountPossibleToTake;
                     }
                     else
                     {
+                        //if you can fit all the items in the stack, add it to the stack and inform about change (evoke event)
                         inventoryItems[i] = inventoryItems[i]
                             .ChangeQuantity(inventoryItems[i].quantity + quantity);
                         InformAboutChange();
@@ -124,6 +127,8 @@ namespace Inventory.Model
                     }
                 }
             }
+            //while the quantity is still above 0 (items collected did not get fully deposited due to full stack) and inventory is not full still...
+            //add the item to the first slot open
             while (quantity > 0 && IsInventoryFull() == false)
             {
                 int newQuantity = Mathf.Clamp(quantity, 0, item.MaxStackSize);
@@ -133,11 +138,13 @@ namespace Inventory.Model
             return quantity;
         }
 
+        //referenced by the inventory controller to add items to the inventory
         public void AddItem(InventoryItem item)
         {
             AddItem(item.item, item.quantity);
         }
 
+        //return a list/dictionary of all inventory items that exist (not empty) in the inventory 
         public Dictionary<int, InventoryItem> GetCurrentInventoryState()
         {
             Dictionary<int, InventoryItem> returnValue =

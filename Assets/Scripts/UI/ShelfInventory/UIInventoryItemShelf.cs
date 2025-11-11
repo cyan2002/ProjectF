@@ -30,7 +30,7 @@ public class UIInventoryItemShelf : MonoBehaviour
 
     public void Awake()
     {
-        //ResetData();
+        ResetData();
     }
 
     //disables image - removes item from slot
@@ -74,7 +74,6 @@ public class UIInventoryItemShelf : MonoBehaviour
     //If called and it's not on an empty object, the OnItemBegin Drag is invoked passing this item UI object
     public void OnBeginDrag()
     {
-        Debug.Log("Hello1");
         if (empty)
             return;
         ShelfOnItemBeginDrag?.Invoke(this);
@@ -88,7 +87,7 @@ public class UIInventoryItemShelf : MonoBehaviour
     //It then invokes the OnItemDropped sending the object (item) itself
     public void OnDrop()
     {
-        Debug.Log("Hello2");
+        Debug.Log("adwads");
         ShelfOnItemDroppedOn?.Invoke(this);
     }
 
@@ -98,7 +97,6 @@ public class UIInventoryItemShelf : MonoBehaviour
     //It then invokes the OnItemEndDrag Action sending the object (item) itself
     public void OnEndDrag()
     {
-        Debug.Log("Hello3");
         ShelfOnItemEndDrag?.Invoke(this);
     }
 }

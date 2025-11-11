@@ -111,6 +111,7 @@ public class ShelfInventoryData : MonoBehaviour
 
     public void SwapItems(int itemIndex_1, int itemIndex_2)
     {
+        Debug.Log("!");
         InventoryItemShelf item1 = slots[itemIndex_1];
         slots[itemIndex_1] = slots[itemIndex_2];
         slots[itemIndex_2] = item1;

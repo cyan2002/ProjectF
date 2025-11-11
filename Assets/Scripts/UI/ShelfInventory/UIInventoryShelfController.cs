@@ -44,6 +44,7 @@ public class UIInventoryShelfController : MonoBehaviour
             if (item.IsEmpty)
                 continue;
             inventoryData.AddItem(item);
+            Debug.Log(item);
         }
     }
 
@@ -89,6 +90,13 @@ public class UIInventoryShelfController : MonoBehaviour
             if (inventoryUI.isActiveAndEnabled == false)
             {
                 inventoryUI.Show();
+                //for each item in the inventoryData scriptable object, update each item in the UI
+                foreach (var item in inventoryData.GetCurrentInventoryStateShelf())
+                {
+                    inventoryUI.UpdateData(item.Key,
+                        item.Value.item.ItemImage,
+                        item.Value.quantity);
+                }
             }
             else
             {

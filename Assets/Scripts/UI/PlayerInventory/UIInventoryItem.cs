@@ -111,6 +111,8 @@ namespace Inventory.UI
         //It then invokes the OnItemDropped sending the object (item) itself
         public void OnDrop()
         {
+            Debug.Log($"Drop triggered on {gameObject.name}, ID: {gameObject.GetInstanceID()}");
+
             OnItemDroppedOn?.Invoke(this);
         }
 

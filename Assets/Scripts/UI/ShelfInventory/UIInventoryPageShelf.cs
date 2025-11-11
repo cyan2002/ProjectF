@@ -32,7 +32,7 @@ public class UIInventoryPageShelf : MonoBehaviour
     private void Awake()
     {
         Hide();
-        //mouseFollower.Toggle(false);
+        mouseFollower.Toggle(false);
         //itemDescription.ResetDescription();
     }
 
@@ -45,12 +45,18 @@ public class UIInventoryPageShelf : MonoBehaviour
     {
         for (int i = 0; i < inventorysize; i++)
         {
+            
+
             UIInventoryItemShelf uiItem =
-    Instantiate(itemPrefab, contentPanel, false); // <-- important!
+                   Instantiate(itemPrefab, Vector3.zero, Quaternion.identity);
+            uiItem.transform.SetParent(contentPanel);
+            //UIInventoryItemShelf uiItem =
+            //Instantiate(itemPrefab, contentPanel, false); // <-- important!
             listOfUIItems.Add(uiItem);
             uiItem.ShelfOnItemBeginDrag += HandleBeginDrag;
             uiItem.ShelfOnItemDroppedOn += HandleSwap;
             uiItem.ShelfOnItemEndDrag += HandleEndDrag;
+
         }
     }
 
@@ -92,11 +98,13 @@ public class UIInventoryPageShelf : MonoBehaviour
     //the handleItemselection method is then called with the item 
     private void HandleSwap(UIInventoryItemShelf inventoryItemUI)
     {
+        Debug.Log("Dropped!");
         int index = listOfUIItems.IndexOf(inventoryItemUI);
         if (index == -1)
         {
             return;
         }
+        
         ShelfOnSwapItems?.Invoke(currentlyDraggedItemIndex, index);
         HandleItemSelection(inventoryItemUI);
     }

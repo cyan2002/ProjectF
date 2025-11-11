@@ -15,18 +15,18 @@ public class UIInventoryPageShelf : MonoBehaviour
     //private UIInventoryDescription itemDescription;
 
     [SerializeField]
-    private MouseFollower mouseFollower;
+    private MouseFollowerShelf mouseFollower;
 
     //list of items that the script keeps track of so that it can map out the inventory UI appropriately
     List<UIInventoryItemShelf> listOfUIItems = new List<UIInventoryItemShelf>();
 
     private int currentlyDraggedItemIndex = -1;
 
-    public event Action<int> OnDescriptionRequested,
-            OnItemActionRequested,
-            OnStartDragging;
+    public event Action<int> ShelfOnDescriptionRequested,
+            ShelfOnItemActionRequested,
+            ShelfOnStartDragging;
 
-    public event Action<int, int> OnSwapItems;
+    public event Action<int, int> ShelfOnSwapItems;
 
     //hides the page and toggles the mouse follower (dragging) to false
     private void Awake()
@@ -97,14 +97,14 @@ public class UIInventoryPageShelf : MonoBehaviour
         {
             return;
         }
-        OnSwapItems?.Invoke(currentlyDraggedItemIndex, index);
+        ShelfOnSwapItems?.Invoke(currentlyDraggedItemIndex, index);
         HandleItemSelection(inventoryItemUI);
     }
 
     //This just resets the dragged item. Disables mouseFollower and makes the index -1 indicating there is no dragged item currently
     private void ResetDraggedItem()
     {
-        //mouseFollower.Toggle(false);
+        mouseFollower.Toggle(false);
         currentlyDraggedItemIndex = -1;
     }
 
@@ -119,7 +119,7 @@ public class UIInventoryPageShelf : MonoBehaviour
             return;
         currentlyDraggedItemIndex = index;
         HandleItemSelection(inventoryItemUI);
-        OnStartDragging?.Invoke(index);
+        ShelfOnStartDragging?.Invoke(index);
     }
 
     //This just makes the dragged item appearance by toggling the mouseFollower and setting the sprite and quantity of it
@@ -138,7 +138,7 @@ public class UIInventoryPageShelf : MonoBehaviour
         int index = listOfUIItems.IndexOf(inventoryItemUI);
         if (index == -1)
             return;
-        OnDescriptionRequested?.Invoke(index);
+        ShelfOnDescriptionRequested?.Invoke(index);
     }
 
     //Sets the UI for the inventory on and deselects all items (removes borders)

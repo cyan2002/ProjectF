@@ -18,8 +18,9 @@ public class UIInventoryItemShelf : MonoBehaviour
     //used to drag arond items in inventory
     //action is a method used in unity where if an action happens it sends information somewhere
     //with the item that the action happened to
-    public event Action<UIInventoryItemShelf> ShelfOnItemDroppedOn,
-        ShelfOnItemBeginDrag, ShelfOnItemEndDrag;
+    public event Action<UIInventoryItemShelf> ShelfOnItemClicked,
+            ShelfOnItemDroppedOn, ShelfOnItemBeginDrag, ShelfOnItemEndDrag,
+            ShelfOnRightMouseBtnClick;
 
     //OnItemClicked - left mouse button clicked (item select)
     //Right mouse button click - menu options
@@ -47,6 +48,22 @@ public class UIInventoryItemShelf : MonoBehaviour
         itemImage.gameObject.SetActive(true);
         itemImage.sprite = sprite;
         empty = false;
+    }
+
+    //detects when there is a right click and left click 
+    //passes data of object but also which button was used to click on this object
+    //see below for further explainations of events and etc
+    public void OnPointerClick(BaseEventData data)
+    {
+        PointerEventData pointerData = (PointerEventData)data;
+        if (pointerData.button == PointerEventData.InputButton.Left)
+        {
+            ShelfOnItemClicked?.Invoke(this);
+        }
+        else if (pointerData.button == PointerEventData.InputButton.Right)
+        {
+            ShelfOnRightMouseBtnClick?.Invoke(this);
+        }
     }
 
     //THIS EVENT IS NOT A BUILT-IN METHOD BY UNITY. connected via EventTrigger

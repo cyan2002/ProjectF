@@ -1,9 +1,22 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ShelfInventoryItem : MonoBehaviour
 {
-    public int sizeWidth = 1;
-    public int sizeHeight = 2;
+    public ItemData itemData;
+
+    internal void Set(ItemData itemData)
+    {
+        this.itemData = itemData;
+
+        GetComponent<Image>().sprite = itemData.itemIcon;
+
+        Vector2 size = new Vector2();
+        size.x = itemData.width * ItemGrid.tileSizeWidth;
+        size.y = itemData.height * ItemGrid.tileSizeHeight;
+        GetComponent<RectTransform>().sizeDelta = size;
+    }
 }

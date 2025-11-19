@@ -6,9 +6,8 @@ using UnityEngine.UI;
 
 public class ItemGrid : MonoBehaviour
 {
-
-    const float tileSizeWidth = 32;
-    const float tileSizeHeight = 32;
+    public const float tileSizeWidth = 32;
+    public const float tileSizeHeight = 32;
 
     ShelfInventoryItem[,] inventoryItemSlot;
 
@@ -21,26 +20,21 @@ public class ItemGrid : MonoBehaviour
     Vector2Int tileGridPosition = new Vector2Int();
     public Camera uiCamera;
 
-    [SerializeField] GameObject inventoryItemPrefab;
-
     [SerializeField] int gridSizeWidth = 10;
+    [SerializeField] int gridSizeHeight = 9;
 
     public ShelfInventoryItem PickUpItem(int x, int y)
     {
+        print(inventoryItemSlot[x, y].gameObject.name);
         ShelfInventoryItem toReturn = inventoryItemSlot[x, y];
         inventoryItemSlot[x, y] = null;
         return toReturn;
     }
 
-    [SerializeField] int gridSizeHeight = 9;
-
     private void Start()
     {
         rectTransform = GetComponent<RectTransform>();
         Init(gridSizeWidth, gridSizeHeight);
-
-        ShelfInventoryItem inventoryItem = Instantiate(inventoryItemPrefab).GetComponent<ShelfInventoryItem>();
-        PlaceItem(inventoryItem, 3, 2);
     }
 
     private void Init(int width, int height)
@@ -93,8 +87,11 @@ public class ItemGrid : MonoBehaviour
         );
 
         // Item position in top-left coordinate space
-        float x = topLeftOrigin.x + posX * tileSizeWidth + tileSizeWidth * 0.5f;
-        float y = topLeftOrigin.y - posY * tileSizeHeight - tileSizeHeight * 0.5f;
+        float x = topLeftOrigin.x + posX * tileSizeWidth + tileSizeWidth * 0.5f * inventoryItem.itemData.width;
+        float y = topLeftOrigin.y - posY * tileSizeHeight - tileSizeHeight * 0.5f * inventoryItem.itemData.height;
+
+        //adding it into the inventory array to keep track of it
+        inventoryItemSlot[posX, posY] = inventoryItem;
 
         itemRT.localPosition = new Vector2(x, y);
     }

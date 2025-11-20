@@ -8,6 +8,9 @@ public class ShelfInventoryItem : MonoBehaviour
 {
     public ItemData itemData;
 
+    public int onGridPositionX;
+    public int onGridPositionY;
+
     internal void Set(ItemData itemData)
     {
         this.itemData = itemData;

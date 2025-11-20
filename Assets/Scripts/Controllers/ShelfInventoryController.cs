@@ -9,6 +9,7 @@ public class ShelfInventoryController : MonoBehaviour
     public ItemGrid selectedItemGrid;
 
     ShelfInventoryItem selectedItem;
+    ShelfInventoryItem overlapItem;
     RectTransform rectTransform;
 
     [SerializeField] List<ItemData> items;
@@ -46,12 +47,19 @@ public class ShelfInventoryController : MonoBehaviour
 
     private void LeftMouseButtonPress()
     {
-        Vector2Int tileGridPosition = selectedItemGrid.GetTileGridPosition(Input.mousePosition);
+        Vector2 position = Input.mousePosition;
+
+        if(selectedItem != null)
+        {
+            position.x -= (selectedItem.itemData.width - 1) * ItemGrid.tileSizeWidth / 2;
+            position.y += (selectedItem.itemData.height - 1) * ItemGrid.tileSizeHeight / 2;
+        }
+
+        Vector2Int tileGridPosition = selectedItemGrid.GetTileGridPosition(position);
 
         if (selectedItem == null)
         {
             PickUpItem(tileGridPosition);
-
         }
         else
         {
@@ -61,8 +69,18 @@ public class ShelfInventoryController : MonoBehaviour
 
     private void PlaceItem(Vector2Int tileGridPosition)
     {
-        selectedItemGrid.PlaceItem(selectedItem, tileGridPosition.x, tileGridPosition.y);
-        selectedItem = null;
+        bool complete = selectedItemGrid.PlaceItem(selectedItem, tileGridPosition.x, tileGridPosition.y, ref overlapItem);
+
+        if (complete)
+        {
+            selectedItem = null;
+            if(overlapItem != null)
+            {
+                selectedItem = overlapItem;
+                overlapItem = null;
+                rectTransform = selectedItem.GetComponent<RectTransform>();
+            }
+        }
     }
 
     private void PickUpItem(Vector2Int tileGridPosition)

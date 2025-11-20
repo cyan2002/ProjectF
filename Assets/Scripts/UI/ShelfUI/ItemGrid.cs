@@ -23,12 +23,28 @@ public class ItemGrid : MonoBehaviour
     [SerializeField] int gridSizeWidth = 10;
     [SerializeField] int gridSizeHeight = 9;
 
+    //to removes item, it only gives u the location of the press
+    //we need to find the origin and cycle from that origin to properly remove the item
     public ShelfInventoryItem PickUpItem(int x, int y)
     {
-        print(inventoryItemSlot[x, y].gameObject.name);
         ShelfInventoryItem toReturn = inventoryItemSlot[x, y];
-        inventoryItemSlot[x, y] = null;
+
+        if (toReturn == null) { return null; }
+
+        CleanGridReference(toReturn);
+
         return toReturn;
+    }
+
+    private void CleanGridReference(ShelfInventoryItem item)
+    {
+        for (int ix = 0; ix < item.itemData.width; ix++)
+        {
+            for (int iy = 0; iy < item.itemData.height; iy++)
+            {
+                inventoryItemSlot[item.onGridPositionX + ix, item.onGridPositionY + iy] = null;
+            }
+        }
     }
 
     private void Start()
@@ -71,8 +87,24 @@ public class ItemGrid : MonoBehaviour
         return new Vector2Int(x, y);
     }
 
-    public void PlaceItem(ShelfInventoryItem inventoryItem, int posX, int posY)
+    public bool PlaceItem(ShelfInventoryItem inventoryItem, int posX, int posY, ref ShelfInventoryItem overlapItem)
     {
+        if(BoundryCheck(posX, posY, inventoryItem.itemData.width, inventoryItem.itemData.height) == false)
+        {
+            return false;
+        }
+
+        if(OverlapCheck(posX, posY, inventoryItem.itemData.width, inventoryItem.itemData.height, ref overlapItem) == false)
+        {
+            overlapItem = null;
+            return false;
+        }
+
+        if(overlapItem != null)
+        {
+            CleanGridReference(overlapItem);
+        }
+
         RectTransform itemRT = inventoryItem.GetComponent<RectTransform>();
         itemRT.SetParent(rectTransform, false);
 
@@ -91,8 +123,84 @@ public class ItemGrid : MonoBehaviour
         float y = topLeftOrigin.y - posY * tileSizeHeight - tileSizeHeight * 0.5f * inventoryItem.itemData.height;
 
         //adding it into the inventory array to keep track of it
-        inventoryItemSlot[posX, posY] = inventoryItem;
+        for (int xnum = 0; xnum < inventoryItem.itemData.width; xnum++)
+        {
+            for (int ynum = 0; ynum < inventoryItem.itemData.height; ynum++)
+            {
+                inventoryItemSlot[posX + xnum, posY + ynum] = inventoryItem;
+                
+            }
+        }
+
+        
+
+        inventoryItem.onGridPositionX = posX;
+        inventoryItem.onGridPositionY = posY;
 
         itemRT.localPosition = new Vector2(x, y);
+
+        return true;
+    }
+
+    private bool OverlapCheck(int posX, int posY, int width, int height, ref ShelfInventoryItem overlapItem)
+    {
+        for(int x = 0; x < width; x++)
+        {
+            for(int y = 0; y < height; y++)
+            {
+                if(inventoryItemSlot[posX + x, posY + y] != null)
+                {
+                    if(overlapItem == null)
+                    {
+                        overlapItem = inventoryItemSlot[posX + x, posY + y];
+                    }
+                    else
+                    {
+                        //overlapped with two items - player needs to find another place to put item
+                        if(overlapItem != inventoryItemSlot[posX + x, posY + y])
+                        {
+                            return false;
+                        }
+                    }
+                    
+                }
+            }
+        }
+
+        return true;
+    }
+
+    //checks if the position is within the boundaires of the inventory grid or not
+    bool PositionCheck(int posX, int posY)
+    {
+        if(posX < 0 || posY < 0)
+        {
+            return false;
+        }
+
+        if(posX >= gridSizeWidth || posY >= gridSizeHeight)
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    bool BoundryCheck(int posX, int posY, int width, int height)
+    {
+        if(PositionCheck(posX, posY) == false)
+        {
+            return false;
+        }
+
+        posX += width-1;
+        posY += height-1;
+
+        if(PositionCheck(posX, posY) == false)
+        {
+            return false;
+        }
+
+        return true;
     }
 }

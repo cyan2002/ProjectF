@@ -47,6 +47,11 @@ public class ItemGrid : MonoBehaviour
         }
     }
 
+    internal ShelfInventoryItem GetItem(int x, int y)
+    {
+        return inventoryItemSlot[x, y];
+    }
+
     private void Start()
     {
         rectTransform = GetComponent<RectTransform>();
@@ -89,18 +94,18 @@ public class ItemGrid : MonoBehaviour
 
     public bool PlaceItem(ShelfInventoryItem inventoryItem, int posX, int posY, ref ShelfInventoryItem overlapItem)
     {
-        if(BoundryCheck(posX, posY, inventoryItem.itemData.width, inventoryItem.itemData.height) == false)
+        if (BoundryCheck(posX, posY, inventoryItem.itemData.width, inventoryItem.itemData.height) == false)
         {
             return false;
         }
 
-        if(OverlapCheck(posX, posY, inventoryItem.itemData.width, inventoryItem.itemData.height, ref overlapItem) == false)
+        if (OverlapCheck(posX, posY, inventoryItem.itemData.width, inventoryItem.itemData.height, ref overlapItem) == false)
         {
             overlapItem = null;
             return false;
         }
 
-        if(overlapItem != null)
+        if (overlapItem != null)
         {
             CleanGridReference(overlapItem);
         }
@@ -108,6 +113,28 @@ public class ItemGrid : MonoBehaviour
         RectTransform itemRT = inventoryItem.GetComponent<RectTransform>();
         itemRT.SetParent(rectTransform, false);
 
+        //adding it into the inventory array to keep track of it
+        for (int xnum = 0; xnum < inventoryItem.itemData.width; xnum++)
+        {
+            for (int ynum = 0; ynum < inventoryItem.itemData.height; ynum++)
+            {
+                inventoryItemSlot[posX + xnum, posY + ynum] = inventoryItem;
+
+            }
+        }
+
+        inventoryItem.onGridPositionX = posX;
+        inventoryItem.onGridPositionY = posY;
+        float x, y;
+        Vector2 position = CalculatePositionOnGrid(inventoryItem, posX, posY);
+
+        itemRT.localPosition = position;
+
+        return true;
+    }
+
+    public Vector2 CalculatePositionOnGrid(ShelfInventoryItem inventoryItem, int posX, int posY)
+    {
         // Position item inside the grid
         Vector2 rectSize = rectTransform.rect.size;
         Vector2 pivot = rectTransform.pivot;
@@ -118,28 +145,11 @@ public class ItemGrid : MonoBehaviour
              rectSize.y * (1 - pivot.y)
         );
 
+        Vector2 position = new Vector2();
         // Item position in top-left coordinate space
-        float x = topLeftOrigin.x + posX * tileSizeWidth + tileSizeWidth * 0.5f * inventoryItem.itemData.width;
-        float y = topLeftOrigin.y - posY * tileSizeHeight - tileSizeHeight * 0.5f * inventoryItem.itemData.height;
-
-        //adding it into the inventory array to keep track of it
-        for (int xnum = 0; xnum < inventoryItem.itemData.width; xnum++)
-        {
-            for (int ynum = 0; ynum < inventoryItem.itemData.height; ynum++)
-            {
-                inventoryItemSlot[posX + xnum, posY + ynum] = inventoryItem;
-                
-            }
-        }
-
-        
-
-        inventoryItem.onGridPositionX = posX;
-        inventoryItem.onGridPositionY = posY;
-
-        itemRT.localPosition = new Vector2(x, y);
-
-        return true;
+        position.x = topLeftOrigin.x + posX * tileSizeWidth + tileSizeWidth * 0.5f * inventoryItem.itemData.width;
+        position.y = topLeftOrigin.y - posY * tileSizeHeight - tileSizeHeight * 0.5f * inventoryItem.itemData.height;
+        return position;
     }
 
     private bool OverlapCheck(int posX, int posY, int width, int height, ref ShelfInventoryItem overlapItem)
@@ -186,7 +196,7 @@ public class ItemGrid : MonoBehaviour
         return true;
     }
 
-    bool BoundryCheck(int posX, int posY, int width, int height)
+    public bool BoundryCheck(int posX, int posY, int width, int height)
     {
         if(PositionCheck(posX, posY) == false)
         {

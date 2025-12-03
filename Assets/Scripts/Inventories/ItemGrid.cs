@@ -9,7 +9,7 @@ public class ItemGrid : MonoBehaviour
     public const float tileSizeWidth = 32;
     public const float tileSizeHeight = 32;
 
-    ShelfInventoryItem[,] inventoryItemSlot;
+    InventoryItem[,] inventoryItemSlot;
 
     RectTransform rectTransform;
 
@@ -25,9 +25,9 @@ public class ItemGrid : MonoBehaviour
 
     //to removes item, it only gives u the location of the press
     //we need to find the origin and cycle from that origin to properly remove the item
-    public ShelfInventoryItem PickUpItem(int x, int y)
+    public InventoryItem PickUpItem(int x, int y)
     {
-        ShelfInventoryItem toReturn = inventoryItemSlot[x, y];
+        InventoryItem toReturn = inventoryItemSlot[x, y];
 
         if (toReturn == null) { return null; }
 
@@ -36,18 +36,18 @@ public class ItemGrid : MonoBehaviour
         return toReturn;
     }
 
-    private void CleanGridReference(ShelfInventoryItem item)
+    private void CleanGridReference(InventoryItem item)
     {
-        for (int ix = 0; ix < item.itemData.width; ix++)
+        for (int ix = 0; ix < item.WIDTH; ix++)
         {
-            for (int iy = 0; iy < item.itemData.height; iy++)
+            for (int iy = 0; iy < item.HEIGHT; iy++)
             {
                 inventoryItemSlot[item.onGridPositionX + ix, item.onGridPositionY + iy] = null;
             }
         }
     }
 
-    internal ShelfInventoryItem GetItem(int x, int y)
+    internal InventoryItem GetItem(int x, int y)
     {
         return inventoryItemSlot[x, y];
     }
@@ -60,9 +60,30 @@ public class ItemGrid : MonoBehaviour
 
     private void Init(int width, int height)
     {
-        inventoryItemSlot = new ShelfInventoryItem[width, height];
+        inventoryItemSlot = new InventoryItem[width, height];
         Vector2 size = new Vector2(width * tileSizeWidth, height * tileSizeHeight);
         rectTransform.sizeDelta = size;
+    }
+
+    //finds space for the object to be placed into inventory
+    //searches through the whole inventory, slot by slot to see if the item to insert can fit
+    //returns the vector2 of the first spot where the item can fit
+    public Vector2Int? FindSpaceForObject(InventoryItem itemToInsert)
+    {
+        int height = gridSizeHeight - itemToInsert.HEIGHT + 1;
+        int width = gridSizeWidth - itemToInsert.WIDTH + 1;
+        for (int y = 0; y < height; y++)
+        {
+            for (int x = 0; x < width; x++)
+            {
+                if(CheckAvailableSpace(x, y, itemToInsert.WIDTH, itemToInsert.HEIGHT))
+                {
+                    return new Vector2Int(x, y);
+                }
+            }
+        }
+
+        return null;
     }
 
     //returns the Grid position of the tile where the mouse currently is
@@ -92,14 +113,15 @@ public class ItemGrid : MonoBehaviour
         return new Vector2Int(x, y);
     }
 
-    public bool PlaceItem(ShelfInventoryItem inventoryItem, int posX, int posY, ref ShelfInventoryItem overlapItem)
+    //places item, but checks if the item will go over borders/out of bounds
+    public bool PlaceItem(InventoryItem inventoryItem, int posX, int posY, ref InventoryItem overlapItem)
     {
-        if (BoundryCheck(posX, posY, inventoryItem.itemData.width, inventoryItem.itemData.height) == false)
+        if (BoundryCheck(posX, posY, inventoryItem.WIDTH, inventoryItem.HEIGHT) == false)
         {
             return false;
         }
 
-        if (OverlapCheck(posX, posY, inventoryItem.itemData.width, inventoryItem.itemData.height, ref overlapItem) == false)
+        if (OverlapCheck(posX, posY, inventoryItem.WIDTH, inventoryItem.HEIGHT, ref overlapItem) == false)
         {
             overlapItem = null;
             return false;
@@ -110,13 +132,21 @@ public class ItemGrid : MonoBehaviour
             CleanGridReference(overlapItem);
         }
 
+        PlaceItem(inventoryItem, posX, posY);
+
+        return true;
+    }
+
+    //can be called to place item IF you already know that the item will fit
+    public void PlaceItem(InventoryItem inventoryItem, int posX, int posY)
+    {
         RectTransform itemRT = inventoryItem.GetComponent<RectTransform>();
         itemRT.SetParent(rectTransform, false);
 
         //adding it into the inventory array to keep track of it
-        for (int xnum = 0; xnum < inventoryItem.itemData.width; xnum++)
+        for (int xnum = 0; xnum < inventoryItem.WIDTH; xnum++)
         {
-            for (int ynum = 0; ynum < inventoryItem.itemData.height; ynum++)
+            for (int ynum = 0; ynum < inventoryItem.HEIGHT; ynum++)
             {
                 inventoryItemSlot[posX + xnum, posY + ynum] = inventoryItem;
 
@@ -129,11 +159,9 @@ public class ItemGrid : MonoBehaviour
         Vector2 position = CalculatePositionOnGrid(inventoryItem, posX, posY);
 
         itemRT.localPosition = position;
-
-        return true;
     }
 
-    public Vector2 CalculatePositionOnGrid(ShelfInventoryItem inventoryItem, int posX, int posY)
+    public Vector2 CalculatePositionOnGrid(InventoryItem inventoryItem, int posX, int posY)
     {
         // Position item inside the grid
         Vector2 rectSize = rectTransform.rect.size;
@@ -147,12 +175,12 @@ public class ItemGrid : MonoBehaviour
 
         Vector2 position = new Vector2();
         // Item position in top-left coordinate space
-        position.x = topLeftOrigin.x + posX * tileSizeWidth + tileSizeWidth * 0.5f * inventoryItem.itemData.width;
-        position.y = topLeftOrigin.y - posY * tileSizeHeight - tileSizeHeight * 0.5f * inventoryItem.itemData.height;
+        position.x = topLeftOrigin.x + posX * tileSizeWidth + tileSizeWidth * 0.5f * inventoryItem.WIDTH;
+        position.y = topLeftOrigin.y - posY * tileSizeHeight - tileSizeHeight * 0.5f * inventoryItem.HEIGHT;
         return position;
     }
 
-    private bool OverlapCheck(int posX, int posY, int width, int height, ref ShelfInventoryItem overlapItem)
+    private bool OverlapCheck(int posX, int posY, int width, int height, ref InventoryItem overlapItem)
     {
         for(int x = 0; x < width; x++)
         {
@@ -177,6 +205,22 @@ public class ItemGrid : MonoBehaviour
             }
         }
 
+        return true;
+    }
+
+    //given a position, checks to see if it's empty or not
+    private bool CheckAvailableSpace(int posX, int posY, int width, int height)
+    {
+        for (int x = 0; x < width; x++)
+        {
+            for (int y = 0; y < height; y++)
+            {
+                if (inventoryItemSlot[posX + x, posY + y] != null)
+                {
+                    return false;
+                }
+            }
+        }
         return true;
     }
 

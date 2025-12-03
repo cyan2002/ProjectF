@@ -6,12 +6,12 @@ using UnityEngine.EventSystems;
 [RequireComponent(typeof(ItemGrid))]
 public class GridInteract : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
-    ShelfInventoryController inventoryController;
+    InventoryController inventoryController;
     ItemGrid itemGrid;
 
     private void Awake()
     {
-        inventoryController = FindObjectOfType(typeof(ShelfInventoryController)) as ShelfInventoryController;
+        inventoryController = FindObjectOfType(typeof(InventoryController)) as InventoryController;
         itemGrid = GetComponent<ItemGrid>();
     }
     public void OnPointerEnter(PointerEventData eventData)

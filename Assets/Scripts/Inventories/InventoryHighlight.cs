@@ -11,15 +11,15 @@ public class InventoryHighlight : MonoBehaviour
         highlighter.gameObject.SetActive(b);
     }
 
-    public void SetSize(ShelfInventoryItem targetItem)
+    public void SetSize(InventoryItem targetItem)
     {
         Vector2 size = new Vector2();
-        size.x = targetItem.itemData.width * ItemGrid.tileSizeWidth;
-        size.y = targetItem.itemData.height * ItemGrid.tileSizeHeight;
+        size.x = targetItem.WIDTH * ItemGrid.tileSizeWidth;
+        size.y = targetItem.HEIGHT * ItemGrid.tileSizeHeight;
         highlighter.sizeDelta = size;
     }
 
-    public void SetPosition(ItemGrid targetGrid, ShelfInventoryItem targetItem)
+    public void SetPosition(ItemGrid targetGrid, InventoryItem targetItem)
     {
         SetParent(targetGrid);
 
@@ -38,7 +38,7 @@ public class InventoryHighlight : MonoBehaviour
         highlighter.SetParent(targetGrid.GetComponent<RectTransform>());
     }
 
-    public void SetPosition(ItemGrid targetGrid, ShelfInventoryItem targetItem, int posX, int posY)
+    public void SetPosition(ItemGrid targetGrid, InventoryItem targetItem, int posX, int posY)
     {
         Vector2 pos = targetGrid.CalculatePositionOnGrid(
             targetItem,

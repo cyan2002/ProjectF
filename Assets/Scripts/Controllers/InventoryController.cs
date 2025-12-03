@@ -1,127 +1,207 @@
-using Inventory.Model;
-using Inventory.UI;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-//https://www.youtube.com/watch?v=ysUb6u08uMo - adding item to inventory
-
-namespace Inventory
+public class InventoryController : MonoBehaviour
 {
-    public class InventoryController : MonoBehaviour
+    [HideInInspector]
+    public ItemGrid selectedItemGrid;
+
+    public ItemGrid SelectedItemGrid
     {
-        [SerializeField]
-        private UIInventoryPage inventoryUI;
-
-        [SerializeField]
-        private InventorySO inventoryData;
-
-        public List<InventoryItem> initialItems = new List<InventoryItem>();
-
-        private void Start()
+        get => selectedItemGrid;
+        set
         {
-            PrepareUI();
-            PrepareInventoryData();
+            selectedItemGrid = value;
+            inventoryHighlight.SetParent(value);
         }
+    }
 
-        //This updates the inventory SO, so where the data is kept for the objects in the inventory (not UI)
-        //It them makes the scriptable object inventory a subscriber to the inventory update event
-        //It then runs through each item in the initial items list (given by here) and adds it to the inventory data scriptable object
-        private void PrepareInventoryData()
+    InventoryItem selectedItem;
+    InventoryItem overlapItem;
+    RectTransform rectTransform;
+
+    [SerializeField] List<ItemData> items;
+    [SerializeField] GameObject itemPrefab;
+    [SerializeField] Transform canvasTransform;
+
+    InventoryHighlight inventoryHighlight;
+
+    private void Awake()
+    {
+        inventoryHighlight = GetComponent<InventoryHighlight>();
+    }
+
+    private void Update()
+    {
+        ItemIconDrag();
+
+        if (Input.GetKeyDown(KeyCode.Q))
         {
-            inventoryData.Initialize();
-            inventoryData.OnInventoryUpdated += UpdateInventoryUI;
-            foreach (InventoryItem item in initialItems)
+            if(selectedItem == null)
             {
-                if (item.IsEmpty)
-                    continue;
-                inventoryData.AddItem(item);
+                CreateRandomItem();
             }
         }
 
-        //This method is triggered when the OnInventoryUpdated event occurs
-        //the inventory UI is reset and for each item in the inventory state dictionary, it updates the UI for it
-        private void UpdateInventoryUI(Dictionary<int, InventoryItem> inventoryState)
+        //places a random item if mouse is over the inventory inside the inventory
+        if (Input.GetKeyDown(KeyCode.E))
         {
-            inventoryUI.ResetAllItems();
-            foreach (var item in inventoryState)
+            InsertRandomItem();
+        }
+
+        if(Input.GetKeyDown(KeyCode.R))
+        {
+            RotateItem();
+        }
+
+        if (selectedItemGrid == null) 
+        {
+            inventoryHighlight.Show(false);
+            return; 
+        }
+
+        HandleHighlight();
+
+        if (Input.GetMouseButtonDown(0))
+        {
+            LeftMouseButtonPress();
+        }
+    }
+
+    private void RotateItem()
+    {
+        if(selectedItem == null) { return; }
+
+        selectedItem.Rotate();
+    }
+
+    //adds a random Item to the inventory, placing it into the next available spot - USE FOR PICKING UP PACKAGES OF SUPPLIES IN GAME
+    private void InsertRandomItem()
+    {
+        if (selectedItemGrid == null) { return;}
+
+        CreateRandomItem();
+        InventoryItem itemToInsert = selectedItem;
+        selectedItem = null;
+        InsertItem(itemToInsert);
+    }
+
+    private void InsertItem(InventoryItem itemToInsert)
+    {
+        Vector2Int? posOnGrid = selectedItemGrid.FindSpaceForObject(itemToInsert);
+
+        if (posOnGrid == null) { return; }
+
+        selectedItemGrid.PlaceItem(itemToInsert, posOnGrid.Value.x, posOnGrid.Value.y);
+    }
+
+    private void CreateRandomItem()
+    {
+        InventoryItem inventoryItem = Instantiate(itemPrefab).GetComponent<InventoryItem>();
+        selectedItem = inventoryItem;
+
+        rectTransform = inventoryItem.GetComponent<RectTransform>();
+        rectTransform.SetParent(canvasTransform);
+        rectTransform.SetAsLastSibling();
+
+        int selectedItemID = UnityEngine.Random.Range(0, items.Count);
+        inventoryItem.Set(items[selectedItemID]);
+    }
+
+    Vector2Int oldPosition;
+    InventoryItem itemToHighlight;
+
+    private void HandleHighlight()
+    {
+        Vector2Int positionOnGrid = GetTileGridPosition();
+        if(oldPosition == positionOnGrid) { return; }
+        oldPosition = positionOnGrid;
+        if (selectedItem == null)
+        {
+            itemToHighlight = selectedItemGrid.GetItem(positionOnGrid.x, positionOnGrid.y);
+
+            if(itemToHighlight != null)
             {
-                inventoryUI.UpdateData(item.Key, item.Value.item.ItemImage,
-                    item.Value.quantity);
+                inventoryHighlight.Show(true);
+                inventoryHighlight.SetSize(itemToHighlight);
+                inventoryHighlight.SetPosition(selectedItemGrid, itemToHighlight);
+            }
+            else
+            {
+                inventoryHighlight.Show(false);
             }
         }
-
-        //prepares the UI by initializing the inventory size in the UI page script.
-        //the UI page script then creates items that are added to the grid canvas (the item prefabs, to represent items they are disabled when empty and image is placed in holder when they have something in it)
-        //The script then subscribes the inventory page a subscriber to the events. 
-        private void PrepareUI()
+        else
         {
-            inventoryUI.InitializeInventoryUI(inventoryData.Size);
-            inventoryUI.OnDescriptionRequested += HandleDescriptionRequest;
-            inventoryUI.OnSwapItems += HandleSwapItems;
-            inventoryUI.OnStartDragging += HandleDragging;
-            inventoryUI.OnItemActionRequested += HandleItemActionRequest;
+            inventoryHighlight.Show(selectedItemGrid.BoundryCheck(positionOnGrid.x, 
+                positionOnGrid.y, 
+                selectedItem.WIDTH,
+                selectedItem.HEIGHT));
+            inventoryHighlight.SetSize(selectedItem);
+            inventoryHighlight.SetPosition(selectedItemGrid, selectedItem, positionOnGrid.x, positionOnGrid.y);
+        }
+    }
+
+    private void LeftMouseButtonPress()
+    {
+        Vector2Int tileGridPosition = GetTileGridPosition();
+
+        if (selectedItem == null)
+        {
+            PickUpItem(tileGridPosition);
+        }
+        else
+        {
+            PlaceItem(tileGridPosition);
+        }
+    }
+
+    private Vector2Int GetTileGridPosition()
+    {
+        Vector2 position = Input.mousePosition;
+
+        if (selectedItem != null)
+        {
+            position.x -= (selectedItem.WIDTH - 1) * ItemGrid.tileSizeWidth / 2;
+            position.y += (selectedItem.HEIGHT - 1) * ItemGrid.tileSizeHeight / 2;
         }
 
-        private void HandleItemActionRequest(int itemIndex)
-        {
+        return selectedItemGrid.GetTileGridPosition(position);
+    }
 
-        }
+    private void PlaceItem(Vector2Int tileGridPosition)
+    {
+        bool complete = selectedItemGrid.PlaceItem(selectedItem, tileGridPosition.x, tileGridPosition.y, ref overlapItem);
 
-        //This method is played when the event OnStartDragging occurs
-        //Given the item index of the item that's being dragged, it sets the MouseFollower to be on and appear as you are dragging the item
-        private void HandleDragging(int itemIndex)
+        if (complete)
         {
-            InventoryItem inventoryItem = inventoryData.GetItemAt(itemIndex);
-            if (inventoryItem.IsEmpty)
-                return;
-            inventoryUI.CreateDraggedItem(inventoryItem.item.ItemImage, inventoryItem.quantity);
-        }
-
-        //This method plays when the items are swapped. - comes from UI input
-        //This just tells the scriptable object inventory to swap the two items that need to be swapped.
-        private void HandleSwapItems(int itemIndex_1, int itemIndex_2)
-        {
-            inventoryData.SwapItems(itemIndex_1, itemIndex_2);
-        }
-
-        //This is for the description part - NOT IN USE CURRENTLY
-        private void HandleDescriptionRequest(int itemIndex)
-        {
-            InventoryItem inventoryItem = inventoryData.GetItemAt(itemIndex);
-            if (inventoryItem.IsEmpty)
+            selectedItem = null;
+            if(overlapItem != null)
             {
-                inventoryUI.ResetSelection();
-                return;
+                selectedItem = overlapItem;
+                overlapItem = null;
+                rectTransform = selectedItem.GetComponent<RectTransform>();
+                rectTransform.SetAsLastSibling();
             }
-            ItemSO item = inventoryItem.item;
-            inventoryUI.UpdateDescription(itemIndex, item.ItemImage,
-                item.name, item.Description);
         }
+    }
 
-        //If player presses the "I" key, enable the inventory UI if it's not already. If it's enabled then hide it.
-        public void Update()
+    private void PickUpItem(Vector2Int tileGridPosition)
+    {
+        selectedItem = selectedItemGrid.PickUpItem(tileGridPosition.x, tileGridPosition.y);
+        if (selectedItem != null)
         {
-            if (Input.GetKeyDown(KeyCode.I))
-            {
-                if (inventoryUI.isActiveAndEnabled == false)
-                {
-                    inventoryUI.Show();
-                    //for each item in the inventoryData scriptable object, update each item in the UI
-                    foreach (var item in inventoryData.GetCurrentInventoryState())
-                    {
-                        inventoryUI.UpdateData(item.Key,
-                            item.Value.item.ItemImage,
-                            item.Value.quantity);
-                    }
-                }
-                else
-                {
-                    inventoryUI.Hide();
-                }
+            rectTransform = selectedItem.GetComponent<RectTransform>();
+        }
+    }
 
-            }
+    private void ItemIconDrag()
+    {
+        if (selectedItem != null)
+        {
+            rectTransform.position = Input.mousePosition;
         }
     }
 }

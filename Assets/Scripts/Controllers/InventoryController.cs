@@ -25,8 +25,12 @@ public class InventoryController : MonoBehaviour
     [SerializeField] List<ItemData> items;
     [SerializeField] GameObject itemPrefab;
     [SerializeField] Transform canvasTransform;
+    [SerializeField] GameObject shelf;
 
     InventoryHighlight inventoryHighlight;
+
+    //statement of whether the inventory is open or not
+    private bool InventoryOpen = false;
 
     private void Awake()
     {
@@ -35,6 +39,19 @@ public class InventoryController : MonoBehaviour
 
     private void Update()
     {
+        if(Input.GetKeyDown(KeyCode.I) && InventoryOpen)
+        {
+            Debug.Log("2");
+            InventoryOpen = false;
+            shelf.SetActive(false);
+        }
+        else if(Input.GetKeyDown(KeyCode.I) && !InventoryOpen)
+        {
+            Debug.Log("1");
+            InventoryOpen = true;
+            shelf.SetActive(true);
+        }
+
         ItemIconDrag();
 
         if (Input.GetKeyDown(KeyCode.Q))

@@ -9,6 +9,7 @@ public class ItemGrid : MonoBehaviour
     public const float tileSizeWidth = 32;
     public const float tileSizeHeight = 32;
 
+    //list of items in the inventory
     InventoryItem[,] inventoryItemSlot;
 
     RectTransform rectTransform;

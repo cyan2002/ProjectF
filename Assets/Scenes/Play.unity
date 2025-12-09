@@ -4345,7 +4345,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1467368797
 RectTransform:
   m_ObjectHideFlags: 0
@@ -4734,7 +4734,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1537046435
 RectTransform:
   m_ObjectHideFlags: 0
@@ -5688,6 +5688,8 @@ GameObject:
   - component: {fileID: 1796535890}
   - component: {fileID: 1796535893}
   - component: {fileID: 1796535897}
+  - component: {fileID: 1796535899}
+  - component: {fileID: 1796535898}
   m_Layer: 8
   m_Name: Player
   m_TagString: Player
@@ -5838,6 +5840,38 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &1796535898
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1796535888}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 68e35f29e31e13248918d706bfade9e0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  highlighter: {fileID: 303190652}
+--- !u!114 &1796535899
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1796535888}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2426d260c51a3714aabbecb417314982, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  selectedItemGrid: {fileID: 0}
+  items:
+  - {fileID: 11400000, guid: 041c14778ae27b4498d21baf7cdec96f, type: 2}
+  - {fileID: 11400000, guid: 7517b042bb62e334ca9e0dff903da4de, type: 2}
+  itemPrefab: {fileID: 8861289784328858834, guid: 82e5a992b46bc694ba739fefc8f3060d, type: 3}
+  canvasTransform: {fileID: 1474204914}
+  inventoryObject: {fileID: 1537046434}
 --- !u!4 &1840294492 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6718817820983613798, guid: 07001a69e8c74ad4ca6836d9115ac99b, type: 3}
@@ -6377,9 +6411,10 @@ GameObject:
   m_Component:
   - component: {fileID: 2045679585}
   - component: {fileID: 2045679584}
-  - component: {fileID: 2045679583}
   - component: {fileID: 2045679582}
-  m_Layer: 0
+  - component: {fileID: 2045679587}
+  - component: {fileID: 2045679586}
+  m_Layer: 9
   m_Name: PegBoard
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6399,25 +6434,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   highlighter: {fileID: 303190652}
---- !u!114 &2045679583
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2045679581}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2426d260c51a3714aabbecb417314982, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  selectedItemGrid: {fileID: 0}
-  items:
-  - {fileID: 11400000, guid: 041c14778ae27b4498d21baf7cdec96f, type: 2}
-  - {fileID: 11400000, guid: 7517b042bb62e334ca9e0dff903da4de, type: 2}
-  itemPrefab: {fileID: 8861289784328858834, guid: 82e5a992b46bc694ba739fefc8f3060d, type: 3}
-  canvasTransform: {fileID: 1474204914}
-  shelf: {fileID: 1537046434}
 --- !u!212 &2045679584
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -6485,6 +6501,45 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2045679586
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2045679581}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 95e22c1e9ed69cf4b8eababa4bf051a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  controlledInventory: {fileID: 0}
+--- !u!61 &2045679587
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2045679581}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 1, y: 1}
+    newSize: {x: 1, y: 1}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 1.9760658, y: 1.9251837}
+  m_EdgeRadius: 0
 --- !u!4 &2048974979 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6718817820983613798, guid: 07001a69e8c74ad4ca6836d9115ac99b, type: 3}

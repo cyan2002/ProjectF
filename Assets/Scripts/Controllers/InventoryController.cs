@@ -3,11 +3,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+//attaches to that item or player with that inventory
 public class InventoryController : MonoBehaviour
 {
     [HideInInspector]
     public ItemGrid selectedItemGrid;
 
+    //whenever you make a call to selectedItemGrid it comes with functions attached
+    //calling SelectedItemGrid returns selceted Item Grid
+    //with this, you can also set selectedItemGrid to value and set the parent of that grid to value.
     public ItemGrid SelectedItemGrid
     {
         get => selectedItemGrid;
@@ -25,7 +29,9 @@ public class InventoryController : MonoBehaviour
     [SerializeField] List<ItemData> items;
     [SerializeField] GameObject itemPrefab;
     [SerializeField] Transform canvasTransform;
-    [SerializeField] GameObject shelf;
+
+    //for toggling the inventory off and on
+    [SerializeField] GameObject inventoryObject;
 
     InventoryHighlight inventoryHighlight;
 
@@ -37,56 +43,66 @@ public class InventoryController : MonoBehaviour
         inventoryHighlight = GetComponent<InventoryHighlight>();
     }
 
+    //checks for user input
+    //updates item dragger and highlighter
     private void Update()
     {
-        if(Input.GetKeyDown(KeyCode.I) && InventoryOpen)
+        //toggling player inventory
+        if (Input.GetKeyDown(KeyCode.I) && !InventoryOpen)
         {
-            Debug.Log("2");
-            InventoryOpen = false;
-            shelf.SetActive(false);
-        }
-        else if(Input.GetKeyDown(KeyCode.I) && !InventoryOpen)
-        {
-            Debug.Log("1");
+            inventoryObject.SetActive(true);
             InventoryOpen = true;
-            shelf.SetActive(true);
+        }
+        else if(Input.GetKeyDown(KeyCode.I) && InventoryOpen)
+        {
+            inventoryObject.SetActive(false);
+            InventoryOpen = false;
         }
 
-        ItemIconDrag();
+        //object dragging highlighter
+        HandleHighlight();
 
+        //creating a random item that is assigned to the mouse position, can be placed into an inventory after
         if (Input.GetKeyDown(KeyCode.Q))
         {
+            //only create if the item selected is null
             if(selectedItem == null)
             {
                 CreateRandomItem();
             }
         }
 
-        //places a random item if mouse is over the inventory inside the inventory
+        //inserts a random item if mouse is over the inventory inside the inventory
         if (Input.GetKeyDown(KeyCode.E))
         {
-            InsertRandomItem();
+            //only insert if not holding another item
+            if(selectedItem == null)
+            {
+                InsertRandomItem();
+            }
         }
 
+        //rotate the selected item being held
         if(Input.GetKeyDown(KeyCode.R))
         {
             RotateItem();
         }
 
+        //place or pick up item on/in inventory
+        if (Input.GetMouseButtonDown(0))
+        {
+            LeftMouseButtonPress();
+        }
+
+        //if there is no selected item, remove the item dragger
         if (selectedItemGrid == null) 
         {
             inventoryHighlight.Show(false);
             return; 
         }
-
-        HandleHighlight();
-
-        if (Input.GetMouseButtonDown(0))
-        {
-            LeftMouseButtonPress();
-        }
     }
 
+    //rotates the item is R is pressed, only rotates if the selected item is not null (there is an item to rotate)
     private void RotateItem()
     {
         if(selectedItem == null) { return; }
@@ -105,7 +121,9 @@ public class InventoryController : MonoBehaviour
         InsertItem(itemToInsert);
     }
 
-    private void InsertItem(InventoryItem itemToInsert)
+    //inserts an item into the inventory
+    //USE THIS FUNCTION TO ADD ITEMS AFTER PURCHASE
+    public void InsertItem(InventoryItem itemToInsert)
     {
         Vector2Int? posOnGrid = selectedItemGrid.FindSpaceForObject(itemToInsert);
 
@@ -114,6 +132,8 @@ public class InventoryController : MonoBehaviour
         selectedItemGrid.PlaceItem(itemToInsert, posOnGrid.Value.x, posOnGrid.Value.y);
     }
 
+    //creates a random item from the list of items given
+    //for testing purposes
     private void CreateRandomItem()
     {
         InventoryItem inventoryItem = Instantiate(itemPrefab).GetComponent<InventoryItem>();
@@ -132,7 +152,18 @@ public class InventoryController : MonoBehaviour
 
     private void HandleHighlight()
     {
-        Vector2Int positionOnGrid = GetTileGridPosition();
+        //need to check when mouse is out of bounds... to not run code.
+        if (selectedItem != null)
+        {
+            rectTransform.position = Input.mousePosition;
+        }
+        if(selectedItem == null)
+        {
+            inventoryHighlight.Show(false);
+            return;
+        }
+
+        Vector2Int positionOnGrid = (Vector2Int)GetTileGridPosition();
         if(oldPosition == positionOnGrid) { return; }
         oldPosition = positionOnGrid;
         if (selectedItem == null)
@@ -163,7 +194,7 @@ public class InventoryController : MonoBehaviour
 
     private void LeftMouseButtonPress()
     {
-        Vector2Int tileGridPosition = GetTileGridPosition();
+        Vector2Int tileGridPosition = (Vector2Int)GetTileGridPosition();
 
         if (selectedItem == null)
         {
@@ -175,7 +206,7 @@ public class InventoryController : MonoBehaviour
         }
     }
 
-    private Vector2Int GetTileGridPosition()
+    private Vector2Int? GetTileGridPosition()
     {
         Vector2 position = Input.mousePosition;
 
@@ -184,6 +215,10 @@ public class InventoryController : MonoBehaviour
             position.x -= (selectedItem.WIDTH - 1) * ItemGrid.tileSizeWidth / 2;
             position.y += (selectedItem.HEIGHT - 1) * ItemGrid.tileSizeHeight / 2;
         }
+        //else
+        //{
+        //    return null;
+        //}
 
         return selectedItemGrid.GetTileGridPosition(position);
     }
@@ -211,14 +246,6 @@ public class InventoryController : MonoBehaviour
         if (selectedItem != null)
         {
             rectTransform = selectedItem.GetComponent<RectTransform>();
-        }
-    }
-
-    private void ItemIconDrag()
-    {
-        if (selectedItem != null)
-        {
-            rectTransform.position = Input.mousePosition;
         }
     }
 }

@@ -4476,7 +4476,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
   m_ReferenceResolution: {x: 2560, y: 1440}
@@ -5871,7 +5871,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 7517b042bb62e334ca9e0dff903da4de, type: 2}
   itemPrefab: {fileID: 8861289784328858834, guid: 82e5a992b46bc694ba739fefc8f3060d, type: 3}
   canvasTransform: {fileID: 1474204914}
-  inventoryObject: {fileID: 1537046434}
+  inventoryObject: {fileID: 1467368796}
 --- !u!4 &1840294492 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6718817820983613798, guid: 07001a69e8c74ad4ca6836d9115ac99b, type: 3}
@@ -6513,7 +6513,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 95e22c1e9ed69cf4b8eababa4bf051a3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  controlledInventory: {fileID: 0}
+  controlledGrid: {fileID: 1537046434}
 --- !u!61 &2045679587
 BoxCollider2D:
   m_ObjectHideFlags: 0

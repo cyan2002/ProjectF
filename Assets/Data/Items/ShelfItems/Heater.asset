@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f855074172eccb34798edbeff0b753e0, type: 3}
   m_Name: Heater
   m_EditorClassIdentifier: 
-  width: 2
-  height: 4
+  width: 1
+  height: 2
   itemIcon: {fileID: 21300000, guid: 7e44aeab9e97cdf4abb3826b676a0083, type: 3}

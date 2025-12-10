@@ -6,6 +6,7 @@ public class ShopController : MonoBehaviour
 {
     public InventoryController playerInventory;
     public InventoryItem testItem;
+    [SerializeField] List<ItemData> items;
 
     private void Update()
     {

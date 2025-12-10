@@ -43,11 +43,21 @@ public class InventoryItem : MonoBehaviour
 
         GetComponent<Image>().sprite = itemData.itemIcon;
 
-        Vector2 size = new Vector2();
-        size.x = itemData.width * ItemGrid.tileSizeWidth;
-        size.y = itemData.height * ItemGrid.tileSizeHeight;
+        float scale = GetComponentInParent<CanvasScaler>().scaleFactor;
+        Debug.Log(scale);
+
+        float tw = ItemGrid.tileSizeWidth * scale;
+        float th = ItemGrid.tileSizeHeight * scale;
+
+        // Use WIDTH and HEIGHT so rotation is accounted for
+        Vector2 size = new Vector2(
+        Mathf.Round(WIDTH * tw),
+        Mathf.Round(HEIGHT * th)
+        );
+
         GetComponent<RectTransform>().sizeDelta = size;
     }
+
 
     internal void Rotate()
     {

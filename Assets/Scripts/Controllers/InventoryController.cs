@@ -62,26 +62,6 @@ public class InventoryController : MonoBehaviour
         //object dragging highlighter
         HandleHighlight();
 
-        //creating a random item that is assigned to the mouse position, can be placed into an inventory after
-        if (Input.GetKeyDown(KeyCode.Q))
-        {
-            //only create if the item selected is null
-            if(selectedItem == null)
-            {
-                CreateRandomItem();
-            }
-        }
-
-        //inserts a random item if mouse is over the inventory inside the inventory
-        if (Input.GetKeyDown(KeyCode.E))
-        {
-            //only insert if not holding another item
-            if(selectedItem == null)
-            {
-                InsertRandomItem();
-            }
-        }
-
         //rotate the selected item being held
         if(Input.GetKeyDown(KeyCode.R))
         {
@@ -100,14 +80,28 @@ public class InventoryController : MonoBehaviour
             inventoryHighlight.Show(false);
             return; 
         }
-    }
 
-    //rotates the item is R is pressed, only rotates if the selected item is not null (there is an item to rotate)
-    private void RotateItem()
-    {
-        if(selectedItem == null) { return; }
+        //creating a random item that is assigned to the mouse position, can be placed into an inventory after
+        //USED FOR TESTING
+        if (Input.GetKeyDown(KeyCode.J))
+        {
+            //only create if the item selected is null
+            if (selectedItem == null)
+            {
+                CreateRandomItem();
+            }
+        }
 
-        selectedItem.Rotate();
+        //inserts a random item if mouse is over the inventory inside the inventory
+        //USED FOR TESTING
+        if (Input.GetKeyDown(KeyCode.K))
+        {
+            //only insert if not holding another item
+            if (selectedItem == null)
+            {
+                InsertRandomItem();
+            }
+        }
     }
 
     //adds a random Item to the inventory, placing it into the next available spot - USE FOR PICKING UP PACKAGES OF SUPPLIES IN GAME
@@ -147,6 +141,23 @@ public class InventoryController : MonoBehaviour
         inventoryItem.Set(items[selectedItemID]);
     }
 
+    //this returns the tile grid position that mouse is currently over
+    private Vector2Int? GetTileGridPosition()
+    {
+        if (selectedItemGrid == null)
+            return null;
+
+        Vector2 position = Input.mousePosition;
+
+        if (selectedItem != null)
+        {
+            position.x -= (selectedItem.WIDTH - 1) * ItemGrid.tileSizeWidth / 2;
+            position.y += (selectedItem.HEIGHT - 1) * ItemGrid.tileSizeHeight / 2;
+        }
+
+        return selectedItemGrid.GetTileGridPosition(position);
+    }
+
     Vector2Int oldPosition;
     InventoryItem itemToHighlight;
 
@@ -163,8 +174,15 @@ public class InventoryController : MonoBehaviour
             return;
         }
 
-        Vector2Int positionOnGrid = (Vector2Int)GetTileGridPosition();
-        if(oldPosition == positionOnGrid) { return; }
+        Vector2Int? pos = GetTileGridPosition();
+        if (pos == null)
+        {
+            inventoryHighlight.Show(false);
+            return;
+        }
+
+        Vector2Int positionOnGrid = pos.Value;
+        if (oldPosition == positionOnGrid) { return; }
         oldPosition = positionOnGrid;
         if (selectedItem == null)
         {
@@ -192,9 +210,14 @@ public class InventoryController : MonoBehaviour
         }
     }
 
+    //when mouse button is clicked, get the tilegrid position of where the mouse is and pass that to the pick up or place item function
     private void LeftMouseButtonPress()
     {
-        Vector2Int tileGridPosition = (Vector2Int)GetTileGridPosition();
+        Vector2Int? pos = GetTileGridPosition();
+        if (pos == null) return;
+
+        Vector2Int tileGridPosition = pos.Value;
+
 
         if (selectedItem == null)
         {
@@ -206,23 +229,7 @@ public class InventoryController : MonoBehaviour
         }
     }
 
-    private Vector2Int? GetTileGridPosition()
-    {
-        Vector2 position = Input.mousePosition;
-
-        if (selectedItem != null)
-        {
-            position.x -= (selectedItem.WIDTH - 1) * ItemGrid.tileSizeWidth / 2;
-            position.y += (selectedItem.HEIGHT - 1) * ItemGrid.tileSizeHeight / 2;
-        }
-        //else
-        //{
-        //    return null;
-        //}
-
-        return selectedItemGrid.GetTileGridPosition(position);
-    }
-
+    //places the item using the ItemGrid Function and if completed sucessfully, make the selecteditem nbull and reset variables.
     private void PlaceItem(Vector2Int tileGridPosition)
     {
         bool complete = selectedItemGrid.PlaceItem(selectedItem, tileGridPosition.x, tileGridPosition.y, ref overlapItem);
@@ -240,6 +247,7 @@ public class InventoryController : MonoBehaviour
         }
     }
 
+    //picks up items using the ItemGrid Function and if completed sucessfully, make the rectransform the current transform that we are working with
     private void PickUpItem(Vector2Int tileGridPosition)
     {
         selectedItem = selectedItemGrid.PickUpItem(tileGridPosition.x, tileGridPosition.y);
@@ -247,5 +255,13 @@ public class InventoryController : MonoBehaviour
         {
             rectTransform = selectedItem.GetComponent<RectTransform>();
         }
+    }
+
+    //rotates the item is R is pressed, only rotates if the selected item is not null (there is an item to rotate)
+    private void RotateItem()
+    {
+        if (selectedItem == null) { return; }
+
+        selectedItem.Rotate();
     }
 }

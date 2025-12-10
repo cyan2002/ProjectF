@@ -17,8 +17,6 @@ public class ItemGrid : MonoBehaviour
     [SerializeField]
     private CanvasScaler canvasGroup;
 
-    Vector2 positionOnTheGrid = new Vector2();
-    Vector2Int tileGridPosition = new Vector2Int();
     public Camera uiCamera;
 
     [SerializeField] int gridSizeWidth = 10;
@@ -61,8 +59,14 @@ public class ItemGrid : MonoBehaviour
 
     private void Init(int width, int height)
     {
+        float scale = canvasGroup.scaleFactor;  // CanvasScaler scale
+
+        float tw = tileSizeWidth * scale;
+        float th = tileSizeHeight * scale;
+
         inventoryItemSlot = new InventoryItem[width, height];
-        Vector2 size = new Vector2(width * tileSizeWidth, height * tileSizeHeight);
+
+        Vector2 size = new Vector2(width * tw, height * th);
         rectTransform.sizeDelta = size;
     }
 
@@ -90,6 +94,8 @@ public class ItemGrid : MonoBehaviour
     //returns the Grid position of the tile where the mouse currently is
     public Vector2Int GetTileGridPosition(Vector2 mousePosition)
     {
+        float s = canvasGroup.scaleFactor; // CanvasScaler scale
+
         Vector2 localPoint;
         RectTransformUtility.ScreenPointToLocalPointInRectangle(
             rectTransform,
@@ -108,8 +114,8 @@ public class ItemGrid : MonoBehaviour
         // Top-left–relative coordinate
         Vector2 TL = localPoint - topLeftOrigin;
 
-        int x = Mathf.FloorToInt(TL.x / tileSizeWidth);
-        int y = Mathf.FloorToInt(-TL.y / tileSizeHeight);  // NOTICE THE '-' HERE
+        int x = Mathf.FloorToInt(TL.x / (tileSizeWidth * s));
+        int y = Mathf.FloorToInt(-TL.y / (tileSizeHeight * s));  // NOTICE THE '-' HERE
 
         return new Vector2Int(x, y);
     }
@@ -156,7 +162,6 @@ public class ItemGrid : MonoBehaviour
 
         inventoryItem.onGridPositionX = posX;
         inventoryItem.onGridPositionY = posY;
-        float x, y;
         Vector2 position = CalculatePositionOnGrid(inventoryItem, posX, posY);
 
         itemRT.localPosition = position;
@@ -164,6 +169,10 @@ public class ItemGrid : MonoBehaviour
 
     public Vector2 CalculatePositionOnGrid(InventoryItem inventoryItem, int posX, int posY)
     {
+        float scale = canvasGroup.scaleFactor;  // CanvasScaler scale
+        float tw = tileSizeWidth * scale;
+        float th = tileSizeHeight * scale;
+
         // Position item inside the grid
         Vector2 rectSize = rectTransform.rect.size;
         Vector2 pivot = rectTransform.pivot;
@@ -176,8 +185,8 @@ public class ItemGrid : MonoBehaviour
 
         Vector2 position = new Vector2();
         // Item position in top-left coordinate space
-        position.x = topLeftOrigin.x + posX * tileSizeWidth + tileSizeWidth * 0.5f * inventoryItem.WIDTH;
-        position.y = topLeftOrigin.y - posY * tileSizeHeight - tileSizeHeight * 0.5f * inventoryItem.HEIGHT;
+        position.x = topLeftOrigin.x + posX * tileSizeWidth + tw * 0.5f * inventoryItem.WIDTH;
+        position.y = topLeftOrigin.y - posY * tileSizeHeight - th * 0.5f * inventoryItem.HEIGHT;
         return position;
     }
 

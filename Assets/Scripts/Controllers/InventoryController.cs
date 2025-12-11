@@ -6,7 +6,7 @@ using UnityEngine;
 //attaches to that item or player with that inventory
 public class InventoryController : MonoBehaviour
 {
-    [HideInInspector]
+    //[HideInInspector]
     public ItemGrid selectedItemGrid;
 
     //whenever you make a call to selectedItemGrid it comes with functions attached
@@ -32,6 +32,9 @@ public class InventoryController : MonoBehaviour
 
     //for toggling the inventory off and on
     [SerializeField] GameObject inventoryObject;
+    //used for shop purchases, since the mouse makes selectedItemGrid null when not hovering over, adding items would be impossible since the grid is null
+    //this varaible would bypass that and allow item entry even when inventory is not selected.
+    [SerializeField] ItemGrid selectedGrid;
 
     InventoryHighlight inventoryHighlight;
 
@@ -62,8 +65,16 @@ public class InventoryController : MonoBehaviour
         //object dragging highlighter
         HandleHighlight();
 
+        //if there is no selected item, remove the item dragger
+        //MAKES IT RUN OR NOT DEPENDING ON IF THE MOUSE IS OVER THE INVENTORY
+        if (selectedItemGrid == null)
+        {
+            inventoryHighlight.Show(false);
+            return;
+        }
+
         //rotate the selected item being held
-        if(Input.GetKeyDown(KeyCode.R))
+        if (Input.GetKeyDown(KeyCode.R))
         {
             RotateItem();
         }
@@ -72,13 +83,6 @@ public class InventoryController : MonoBehaviour
         if (Input.GetMouseButtonDown(0))
         {
             LeftMouseButtonPress();
-        }
-
-        //if there is no selected item, remove the item dragger
-        if (selectedItemGrid == null) 
-        {
-            inventoryHighlight.Show(false);
-            return; 
         }
 
         //creating a random item that is assigned to the mouse position, can be placed into an inventory after
@@ -107,6 +111,7 @@ public class InventoryController : MonoBehaviour
     //adds a random Item to the inventory, placing it into the next available spot - USE FOR PICKING UP PACKAGES OF SUPPLIES IN GAME
     private void InsertRandomItem()
     {
+        //this gets caught if mouse is not over the inventory, for inserting random item I want this to run either way...
         if (selectedItemGrid == null) { return;}
 
         CreateRandomItem();
@@ -119,9 +124,15 @@ public class InventoryController : MonoBehaviour
     //USE THIS FUNCTION TO ADD ITEMS AFTER PURCHASE
     public void InsertItem(InventoryItem itemToInsert)
     {
+        //will print out null
+        //Debug.Log(selectedItemGrid);
+        //no selectedItemGrid (null), can fix with other controller?
         Vector2Int? posOnGrid = selectedItemGrid.FindSpaceForObject(itemToInsert);
 
-        if (posOnGrid == null) { return; }
+        if (posOnGrid == null)
+        {
+                return; 
+        }
 
         selectedItemGrid.PlaceItem(itemToInsert, posOnGrid.Value.x, posOnGrid.Value.y);
     }
@@ -140,6 +151,38 @@ public class InventoryController : MonoBehaviour
         int selectedItemID = UnityEngine.Random.Range(0, items.Count);
         inventoryItem.Set(items[selectedItemID]);
     }
+
+    //same as CreateRandomItem; however, it's not random, so it's just create the item given the item
+    public void purchaseItem(ItemData item)
+    {
+        InventoryItem inventoryItem = Instantiate(itemPrefab).GetComponent<InventoryItem>();
+        selectedItem = inventoryItem;
+
+        rectTransform = inventoryItem.GetComponent<RectTransform>();
+        rectTransform.SetParent(canvasTransform);
+        rectTransform.SetAsLastSibling();
+
+        inventoryItem.Set(item);
+
+        //this part comes from InsertRandomItem
+        InventoryItem itemToInsert = selectedItem;
+        selectedItem = null;
+
+        //comes from InsertItem
+        //no selectedItemGrid (null), can fix with other controller?
+        //selectedGrid used here instead of selectedItemGrid because selectedItemGrid is turned on and off from mouse placement, but selectedGrid is always there.
+        //this means when testing I won't be able to place items in the inventory via mouse off grid
+        Vector2Int? posOnGrid = selectedGrid.FindSpaceForObject(itemToInsert);
+
+        if (posOnGrid == null)
+        {
+            return;
+        }
+
+        selectedGrid.PlaceItem(itemToInsert, posOnGrid.Value.x, posOnGrid.Value.y);
+    }
+
+    
 
     //this returns the tile grid position that mouse is currently over
     private Vector2Int? GetTileGridPosition()

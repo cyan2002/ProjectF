@@ -55,9 +55,9 @@ TagManager:
   - name: NPCs
     uniqueID: 2568286157
     locked: 0
-  - name: Player
-    uniqueID: 3433016167
-    locked: 0
   - name: Tank
     uniqueID: 1878214669
+    locked: 0
+  - name: Player
+    uniqueID: 3433016167
     locked: 0

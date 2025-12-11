@@ -5,7 +5,7 @@ using UnityEngine;
 public class ShopController : MonoBehaviour
 {
     public InventoryController playerInventory;
-    public InventoryItem testItem;
+    public InventoryItem itemPrefab;
     [SerializeField] List<ItemData> items;
 
     private void Update()
@@ -18,6 +18,6 @@ public class ShopController : MonoBehaviour
 
     private void addItemsToInventory()
     {
-        playerInventory.InsertItem(testItem);
+        playerInventory.purchaseItem(items[0]);
     }
 }

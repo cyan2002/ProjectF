@@ -44,7 +44,6 @@ public class InventoryItem : MonoBehaviour
         GetComponent<Image>().sprite = itemData.itemIcon;
 
         float scale = GetComponentInParent<CanvasScaler>().scaleFactor;
-        Debug.Log(scale);
 
         float tw = ItemGrid.tileSizeWidth * scale;
         float th = ItemGrid.tileSizeHeight * scale;

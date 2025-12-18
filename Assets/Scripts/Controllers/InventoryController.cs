@@ -6,6 +6,7 @@ using UnityEngine;
 //attaches to that item or player with that inventory
 public class InventoryController : MonoBehaviour
 {
+    public static InventoryController Instance { get; private set; }
     //[HideInInspector]
     public ItemGrid selectedItemGrid;
 
@@ -43,7 +44,9 @@ public class InventoryController : MonoBehaviour
 
     private void Awake()
     {
+        Instance = this;
         inventoryHighlight = GetComponent<InventoryHighlight>();
+        inventoryObject.gameObject.SetActive(false);
     }
 
     //checks for user input
@@ -172,14 +175,14 @@ public class InventoryController : MonoBehaviour
         //no selectedItemGrid (null), can fix with other controller?
         //selectedGrid used here instead of selectedItemGrid because selectedItemGrid is turned on and off from mouse placement, but selectedGrid is always there.
         //this means when testing I won't be able to place items in the inventory via mouse off grid
-        Vector2Int? posOnGrid = selectedGrid.FindSpaceForObject(itemToInsert);
+        Vector2Int? posOnGrid = inventoryObject.GetComponentInChildren<ItemGrid>().FindSpaceForObject(itemToInsert);
 
         if (posOnGrid == null)
         {
             return;
         }
 
-        selectedGrid.PlaceItem(itemToInsert, posOnGrid.Value.x, posOnGrid.Value.y);
+        inventoryObject.GetComponentInChildren<ItemGrid>().PlaceItem(itemToInsert, posOnGrid.Value.x, posOnGrid.Value.y);
     }
 
     

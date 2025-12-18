@@ -166,7 +166,7 @@ public class NPC_Controller : MonoBehaviour
         {
             //finally reached the end point
             //CHANGE HERE HOW TO HANDLE NPC LEAVING THE STORE
-            print("exit!");
+            //print("exit!");
         }
     }
 

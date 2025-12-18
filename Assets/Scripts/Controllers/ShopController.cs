@@ -4,20 +4,48 @@ using UnityEngine;
 
 public class ShopController : MonoBehaviour
 {
-    public InventoryController playerInventory;
+    public static ShopController Instance { get; private set; }
     public InventoryItem itemPrefab;
-    [SerializeField] List<ItemData> items;
+
+    public GameObject ShopCanvas;
+
+    public Box ShippingBox;
+
+    private bool ShopActive = false;
+
+    private void Awake()
+    {
+        Instance = this;
+        ShopCanvas.gameObject.SetActive(false);
+    }
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.B))
+        //open inventory
+        if (Input.GetKeyDown(KeyCode.B) && !ShopActive)
         {
-            addItemsToInventory();
+            ShopCanvas.gameObject.SetActive(true);
+            ShopActive = true;
+        }
+        else if(Input.GetKeyDown(KeyCode.B) && ShopActive)
+        {
+            ShopCanvas.gameObject.SetActive(false);
+            ShopActive = false;
         }
     }
 
-    private void addItemsToInventory()
+    //private void testAdd()
+    //{
+        //addItemsToInventory();
+    //}
+
+    //private void addItemsToInventory()
+    //{
+        //InventoryController.Instance.purchaseItem(items[0]);
+    //}
+
+    public void AddToBox(ItemData ItemsToAdd)
     {
-        playerInventory.purchaseItem(items[0]);
+        ShippingBox.AddContents(ItemsToAdd);
     }
 }

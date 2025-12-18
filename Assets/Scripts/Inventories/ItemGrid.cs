@@ -51,7 +51,7 @@ public class ItemGrid : MonoBehaviour
         return inventoryItemSlot[x, y];
     }
 
-    private void Start()
+    private void Awake()
     {
         rectTransform = GetComponent<RectTransform>();
         Init(gridSizeWidth, gridSizeHeight);

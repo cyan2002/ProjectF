@@ -55,15 +55,15 @@ public class Node : MonoBehaviour
 
         for (int i = 0; i < hit.Length; i++)
         {
-            if (hit[i].collider.tag == "Node")
-            {
-                num = i;
-                NodePresent = true;
-            }
-            if (hit[i].collider.tag == "pickObject")
+            if (hit[i].collider.CompareTag("Object"))
             {
                 ObjectPresent = true;
             }
+            if (hit[i].collider.CompareTag("Node"))
+            {
+                NodePresent = true;
+            }
+            num = i;
         }
 
         if (!ObjectPresent && NodePresent)
@@ -99,7 +99,7 @@ public class Node : MonoBehaviour
     //Issue is it only places or is called when a Collider
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if(collision.tag == "pickObject")
+        if(collision.CompareTag("Object"))
         {
             connections.Clear();
             onObject = true;
@@ -108,7 +108,7 @@ public class Node : MonoBehaviour
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if (collision.tag == "pickObject")
+        if (collision.CompareTag("Object"))
         {
             onObject = false;
         }

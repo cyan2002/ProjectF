@@ -55,6 +55,7 @@ public class ItemGrid : MonoBehaviour
     {
         rectTransform = GetComponent<RectTransform>();
         Init(gridSizeWidth, gridSizeHeight);
+        transform.parent.gameObject.SetActive(false);
     }
 
     private void Init(int width, int height)
@@ -89,6 +90,27 @@ public class ItemGrid : MonoBehaviour
         }
 
         return null;
+    }
+
+    //this passes the item data itself, not the object.
+    //we are checking to see if this object can fit in the player, if so continue on
+    public bool CheckSpaceInInventory(ItemData itemToInsert)
+    {
+        int height = gridSizeHeight - itemToInsert.height - 1;
+        int width = gridSizeWidth - itemToInsert.width - 1;
+
+        for (int y = 0; y < height; y++)
+        {
+            for (int x = 0; x < width; x++)
+            {
+                if (CheckAvailableSpace(x, y, itemToInsert.width, itemToInsert.height))
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     //returns the Grid position of the tile where the mouse currently is

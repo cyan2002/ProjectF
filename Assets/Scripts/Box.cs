@@ -17,15 +17,6 @@ public class Box : MonoBehaviour
         sprite.enabled = false;
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        if (close && Input.GetKeyDown(KeyCode.P))
-        {
-            DumpIntoPlayer();
-        }
-    }
-
     public void AddContents(ItemData ItemToAdd)
     {
         items.Add(ItemToAdd);
@@ -42,12 +33,21 @@ public class Box : MonoBehaviour
 
     public void DumpIntoPlayer()
     {
-        for(int i = 0; i < items.Count; i++)
-        {
-            InventoryController.Instance.purchaseItem(items[i]);
+        if(close){
+            for(int i = items.Count-1; i >= 0; i--)
+            {
+                //only returns true if the item was added
+                if (InventoryController.Instance.purchaseItem(items[i]))
+                {
+                    items.RemoveAt(i);
+                }
+            }
+
+            if (items.Count == 0)
+            {
+                sprite.enabled = false;
+            }
         }
-        items.Clear();
-        sprite.enabled = false;
     }
 
     private void OnTriggerEnter2D(Collider2D collision)

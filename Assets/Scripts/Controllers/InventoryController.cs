@@ -46,25 +46,17 @@ public class InventoryController : MonoBehaviour
     {
         Instance = this;
         inventoryHighlight = GetComponent<InventoryHighlight>();
-        inventoryObject.gameObject.SetActive(false);
+        PlayerInput.HandleI += OpenInventory;
+        PlayerInput.HandleR += RotateItem;
+        PlayerInput.HandleLeftClick += LeftClick;
+        PlayerInput.HandleJ += TestJ;
+        PlayerInput.HandleK += TestK;
     }
 
     //checks for user input
     //updates item dragger and highlighter
     private void Update()
     {
-        //toggling player inventory
-        if (Input.GetKeyDown(KeyCode.I) && !InventoryOpen)
-        {
-            inventoryObject.SetActive(true);
-            InventoryOpen = true;
-        }
-        else if(Input.GetKeyDown(KeyCode.I) && InventoryOpen)
-        {
-            inventoryObject.SetActive(false);
-            InventoryOpen = false;
-        }
-
         //object dragging highlighter
         HandleHighlight();
 
@@ -75,39 +67,45 @@ public class InventoryController : MonoBehaviour
             inventoryHighlight.Show(false);
             return;
         }
+    }
 
-        //rotate the selected item being held
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            RotateItem();
-        }
-
-        //place or pick up item on/in inventory
-        if (Input.GetMouseButtonDown(0))
-        {
-            LeftMouseButtonPress();
-        }
-
+    private void TestJ()
+    {
         //creating a random item that is assigned to the mouse position, can be placed into an inventory after
         //USED FOR TESTING
-        if (Input.GetKeyDown(KeyCode.J))
+        //only create if the item selected is null
+        if (selectedItem == null)
         {
-            //only create if the item selected is null
-            if (selectedItem == null)
-            {
-                CreateRandomItem();
-            }
+            CreateRandomItem();
         }
+    }
 
-        //inserts a random item if mouse is over the inventory inside the inventory
-        //USED FOR TESTING
-        if (Input.GetKeyDown(KeyCode.K))
+    private void TestK()
+    {
+        //only insert if not holding another item
+        if (selectedItem == null)
         {
-            //only insert if not holding another item
-            if (selectedItem == null)
-            {
-                InsertRandomItem();
-            }
+            InsertRandomItem();
+        }
+    }
+
+    private void LeftClick()
+    {
+        LeftMouseButtonPress();
+    }
+
+    private void OpenInventory()
+    {
+        //toggling player inventory
+        if (!InventoryOpen)
+        {
+            inventoryObject.SetActive(true);
+            InventoryOpen = true;
+        }
+        else if (InventoryOpen)
+        {
+            inventoryObject.SetActive(false);
+            InventoryOpen = false;
         }
     }
 
@@ -115,7 +113,7 @@ public class InventoryController : MonoBehaviour
     private void InsertRandomItem()
     {
         //this gets caught if mouse is not over the inventory, for inserting random item I want this to run either way...
-        if (selectedItemGrid == null) { return;}
+        if (selectedItemGrid == null) { return; }
 
         CreateRandomItem();
         InventoryItem itemToInsert = selectedItem;
@@ -134,7 +132,7 @@ public class InventoryController : MonoBehaviour
 
         if (posOnGrid == null)
         {
-                return; 
+            return;
         }
 
         selectedItemGrid.PlaceItem(itemToInsert, posOnGrid.Value.x, posOnGrid.Value.y);
@@ -156,7 +154,7 @@ public class InventoryController : MonoBehaviour
     }
 
     //same as CreateRandomItem; however, it's not random, so it's just create the item given the item
-    public void purchaseItem(ItemData item)
+    public bool purchaseItem(ItemData item)
     {
         InventoryItem inventoryItem = Instantiate(itemPrefab).GetComponent<InventoryItem>();
         selectedItem = inventoryItem;
@@ -177,15 +175,18 @@ public class InventoryController : MonoBehaviour
         //this means when testing I won't be able to place items in the inventory via mouse off grid
         Vector2Int? posOnGrid = inventoryObject.GetComponentInChildren<ItemGrid>().FindSpaceForObject(itemToInsert);
 
+        //if posOnGrid is null, there is no space for the object to be placed and it will be destroyed and returned to the box
         if (posOnGrid == null)
         {
-            return;
+            Destroy(inventoryItem.gameObject);
+            return false;
         }
 
         inventoryObject.GetComponentInChildren<ItemGrid>().PlaceItem(itemToInsert, posOnGrid.Value.x, posOnGrid.Value.y);
+        return true;
     }
 
-    
+
 
     //this returns the tile grid position that mouse is currently over
     private Vector2Int? GetTileGridPosition()
@@ -214,7 +215,7 @@ public class InventoryController : MonoBehaviour
         {
             rectTransform.position = Input.mousePosition;
         }
-        if(selectedItem == null)
+        if (selectedItem == null)
         {
             inventoryHighlight.Show(false);
             return;
@@ -234,7 +235,7 @@ public class InventoryController : MonoBehaviour
         {
             itemToHighlight = selectedItemGrid.GetItem(positionOnGrid.x, positionOnGrid.y);
 
-            if(itemToHighlight != null)
+            if (itemToHighlight != null)
             {
                 inventoryHighlight.Show(true);
                 inventoryHighlight.SetSize(itemToHighlight);
@@ -247,8 +248,8 @@ public class InventoryController : MonoBehaviour
         }
         else
         {
-            inventoryHighlight.Show(selectedItemGrid.BoundryCheck(positionOnGrid.x, 
-                positionOnGrid.y, 
+            inventoryHighlight.Show(selectedItemGrid.BoundryCheck(positionOnGrid.x,
+                positionOnGrid.y,
                 selectedItem.WIDTH,
                 selectedItem.HEIGHT));
             inventoryHighlight.SetSize(selectedItem);
@@ -283,7 +284,7 @@ public class InventoryController : MonoBehaviour
         if (complete)
         {
             selectedItem = null;
-            if(overlapItem != null)
+            if (overlapItem != null)
             {
                 selectedItem = overlapItem;
                 overlapItem = null;

@@ -4,11 +4,8 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - pickObject
-  - Scene
-  - NPC
-  - Button
   - Node
+  - Object
   layers:
   - Default
   - TransparentFX
@@ -16,14 +13,14 @@ TagManager:
   - 
   - Water
   - UI
-  - Floor
-  - BackGround
-  - Player
-  - Object
-  - Fish
-  - Barrier
-  - NPC
-  - Invisible
+  - OnFloor
+  - Background
+  - IgnorePlayer
+  - 
+  - 
+  - 
+  - 
+  - 
   - 
   - 
   - 
@@ -46,18 +43,12 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
-  - name: Walls
+  - name: WallFloor
     uniqueID: 2686267319
-    locked: 0
-  - name: Floor
-    uniqueID: 1695209963
     locked: 0
   - name: NPCs
     uniqueID: 2568286157
     locked: 0
-  - name: Tank
+  - name: OnFloor
     uniqueID: 1878214669
-    locked: 0
-  - name: Player
-    uniqueID: 3433016167
     locked: 0

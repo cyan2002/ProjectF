@@ -8,14 +8,21 @@ public class ShelfInventoryToggle : MonoBehaviour
     private bool InventoryOpen = false;
     public GameObject controlledGrid;
 
-    private void Update()
-    {
-        if (PlayerInRange && Input.GetKeyDown(KeyCode.M) && !InventoryOpen)
+    private void Start(){
+        PlayerInput.HandleM += ToggleShelf;
+    }
+
+    void ToggleShelf(){
+        if (PlayerInRange && !InventoryOpen)
         {
             controlledGrid.SetActive(true);
             InventoryOpen = true;
         }
-        else if(!PlayerInRange || Input.GetKeyDown(KeyCode.M) && InventoryOpen)
+        else if(PlayerInRange && InventoryOpen){
+            controlledGrid.SetActive(false);
+            InventoryOpen = false;
+        }
+        else if(!PlayerInRange && InventoryOpen)
         {
             controlledGrid.SetActive(false);
             InventoryOpen = false;
@@ -24,12 +31,18 @@ public class ShelfInventoryToggle : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        PlayerInRange = true;
+        if(collision.CompareTag("Player")){
+            PlayerInRange = true;
+        }
+        
     }
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        PlayerInRange = false;
-        controlledGrid.SetActive(false);
+        if(collision.CompareTag("Player")){
+            PlayerInRange = false;
+            controlledGrid.SetActive(false);
+            InventoryOpen = false;
+        }
     }
 }

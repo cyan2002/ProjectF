@@ -6,48 +6,47 @@ public class PlayerMovement : MonoBehaviour
 {
     //declaring my variables.
     public float speed;
-    private float horizontal;
-    private float vertical;
     private bool isFacingRight = true;
     private RaycastHit2D hit;
+
+    private Vector2 moveInput;
     
     public string facing = "right";
     public string tankFace;
     [SerializeField] private Rigidbody2D rb;
     [SerializeField] private new Animator animation;
 
-    //Getting input from user running the move function and flip function.
-    void Update()
-    {
-        //vertical and horiontal input from the player
-        horizontal = Input.GetAxisRaw("Horizontal");
-        vertical = Input.GetAxisRaw("Vertical");
-        findFacing();
-        move();
-        Flip();
+    void Start(){
+        PlayerInput.onMove += HandleMove;
+    }
+
+    void HandleMove(Vector2 input){
+        moveInput = input;
+    }
+
+    void Update(){
+        move(moveInput);
     }
 
     //reads if player is moving, if player moves then run animation. If not remain idle
-    private void move(){
-        if(horizontal == 0 && vertical == 0){
+    private void move(Vector2 movement){
+        if(movement.x == 0 && movement.y == 0){
             animation.SetBool("IsMoving", false);
         }
         else{
             animation.SetBool("IsMoving", true);
         }
-    }
-
-    //updates speed
-    private void FixedUpdate()
-    {
         //updating speed
-        rb.velocity = new Vector2(horizontal * speed, vertical * speed);
+        rb.velocity = new Vector2(movement.x * speed, movement.y * speed);
+
+        findFacing(movement);
+        Flip(movement);
     }
 
     //Flips character sprite based off of velocity
-    private void Flip()
+    private void Flip(Vector2 movement)
     {
-        if (isFacingRight && horizontal < 0f || !isFacingRight && horizontal > 0f)
+        if (isFacingRight && movement.x < 0f || !isFacingRight && movement.x > 0f)
         {
             isFacingRight = !isFacingRight;
             Vector3 localScale = transform.localScale;
@@ -57,37 +56,37 @@ public class PlayerMovement : MonoBehaviour
     }
 
     //Determines which direction the player is facing so that you can place tanks in the direction that you face
-    private void findFacing()
+    private void findFacing(Vector2 movement)
     {
-        if(horizontal > 0 && vertical > 0)
+        if(movement.x > 0 && movement.y > 0)
         {
             facing = "right";
         }
-        else if(horizontal < 0 && vertical < 0)
+        else if(movement.x < 0 && movement.y < 0)
         {
             facing = "left";
         }
-        else if(horizontal > 0 && vertical < 0)
+        else if(movement.x > 0 && movement.y < 0)
         {
             facing = "right";
         }
-        else if(horizontal < 0 && vertical > 0)
+        else if(movement.x < 0 && movement.y > 0)
         {
             facing = "left";
         }
-        else if(horizontal < 0 && vertical == 0)
+        else if(movement.x < 0 && movement.y == 0)
         {
             facing = "left";
         }
-        else if(horizontal > 0 && vertical == 0)
+        else if(movement.x > 0 && movement.y == 0)
         {
             facing = "right";
         }
-        else if(horizontal == 0 && vertical > 0)
+        else if(movement.x == 0 && movement.y > 0)
         {
             facing = "up";
         }
-        else if(horizontal == 0 && vertical < 0)
+        else if(movement.x == 0 && movement.y < 0)
         {
             facing = "down";
         }

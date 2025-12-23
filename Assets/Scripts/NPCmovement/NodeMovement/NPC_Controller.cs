@@ -42,9 +42,10 @@ public class NPC_Controller : MonoBehaviour
             leaving = true;
         }
 
+        //need to decide when to leave for the NPC
         if (leaving)
         {
-            if(trackCount == 0)
+            if (trackCount == 0)
             {
                 if (once)
                 {
@@ -54,7 +55,7 @@ public class NPC_Controller : MonoBehaviour
                 }
                 HeadTarget(Register);
             }
-            else if(trackCount == 1)
+            else if (trackCount == 1)
             {
                 if (once)
                 {
@@ -84,7 +85,6 @@ public class NPC_Controller : MonoBehaviour
     {
         //timer that is randomized so NPC sometimes takes pauses, anywhere between 5 to 20 seconds it can pause
         //pause can happen on non-grid spaces (between 0.5f)
-        //random.range happens everytime... NEEDS TO BE FIXED
         if (pauseTimer >= checkPause && !pause)
         {
             pause = true;
@@ -157,16 +157,17 @@ public class NPC_Controller : MonoBehaviour
                 path.RemoveAt(x);
             }
         }
-        else if(trackCount == 0)
+        else if (trackCount == 0)
         {
             trackCount = 1;
             once = true;
         }
-        else if(trackCount == 1)
+        else if (trackCount == 1)
         {
             //finally reached the end point
             //CHANGE HERE HOW TO HANDLE NPC LEAVING THE STORE
             //print("exit!");
+            Destroy(this.gameObject);
         }
     }
 
@@ -177,9 +178,10 @@ public class NPC_Controller : MonoBehaviour
     }
 
     //if the NPC hits a object collider recalcuate another path
+    //only should play when changing or editing object positions (tanks and shelfs)
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if(collision.tag == "pickObject")
+        if (collision.CompareTag("Object"))
         {
             RecalculatePath();
         }

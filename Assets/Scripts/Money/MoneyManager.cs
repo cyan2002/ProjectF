@@ -28,7 +28,6 @@ public class MoneyManager : MonoBehaviour
     private void Awake()
     {
         Money = 5000;
-
         if (Instance != null && Instance != this)
         {
             Destroy(gameObject);

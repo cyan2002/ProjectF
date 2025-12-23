@@ -17,17 +17,20 @@ public class ShopController : MonoBehaviour
     {
         Instance = this;
         ShopCanvas.gameObject.SetActive(false);
+
+        //Event from PlayerInput
+        PlayerInput.HandleB += ShopToggle;
+        PlayerInput.HandleP += PlaceInInventory;
     }
 
-    private void Update()
-    {
+    void ShopToggle(){
         //open inventory
-        if (Input.GetKeyDown(KeyCode.B) && !ShopActive)
+        if (!ShopActive)
         {
             ShopCanvas.gameObject.SetActive(true);
             ShopActive = true;
         }
-        else if(Input.GetKeyDown(KeyCode.B) && ShopActive)
+        else if(ShopActive)
         {
             ShopCanvas.gameObject.SetActive(false);
             ShopActive = false;
@@ -43,6 +46,10 @@ public class ShopController : MonoBehaviour
     //{
         //InventoryController.Instance.purchaseItem(items[0]);
     //}
+
+    private void PlaceInInventory(){
+        ShippingBox.DumpIntoPlayer();
+    }
 
     public void AddToBox(ItemData ItemsToAdd)
     {

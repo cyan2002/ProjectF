@@ -7,6 +7,6 @@ public class ItemData : ScriptableObject
 {
     public int width;
     public int height;
-
     public Sprite itemIcon;
+    public string type;
 }

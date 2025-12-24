@@ -6,3 +6,4 @@
 //https://www.youtube.com/watch?v=2ajD1GDbEzA&t=4604s
 
 //when using scale with screen size for canvas - sometimes the image when testing is not what you actually see when built and playing
+//when changing sizes of sprites - change from sprite edtior NOT object scale size.

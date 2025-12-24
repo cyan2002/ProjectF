@@ -89,6 +89,7 @@ public class NPC_Controller : MonoBehaviour
         {
             pause = true;
             pauseTimer = 0f;
+            Debug.Log("paused?");
         }
         //if the NPC is already paused, must wait a certain amount of time before moving again.
         else if (pause)
@@ -167,7 +168,7 @@ public class NPC_Controller : MonoBehaviour
             //finally reached the end point
             //CHANGE HERE HOW TO HANDLE NPC LEAVING THE STORE
             //print("exit!");
-            Destroy(this.gameObject);
+            //Destroy(this.gameObject);
         }
     }
 

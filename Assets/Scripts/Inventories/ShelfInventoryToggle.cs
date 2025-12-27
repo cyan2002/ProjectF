@@ -12,6 +12,11 @@ public class ShelfInventoryToggle : MonoBehaviour
         PlayerInput.HandleM += ToggleShelf;
     }
 
+    public ItemGrid ReturnGrid()
+    {
+        return controlledGrid.GetComponent<ItemGrid>();
+    }
+
     void ToggleShelf(){
         if (PlayerInRange && !InventoryOpen)
         {

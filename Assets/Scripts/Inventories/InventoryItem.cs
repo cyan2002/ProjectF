@@ -33,6 +33,11 @@ public class InventoryItem : MonoBehaviour
         }
     }
 
+    public string getType()
+    {
+        return itemData.type;
+    }
+
     public int onGridPositionX;
     public int onGridPositionY;
 

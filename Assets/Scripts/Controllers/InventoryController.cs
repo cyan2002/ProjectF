@@ -9,6 +9,7 @@ public class InventoryController : MonoBehaviour
     public static InventoryController Instance { get; private set; }
     //[HideInInspector]
     public ItemGrid selectedItemGrid;
+    public Transform itemsLayerTransform;
 
     //whenever you make a call to selectedItemGrid it comes with functions attached
     //calling SelectedItemGrid returns selceted Item Grid
@@ -160,7 +161,7 @@ public class InventoryController : MonoBehaviour
         selectedItem = inventoryItem;
 
         rectTransform = inventoryItem.GetComponent<RectTransform>();
-        rectTransform.SetParent(canvasTransform);
+        rectTransform.SetParent(canvasTransform, false);
         rectTransform.SetAsLastSibling();
 
         inventoryItem.Set(item);
@@ -289,6 +290,7 @@ public class InventoryController : MonoBehaviour
                 selectedItem = overlapItem;
                 overlapItem = null;
                 rectTransform = selectedItem.GetComponent<RectTransform>();
+                rectTransform.SetParent(canvasTransform, false);
                 rectTransform.SetAsLastSibling();
             }
         }
@@ -301,7 +303,11 @@ public class InventoryController : MonoBehaviour
         if (selectedItem != null)
         {
             rectTransform = selectedItem.GetComponent<RectTransform>();
+            //to avoid item from being hidden
+            rectTransform.SetParent(itemsLayerTransform, false);
+            rectTransform.SetAsLastSibling();
         }
+        
     }
 
     //rotates the item is R is pressed, only rotates if the selected item is not null (there is an item to rotate)

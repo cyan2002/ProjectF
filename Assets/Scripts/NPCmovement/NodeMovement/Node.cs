@@ -16,16 +16,12 @@ public class Node : MonoBehaviour
     private Rigidbody2D rb2d;
     private RaycastHit2D[] hit;
 
-    private void Awake()
-    {
-        rb2d = GetComponent<Rigidbody2D>();
-    }
-
     //The start method creates 4 arrays of raycasts coming from the node in each direction. They each check to see if there
     //are other nodes in the area and assign them to their connections list.
     //These raycasts do not detect their own object due to a setting changed in the project settings > Physics2D > "Queries Start In Collider".
-    private void Start()
+    private void Awake()
     {
+        rb2d = GetComponent<Rigidbody2D>();
         if (!onObject)
         {
             hit = Physics2D.RaycastAll(transform.position, Vector2.up, .75f);
@@ -46,7 +42,7 @@ public class Node : MonoBehaviour
     public void resetNodeConnections()
     {
         connections.Clear();
-        Start();
+        Awake();
     }
 
     private void CheckForNodeOrObject()
@@ -68,6 +64,11 @@ public class Node : MonoBehaviour
 
         if (!ObjectPresent && NodePresent)
         {
+            if (this.gameObject.name == "Node (42)")
+            {
+                Debug.Log("Added!");
+            }
+
             connections.Add(hit[num].collider.gameObject.GetComponent<Node>());
         }
 
@@ -99,7 +100,7 @@ public class Node : MonoBehaviour
     //Issue is it only places or is called when a Collider
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if(collision.CompareTag("Object"))
+        if (collision.CompareTag("Object"))
         {
             connections.Clear();
             onObject = true;

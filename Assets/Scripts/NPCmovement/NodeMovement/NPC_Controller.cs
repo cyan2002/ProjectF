@@ -89,7 +89,7 @@ public class NPC_Controller : MonoBehaviour
         {
             pause = true;
             pauseTimer = 0f;
-            Debug.Log("paused?");
+            //plays once per pause
         }
         //if the NPC is already paused, must wait a certain amount of time before moving again.
         else if (pause)

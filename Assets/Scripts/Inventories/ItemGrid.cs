@@ -22,6 +22,8 @@ public class ItemGrid : MonoBehaviour
     [SerializeField] int gridSizeWidth = 10;
     [SerializeField] int gridSizeHeight = 9;
 
+    [SerializeField] string GridType;
+
     //to removes item, it only gives u the location of the press
     //we need to find the origin and cycle from that origin to properly remove the item
     public InventoryItem PickUpItem(int x, int y)
@@ -145,6 +147,16 @@ public class ItemGrid : MonoBehaviour
     //places item, but checks if the item will go over borders/out of bounds
     public bool PlaceItem(InventoryItem inventoryItem, int posX, int posY, ref InventoryItem overlapItem)
     {
+
+        //checking to see if the item type is the correct type for the grid
+        if (GridType != inventoryItem.getType())
+        {
+            if (GridType != "Player")
+            {
+                return false;
+            }
+        }
+
         if (BoundryCheck(posX, posY, inventoryItem.WIDTH, inventoryItem.HEIGHT) == false)
         {
             return false;

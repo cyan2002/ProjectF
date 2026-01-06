@@ -149,6 +149,7 @@ public class ItemGrid : MonoBehaviour
     {
 
         //checking to see if the item type is the correct type for the grid
+        //item types being dry vs wet goods
         if (GridType != inventoryItem.getType())
         {
             if (GridType != "Player")

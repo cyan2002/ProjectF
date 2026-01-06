@@ -20,7 +20,7 @@ public class ShopController : MonoBehaviour
 
         //Event from PlayerInput
         PlayerInput.HandleB += ShopToggle;
-        PlayerInput.HandleP += PlaceInInventory;
+        PlayerInput.HandleE += PlaceInInventory;
     }
 
     void ShopToggle(){

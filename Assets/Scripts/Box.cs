@@ -5,6 +5,7 @@ using UnityEngine;
 public class Box : MonoBehaviour
 {
     [SerializeField] List<ItemData> items;
+    [SerializeField] List<Sprite> boxImages;
     private SpriteRenderer sprite;
 
     private bool close = false;
@@ -24,6 +25,21 @@ public class Box : MonoBehaviour
         if (items.Count == 0)
         {
             sprite.enabled = false;
+        }
+        else if (items.Count < 5)
+        {
+            sprite.sprite = boxImages[0];
+            sprite.enabled = true;
+        }
+        else if (items.Count < 10)
+        {
+            sprite.sprite = boxImages[1];
+            sprite.enabled = true;
+        }
+        else if (items.Count < 15)
+        {
+            sprite.sprite = boxImages[2];
+            sprite.enabled = true;
         }
         else
         {

@@ -180,11 +180,48 @@ public class NPC_Controller : MonoBehaviour
 
     //if the NPC hits a object collider recalcuate another path
     //only should play when changing or editing object positions (tanks and shelfs)
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        RecalculatePath();
+    }
+
+    //detection range for if the NPC wants to buy something/
+    //If the NPC wants to buy something, it deletes the object directly from the Grid and adds money to the player's balance.
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("Object"))
+        if (collision.gameObject.GetComponent<ShelfInventoryToggle>() == null)
         {
-            RecalculatePath();
+            return;
+        }
+
+        GameObject stand = collision.gameObject.GetComponent<ShelfInventoryToggle>().controlledGrid;
+
+        TraverseChildren(stand.transform);
+    }
+
+    //itmes go fast perhaps adding something where NPCs can only view a shelfing once before leaving...?
+    private void TraverseChildren(Transform parent)
+    {
+        Debug.Log("Deciding on whole selection");
+        var grandchildren = new List<Transform>();
+
+        foreach (Transform child in parent)
+        {
+            foreach (Transform grandchild in child)
+            {
+                //10% chance of buying an item that the NPC sees
+                if (Random.value < 0.1f)
+                {
+                    //purchase the item!
+                    grandchildren.Add(grandchild);
+                }
+            }
+        }
+
+        foreach (var gc in grandchildren)
+        {
+            MoneyManager.Instance.AddMoney(60);
+            Destroy(gc.gameObject);
         }
     }
 }

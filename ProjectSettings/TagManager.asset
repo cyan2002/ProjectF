@@ -16,8 +16,8 @@ TagManager:
   - OnFloor
   - Background
   - IgnorePlayer
-  - 
-  - 
+  - NPCs
+  - Player
   - 
   - 
   - 

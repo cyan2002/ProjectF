@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class ShopButton : MonoBehaviour
 {
-    [SerializeField] int cost;
     [SerializeField] ItemData item;
 
     //when buying things that need to happen:
@@ -14,7 +13,7 @@ public class ShopButton : MonoBehaviour
     //update money gui
     public void AttemptToBuy()
     {
-        if (MoneyManager.Instance.SpendMoney(cost))
+        if (MoneyManager.Instance.SpendMoney(item.cost))
         {
             //add to inventory, tell shop inventory to add items to the box
             ShopController.Instance.AddToBox(item);

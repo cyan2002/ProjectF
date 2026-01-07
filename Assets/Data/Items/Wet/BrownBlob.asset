@@ -10,9 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f855074172eccb34798edbeff0b753e0, type: 3}
-  m_Name: Barracuda
+  m_Name: BrownBlob
   m_EditorClassIdentifier: 
   width: 3
-  height: 1
-  itemIcon: {fileID: 21300000, guid: 1b2c61b2056ce4ab4beef8df8c78308e, type: 3}
+  height: 2
+  itemIcon: {fileID: 21300000, guid: 3b62949c9138c428d968e8808c9cb832, type: 3}
   type: Wet
+  cost: 25
+  sellcost: 45

@@ -14,10 +14,9 @@ public class ItemGrid : MonoBehaviour
 
     RectTransform rectTransform;
 
-    [SerializeField]
     private CanvasScaler canvasGroup;
 
-    public Camera uiCamera;
+    private Camera uiCamera;
 
     [SerializeField] int gridSizeWidth = 10;
     [SerializeField] int gridSizeHeight = 9;
@@ -55,6 +54,20 @@ public class ItemGrid : MonoBehaviour
 
     private void Awake()
     {
+        canvasGroup = GetComponentInParent<CanvasScaler>(true);
+
+        if (canvasGroup == null)
+        {
+            Debug.LogError($"No CanvasScaler found in parents of {name}");
+        }
+        
+        uiCamera = Camera.main;
+
+        if (uiCamera == null)
+        {
+            Debug.LogError("Main Camera not found! Is it tagged 'MainCamera'?");
+        }
+
         rectTransform = GetComponent<RectTransform>();
         Init(gridSizeWidth, gridSizeHeight);
         transform.parent.gameObject.SetActive(false);
@@ -84,7 +97,7 @@ public class ItemGrid : MonoBehaviour
         {
             for (int x = 0; x < width; x++)
             {
-                if(CheckAvailableSpace(x, y, itemToInsert.WIDTH, itemToInsert.HEIGHT))
+                if (CheckAvailableSpace(x, y, itemToInsert.WIDTH, itemToInsert.HEIGHT))
                 {
                     return new Vector2Int(x, y);
                 }
@@ -227,25 +240,25 @@ public class ItemGrid : MonoBehaviour
 
     private bool OverlapCheck(int posX, int posY, int width, int height, ref InventoryItem overlapItem)
     {
-        for(int x = 0; x < width; x++)
+        for (int x = 0; x < width; x++)
         {
-            for(int y = 0; y < height; y++)
+            for (int y = 0; y < height; y++)
             {
-                if(inventoryItemSlot[posX + x, posY + y] != null)
+                if (inventoryItemSlot[posX + x, posY + y] != null)
                 {
-                    if(overlapItem == null)
+                    if (overlapItem == null)
                     {
                         overlapItem = inventoryItemSlot[posX + x, posY + y];
                     }
                     else
                     {
                         //overlapped with two items - player needs to find another place to put item
-                        if(overlapItem != inventoryItemSlot[posX + x, posY + y])
+                        if (overlapItem != inventoryItemSlot[posX + x, posY + y])
                         {
                             return false;
                         }
                     }
-                    
+
                 }
             }
         }
@@ -272,12 +285,12 @@ public class ItemGrid : MonoBehaviour
     //checks if the position is within the boundaires of the inventory grid or not
     bool PositionCheck(int posX, int posY)
     {
-        if(posX < 0 || posY < 0)
+        if (posX < 0 || posY < 0)
         {
             return false;
         }
 
-        if(posX >= gridSizeWidth || posY >= gridSizeHeight)
+        if (posX >= gridSizeWidth || posY >= gridSizeHeight)
         {
             return false;
         }
@@ -287,19 +300,43 @@ public class ItemGrid : MonoBehaviour
 
     public bool BoundryCheck(int posX, int posY, int width, int height)
     {
-        if(PositionCheck(posX, posY) == false)
+        if (PositionCheck(posX, posY) == false)
         {
             return false;
         }
 
-        posX += width-1;
-        posY += height-1;
+        posX += width - 1;
+        posY += height - 1;
 
-        if(PositionCheck(posX, posY) == false)
+        if (PositionCheck(posX, posY) == false)
         {
             return false;
         }
 
         return true;
     }
+    
+    //removes item from the inventory when an NPC purchases it.
+    public bool RemoveItem(InventoryItem item)
+    {
+        if (item == null)
+            return false;
+
+        // Safety check: make sure this item actually belongs to this grid
+        if (item.onGridPositionX < 0 || item.onGridPositionY < 0)
+            return false;
+
+        // Clear grid references
+        CleanGridReference(item);
+
+        // Optional: detach from grid UI
+        item.transform.SetParent(null);
+
+        // Optional: reset item grid data
+        item.onGridPositionX = -1;
+        item.onGridPositionY = -1;
+
+        return true;
+    }
+
 }

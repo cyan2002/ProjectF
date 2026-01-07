@@ -10,9 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f855074172eccb34798edbeff0b753e0, type: 3}
-  m_Name: BrownBlob
+  m_Name: YellowGoby
   m_EditorClassIdentifier: 
-  width: 3
-  height: 2
-  itemIcon: {fileID: 21300000, guid: 3b62949c9138c428d968e8808c9cb832, type: 3}
+  width: 2
+  height: 1
+  itemIcon: {fileID: 21300000, guid: 85536b35e7c264884a0b1fee3fcecb65, type: 3}
   type: Wet
+  cost: 50
+  sellcost: 85

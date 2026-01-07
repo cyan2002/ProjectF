@@ -16,3 +16,5 @@ MonoBehaviour:
   height: 1
   itemIcon: {fileID: 21300000, guid: f8ef95127bb7ec146bf31819b5144d22, type: 3}
   type: Dry
+  cost: 5
+  sellcost: 10

@@ -201,27 +201,41 @@ public class NPC_Controller : MonoBehaviour
 
     //itmes go fast perhaps adding something where NPCs can only view a shelfing once before leaving...?
     private void TraverseChildren(Transform parent)
-    {
-        Debug.Log("Deciding on whole selection");
-        var grandchildren = new List<Transform>();
+{
+    Debug.Log("Deciding on whole selection");
 
-        foreach (Transform child in parent)
+    foreach (Transform child in parent)
+    {
+        ItemGrid grid = child.GetComponent<ItemGrid>(); // ✅ DECLARED HERE
+
+        if (grid == null)
         {
-            foreach (Transform grandchild in child)
+            Debug.LogError("ItemGrid missing on child: " + child.name);
+            continue;
+        }
+
+        var itemsToBuy = new List<InventoryItem>();
+
+        foreach (Transform grandchild in child)
+        {
+            if (Random.value < 0.1f)
             {
-                //10% chance of buying an item that the NPC sees
-                if (Random.value < 0.1f)
+                InventoryItem item = grandchild.GetComponent<InventoryItem>();
+                if (item != null)
                 {
-                    //purchase the item!
-                    grandchildren.Add(grandchild);
+                    itemsToBuy.Add(item);
                 }
             }
         }
 
-        foreach (var gc in grandchildren)
+        foreach (InventoryItem item in itemsToBuy)
         {
-            MoneyManager.Instance.AddMoney(60);
-            Destroy(gc.gameObject);
+            int cost = item.itemData.sellcost;
+            grid.RemoveItem(item);                // ✅ object-based removal
+            MoneyManager.Instance.AddMoney(cost);
+            Destroy(item.gameObject);
         }
     }
+}
+
 }

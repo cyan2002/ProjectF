@@ -1,10 +1,25 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.UI;
 public class ShopButton : MonoBehaviour
 {
     [SerializeField] ItemData item;
+    private Image itemImage;
+
+    void Start()
+    {
+        itemImage = transform.parent?.GetComponent<Image>();
+
+        if (itemImage == null)
+            Debug.LogWarning("Parent Image not found", this);
+
+        if (itemImage == null)
+            Debug.LogWarning("No item attached to this item", this);
+
+        itemImage.sprite = item.itemIcon;
+        
+    }
 
     //when buying things that need to happen:
     //check if possible to buy, if possible then:

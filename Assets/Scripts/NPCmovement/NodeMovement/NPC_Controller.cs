@@ -113,6 +113,7 @@ public class NPC_Controller : MonoBehaviour
     //this function heads towards the dictated path set by the AStar script. When the path is completed is creates a new randomized path.
     public void CreatePath()
     {
+        Debug.Log(path.Count);
         if (path.Count > 0)
         {
             int x = 0;

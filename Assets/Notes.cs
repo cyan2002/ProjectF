@@ -26,6 +26,12 @@
 //must tell Grid Type (Dry or weight currently)
 //must dictate sprites (different types for wet vs dry or etc)
 
+//VISUAL NOTES
+//each thin white line box is a "meter" or one unity unit
+//If I have a sprite that is a 32x32 pixels and I make it 32 pixels per units, I get a 1 Unity unit or 1 meter sprite in the scene/game
+//formula is: World Size (units) = Pixel Size / Pixels Per Unit
+
+
 //SHOP
 
 //Object and Prefabs:
@@ -63,6 +69,10 @@
 //implement music
 
 //add more items to the shop
+
+//update sprite
+
+//FIX NPC BUG - WON'T PROPERLY GENERATE A NEW PATH
 
 
 

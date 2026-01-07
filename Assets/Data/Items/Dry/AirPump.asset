@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f855074172eccb34798edbeff0b753e0, type: 3}
-  m_Name: Net
+  m_Name: AirPump
   m_EditorClassIdentifier: 
-  width: 1
+  width: 2
   height: 1
-  itemIcon: {fileID: -1104144311, guid: 39134a441477945a4a13ecade555fad9, type: 3}
+  itemIcon: {fileID: -2086649497, guid: 39134a441477945a4a13ecade555fad9, type: 3}
   type: Dry
-  cost: 5
-  sellcost: 10
+  cost: 30
+  sellcost: 45

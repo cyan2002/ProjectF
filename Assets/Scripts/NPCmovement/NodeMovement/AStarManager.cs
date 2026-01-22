@@ -16,17 +16,21 @@ public class AStarManager : MonoBehaviour
     //This uses the F score to calculate the best path to the start and end. 
     public List<Node> GeneratePath(Node start, Node end)
     {
+        //creates a new list of nodes to create the path
         List<Node> openSet = new List<Node>();
 
+        //finds each object of type Node in the scene and assigns a value.
         foreach (Node n in FindObjectsOfType<Node>())
         {
             n.gScore = float.MaxValue;
         }
 
+        //given the start node, sets the gScore and hScore which are used to determining how an NPC moves around
         start.gScore = 0;
         start.hScore = Vector2.Distance(start.transform.position, end.transform.position);
         openSet.Add(start);
 
+        //creates a path based on a gScore and hScore formula, route for the best path from Start to End
         while (openSet.Count > 0)
         {
             int lowestF = default;

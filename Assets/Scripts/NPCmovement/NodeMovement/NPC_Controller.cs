@@ -14,9 +14,14 @@ public class NPC_Controller : MonoBehaviour
     public float pauseTimer = 0f;
     private float checkPause;
     private float stayPause;
+    [SerializeField]
+    private float stayTime;
+    [SerializeField]
+    private float decideTime;
 
     private bool pause = false;
     private bool leaving = false;
+    private bool leavingStore = false;
 
     //varaible used to  
     private bool once = true;
@@ -33,15 +38,12 @@ public class NPC_Controller : MonoBehaviour
         Register = GameObject.Find("Register").GetComponent<Node>();
         checkPause = Random.Range(5f, 10f);
         stayPause = Random.Range(5f, 10f);
+        stayTime = Random.Range(90f, 120f);
+        decideTime = Random.Range(50f, 70f);
     }
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.P))
-        {
-            leaving = true;
-        }
-
         //need to decide when to leave for the NPC
         if (leaving)
         {
@@ -83,6 +85,26 @@ public class NPC_Controller : MonoBehaviour
     //dealing with timer things.
     void timer()
     {
+        //LEAVE
+        if(stayTime <= 0)
+        {
+            leavingStore = true;
+        }
+        else //otherwise, keep taking time off
+        {
+            stayTime -= Time.deltaTime;
+        }
+
+        //decisions have been made, heading to register
+        if (decideTime <= 0)
+        {
+            leaving = true;
+        }
+        else //otherwise, keep taking time off
+        {
+            decideTime -= Time.deltaTime;
+        }
+
         //timer that is randomized so NPC sometimes takes pauses, anywhere between 5 to 20 seconds it can pause
         //pause can happen on non-grid spaces (between 0.5f)
         if (pauseTimer >= checkPause && !pause)
@@ -113,7 +135,6 @@ public class NPC_Controller : MonoBehaviour
     //this function heads towards the dictated path set by the AStar script. When the path is completed is creates a new randomized path.
     public void CreatePath()
     {
-        Debug.Log(path.Count);
         if (path.Count > 0)
         {
             int x = 0;
@@ -151,7 +172,8 @@ public class NPC_Controller : MonoBehaviour
         if (path.Count > 0)
         {
             int x = 0;
-            transform.position = Vector3.MoveTowards(transform.position, new Vector3(path[x].transform.position.x, path[x].transform.position.y, -2), speed * Time.deltaTime);
+            transform.position = Vector3.MoveTowards(transform.position, 
+                new Vector3(path[x].transform.position.x, path[x].transform.position.y, -2), speed * Time.deltaTime);
 
             if (Vector2.Distance(transform.position, path[x].transform.position) < 0.05f)
             {

@@ -64,11 +64,6 @@ public class Node : MonoBehaviour
 
         if (!ObjectPresent && NodePresent)
         {
-            if (this.gameObject.name == "Node (42)")
-            {
-                Debug.Log("Added!");
-            }
-
             connections.Add(hit[num].collider.gameObject.GetComponent<Node>());
         }
 

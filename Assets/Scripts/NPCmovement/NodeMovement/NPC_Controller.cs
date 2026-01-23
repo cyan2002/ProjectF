@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,131 +7,215 @@ using UnityEngine.UI;
 //fix issue with making it to register then going to checkout...
 public class NPC_Controller : MonoBehaviour
 {
-    public Node currentNode;
+    [SerializeField]
+    private Node currentNode;
     public List<Node> path = new List<Node>();
-    public Node StoreDoor;
-    public Node Register;
+    private Node StoreDoor;
+    private Node LineEntry;
+    public Node TargetSpot;
 
-    public float pauseTimer = 0f;
-    private float checkPause;
-    private float stayPause;
     [SerializeField]
     private float stayTime;
     [SerializeField]
     private float decideTime;
 
-    private bool pause = false;
-    private bool leaving = false;
-    private bool leavingStore = false;
+    //pause timer variables
+    private float pauseCheckTimer = 0f;
+    private float nextPauseTime;
+    private float pauseDuration;
+    private float pauseTimer;
+    private bool isPaused;
 
-    //varaible used to  
-    private bool once = true;
+    private bool hasArrived = false;
+    public bool hasJoinedLine = false;
 
     public float speed = 1f;
 
-    //tracks which stage NPC is on, browsing, checking out, or leaving
-    private int trackCount = 0;
+    //different states of the NPCs, spawn in as shopping
+    public enum NPCState
+    {
+        Shopping,
+        GoingToLineEntry,
+        InLine,
+        CheckingOut,
+        LeavingStore,
+        Idle
+    }
+
+
+    public NPCState currentState;
+    public NPCState savedState;
 
     private void Start()
     {
         StoreDoor = GameObject.Find("StartNode").GetComponent<Node>();
         currentNode = GameObject.Find("StartNode").GetComponent<Node>();
-        Register = GameObject.Find("Register").GetComponent<Node>();
-        checkPause = Random.Range(5f, 10f);
-        stayPause = Random.Range(5f, 10f);
-        stayTime = Random.Range(90f, 120f);
-        decideTime = Random.Range(50f, 70f);
+        LineEntry = GameObject.Find("LineEntry").GetComponent<Node>();
+
+        if(StoreDoor == null || currentNode == null || LineEntry == null)
+        {
+            Debug.Log("one of the assigned nodes are null - error!");
+        }
+
+        ScheduleNextPause();
+        stayTime = UnityEngine.Random.Range(90f, 120f);
+        decideTime = UnityEngine.Random.Range(50f, 70f);
+    }
+
+    void ScheduleNextPause()
+    {
+        nextPauseTime = UnityEngine.Random.Range(5f, 20f);   // when to pause
+        pauseDuration = UnityEngine.Random.Range(5f, 7f);    // how long to pause
     }
 
     private void Update()
     {
-        //need to decide when to leave for the NPC
-        if (leaving)
+        switch (currentState)
         {
-            if (trackCount == 0)
-            {
-                if (once)
-                {
-                    //need edge case of incase path is null
-                    once = false;
-                    SetPath(Register);
-                }
-                HeadTarget(Register);
-            }
-            else if (trackCount == 1)
-            {
-                if (once)
-                {
-                    //need edge case incase path is null
-                    once = false;
-                    SetPath(StoreDoor);
-                }
-                HeadTarget(StoreDoor);
-            }
-            else
-            {
-                print("error");
-            }
-        }
-        else
-        {
-            timer();
-            if (!pause)
-            {
+            case NPCState.Idle:
+                // Play idle animation, stop movement
+                break;
+
+            case NPCState.Shopping:
                 CreatePath();
-            }
+                break;
+
+            case NPCState.GoingToLineEntry:
+                HeadTarget(LineEntry);
+                break;
+
+            case NPCState.InLine:
+                if (!hasArrived)
+                {
+                    HeadTarget(TargetSpot);  // move to line
+                }
+                else
+                {
+                    Debug.Log("hello"); // now standing in line
+                                        // wait, idle animation, etc.
+                }
+                break;
+
+            case NPCState.CheckingOut:
+                HandleCheckout();
+                break;
+
+            case NPCState.LeavingStore:
+                HeadTarget(StoreDoor);
+                break;
         }
+
+        HandleTimers();        // impatience, random pauses, etc
+        HandleRandomPause();
+    }
+
+    //checking out, selling items and leaving line
+    private void HandleCheckout()
+    {
+        throw new NotImplementedException();
     }
 
     //dealing with timer things.
-    void timer()
+    void HandleTimers()
     {
-        //LEAVE
-        if(stayTime <= 0)
-        {
-            leavingStore = true;
-        }
-        else //otherwise, keep taking time off
+        // Only decrement timers if NPC is shopping
+        if (currentState == NPCState.Shopping)
         {
             stayTime -= Time.deltaTime;
-        }
-
-        //decisions have been made, heading to register
-        if (decideTime <= 0)
-        {
-            leaving = true;
-        }
-        else //otherwise, keep taking time off
-        {
             decideTime -= Time.deltaTime;
-        }
 
-        //timer that is randomized so NPC sometimes takes pauses, anywhere between 5 to 20 seconds it can pause
-        //pause can happen on non-grid spaces (between 0.5f)
-        if (pauseTimer >= checkPause && !pause)
-        {
-            pause = true;
-            pauseTimer = 0f;
-            //plays once per pause
-        }
-        //if the NPC is already paused, must wait a certain amount of time before moving again.
-        else if (pause)
-        {
-            pauseTimer += Time.deltaTime;
-            //only pauses for about 5-7 seconds
-            if (pauseTimer >= stayPause)
+            if (decideTime <= 0)
             {
-                checkPause = Random.Range(5f, 20f);
-                stayPause = Random.Range(5f, 20f);
-                pause = false;
-                pauseTimer = 0f;
+                ChangeState(NPCState.GoingToLineEntry);
+            }
+
+            if (stayTime <= 0)
+            {
+                ChangeState(NPCState.LeavingStore);
+            }
+        }
+    }
+
+    void HandleRandomPause()
+    {
+        // Don't pause while checking out or leaving
+        if (currentState == NPCState.CheckingOut || currentState == NPCState.LeavingStore)
+            return;
+
+        if (!isPaused)
+        {
+            pauseCheckTimer += Time.deltaTime;
+
+            if (pauseCheckTimer >= nextPauseTime)
+            {
+                EnterPause();
             }
         }
         else
         {
             pauseTimer += Time.deltaTime;
+
+            if (pauseTimer >= pauseDuration)
+            {
+                ExitPause();
+            }
         }
     }
+
+    void EnterPause()
+    {
+        isPaused = true;
+        savedState = currentState;
+        currentState = NPCState.Idle;
+
+        pauseTimer = 0f;
+    }
+
+    void ExitPause()
+    {
+        isPaused = false;
+        savedState = NPCState.Shopping;
+        currentState = NPCState.Shopping;
+
+        pauseCheckTimer = 0f;
+        ScheduleNextPause();
+    }
+
+    void ChangeState(NPCState newState)
+    {
+        
+        //if the new state to be changed is the same one don't start a new state
+        if (savedState == newState) return;
+
+        Debug.Log(newState);
+
+        currentState = newState;
+        savedState = newState;
+
+        OnEnterState(newState);
+    }
+
+    void OnEnterState(NPCState state)
+    {
+        switch (state)
+        {
+            case NPCState.LeavingStore:
+                SetPath(StoreDoor);   // runs ONCE
+                break;
+
+            case NPCState.GoingToLineEntry:
+                Debug.Log("1");
+                SetPath(LineEntry);
+                break;
+
+            case NPCState.InLine:
+                Debug.Log("12");
+                // maybe play wait animation
+                break;
+        }
+    }
+
+
 
     //this function heads towards the dictated path set by the AStar script. When the path is completed is creates a new randomized path.
     public void CreatePath()
@@ -153,7 +238,7 @@ public class NPC_Controller : MonoBehaviour
             {
                 //this is where we create a new randomized path when the old one has finished.
                 //where you can decide where to take a break or head to the register. 
-                path = AStarManager.instance.GeneratePath(currentNode, nodes[Random.Range(0, nodes.Length)]);
+                path = AStarManager.instance.GeneratePath(currentNode, nodes[UnityEngine.Random.Range(0, nodes.Length)]);
             }
         }
     }
@@ -162,7 +247,7 @@ public class NPC_Controller : MonoBehaviour
     public void RecalculatePath()
     {
         Node[] nodes = FindObjectsOfType<Node>();
-        path = AStarManager.instance.GeneratePath(currentNode, nodes[Random.Range(0, nodes.Length)]);
+        path = AStarManager.instance.GeneratePath(currentNode, nodes[UnityEngine.Random.Range(0, nodes.Length)]);
         CreatePath();
     }
 
@@ -172,7 +257,7 @@ public class NPC_Controller : MonoBehaviour
         if (path.Count > 0)
         {
             int x = 0;
-            transform.position = Vector3.MoveTowards(transform.position, 
+            transform.position = Vector3.MoveTowards(transform.position,
                 new Vector3(path[x].transform.position.x, path[x].transform.position.y, -2), speed * Time.deltaTime);
 
             if (Vector2.Distance(transform.position, path[x].transform.position) < 0.05f)
@@ -181,24 +266,43 @@ public class NPC_Controller : MonoBehaviour
                 path.RemoveAt(x);
             }
         }
-        else if (trackCount == 0)
+        else
         {
-            trackCount = 1;
-            once = true;
-        }
-        else if (trackCount == 1)
-        {
-            //finally reached the end point
-            //CHANGE HERE HOW TO HANDLE NPC LEAVING THE STORE
-            //print("exit!");
-            //Destroy(this.gameObject);
+            if (!hasArrived)
+            {
+                OnReachedTarget();
+                hasArrived = true;  // <-- prevents multiple calls
+            }
         }
     }
 
-    private void SetPath(Node target)
+    private void OnReachedTarget()
+    {
+        if (currentState == NPCState.GoingToLineEntry)
+        {
+            // Only join the line once
+            if (!hasJoinedLine)
+            {
+                TargetSpot = ShopLine.Instance.JoinLine(this);
+                hasJoinedLine = true;  // prevents multiple calls
+                SetPath(TargetSpot);
+            }
+
+            // Once path to the line spot is complete
+            if (path.Count == 0)
+            {
+                ChangeState(NPCState.InLine);
+                hasArrived = true;
+            }
+        }
+    }
+
+    public void SetPath(Node target)
     {
         Node[] nodes = FindObjectsOfType<Node>();
         path = AStarManager.instance.GeneratePath(currentNode, target);
+        TargetSpot = target;
+        hasArrived = false;  // reset so OnReachedTarget will fire for the new destination
     }
 
     //if the NPC hits a object collider recalcuate another path
@@ -226,8 +330,6 @@ public class NPC_Controller : MonoBehaviour
     //create item trait that says if its been reservered by another NPC or not. Then make final purchase/transaction at cashier.
     private void TraverseChildren(Transform parent)
 {
-    Debug.Log("Deciding on whole selection");
-
     foreach (Transform child in parent)
     {
         ItemGrid grid = child.GetComponent<ItemGrid>(); // ✅ DECLARED HERE
@@ -242,7 +344,7 @@ public class NPC_Controller : MonoBehaviour
 
         foreach (Transform grandchild in child)
         {
-            if (Random.value < 0.1f)
+            if (UnityEngine.Random.value < 0.1f)
             {
                 InventoryItem item = grandchild.GetComponent<InventoryItem>();
                 if (item != null)

@@ -223,6 +223,7 @@ public class NPC_Controller : MonoBehaviour
     }
 
     //itmes go fast perhaps adding something where NPCs can only view a shelfing once before leaving...?
+    //create item trait that says if its been reservered by another NPC or not. Then make final purchase/transaction at cashier.
     private void TraverseChildren(Transform parent)
 {
     Debug.Log("Deciding on whole selection");

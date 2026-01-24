@@ -18,6 +18,8 @@ public class NPC_Controller : MonoBehaviour
     private float stayTime;
     [SerializeField]
     private float decideTime;
+    [SerializeField]
+    private float lineTime = 30f;
 
     //pause timer variables
     private float pauseCheckTimer = 0f;
@@ -26,8 +28,13 @@ public class NPC_Controller : MonoBehaviour
     private float pauseTimer;
     private bool isPaused;
 
-    private bool hasArrived = false;
     public bool hasJoinedLine = false;
+
+    [SerializeField]
+    List<InventoryItem> itemsToBuy = new List<InventoryItem>();
+
+    [SerializeField]
+    List<Transform> viewedShelves = new List<Transform>();
 
     public float speed = 1f;
 
@@ -37,6 +44,7 @@ public class NPC_Controller : MonoBehaviour
         Shopping,
         GoingToLineEntry,
         InLine,
+        MoveInLine,
         CheckingOut,
         LeavingStore,
         Idle
@@ -72,34 +80,37 @@ public class NPC_Controller : MonoBehaviour
     {
         switch (currentState)
         {
+            //Triggered by timer
             case NPCState.Idle:
                 // Play idle animation, stop movement
                 break;
 
+            //NPC spawns as this state
             case NPCState.Shopping:
                 CreatePath();
                 break;
 
+            //triggered by timer
             case NPCState.GoingToLineEntry:
                 HeadTarget(LineEntry);
                 break;
 
+            //changed by finishing the GoingToLineEntry movement path
             case NPCState.InLine:
-                if (!hasArrived)
-                {
-                    HeadTarget(TargetSpot);  // move to line
-                }
-                else
-                {
-                    Debug.Log("hello"); // now standing in line
-                                        // wait, idle animation, etc.
-                }
+                //play animation?
                 break;
 
+            //this is changed from the ShopLine script
+            case NPCState.MoveInLine:
+                HeadTarget(TargetSpot);
+                break;
+
+            //Triggered by shopline script - user input "e"
             case NPCState.CheckingOut:
                 HandleCheckout();
                 break;
 
+            //after checking out this triggers
             case NPCState.LeavingStore:
                 HeadTarget(StoreDoor);
                 break;
@@ -109,10 +120,32 @@ public class NPC_Controller : MonoBehaviour
         HandleRandomPause();
     }
 
-    //checking out, selling items and leaving line
-    private void HandleCheckout()
+    //called in shopline when E is pressed
+    public void MoveInLineStateChange()
     {
-        throw new NotImplementedException();
+        ChangeState(NPCState.MoveInLine);
+    }
+
+    //checking out, selling items and leaving line
+    //goes through the saved list of all the viewed shelves and purchases the item by adding money to the balance and removing the item.
+    public void HandleCheckout()
+    {
+        foreach (InventoryItem item in itemsToBuy)
+        {
+            ItemGrid grid = item.GetComponentInParent<ItemGrid>(true);
+            if (grid != null)
+            {
+                int cost = item.itemData.sellcost;
+                MoneyManager.Instance.AddMoney(cost);
+                grid.RemoveItem(item);
+                Destroy(item.gameObject);
+            }
+            else
+            {
+                Debug.Log("error!");
+            }
+        }
+        ChangeState(NPCState.LeavingStore);
     }
 
     //dealing with timer things.
@@ -126,20 +159,56 @@ public class NPC_Controller : MonoBehaviour
 
             if (decideTime <= 0)
             {
-                ChangeState(NPCState.GoingToLineEntry);
+                if (ShopLine.Instance.CheckLineFull())
+                {
+                    ChangeState(NPCState.LeavingStore);
+                }
+                else if (itemsToBuy.Count == 0)
+                {
+                    ChangeState(NPCState.LeavingStore);
+                }
+                else
+                {
+                    ChangeState(NPCState.GoingToLineEntry);
+                }
             }
 
             if (stayTime <= 0)
             {
-                ChangeState(NPCState.LeavingStore);
+                LeaveAbruptly();
             }
         }
+
+        if (currentState == NPCState.InLine || currentState == NPCState.MoveInLine)
+        {
+            lineTime -= Time.deltaTime;
+
+            if (lineTime <= 0)
+            {
+                LeaveAbruptly();
+            }
+        }
+    }
+
+    void LeaveAbruptly()
+    {
+        ChangeState(NPCState.LeavingStore);
+        //run this only when NPC is leaving abruptly due to impatience.
+        ShopLine.Instance.LeaveLine(this);
+        //need to remove items from list and reset reservered status.
+
+        foreach (InventoryItem item in itemsToBuy)
+        {
+            item.isTaken = false;
+        }
+
+        itemsToBuy.Clear();
     }
 
     void HandleRandomPause()
     {
         // Don't pause while checking out or leaving
-        if (currentState == NPCState.CheckingOut || currentState == NPCState.LeavingStore)
+        if (currentState != NPCState.Shopping && currentState != NPCState.Idle)
             return;
 
         if (!isPaused)
@@ -181,13 +250,10 @@ public class NPC_Controller : MonoBehaviour
         ScheduleNextPause();
     }
 
-    void ChangeState(NPCState newState)
+    private void ChangeState(NPCState newState)
     {
-        
         //if the new state to be changed is the same one don't start a new state
         if (savedState == newState) return;
-
-        Debug.Log(newState);
 
         currentState = newState;
         savedState = newState;
@@ -204,12 +270,10 @@ public class NPC_Controller : MonoBehaviour
                 break;
 
             case NPCState.GoingToLineEntry:
-                Debug.Log("1");
                 SetPath(LineEntry);
                 break;
 
             case NPCState.InLine:
-                Debug.Log("12");
                 // maybe play wait animation
                 break;
         }
@@ -268,11 +332,7 @@ public class NPC_Controller : MonoBehaviour
         }
         else
         {
-            if (!hasArrived)
-            {
-                OnReachedTarget();
-                hasArrived = true;  // <-- prevents multiple calls
-            }
+            OnReachedTarget();
         }
     }
 
@@ -292,8 +352,15 @@ public class NPC_Controller : MonoBehaviour
             if (path.Count == 0)
             {
                 ChangeState(NPCState.InLine);
-                hasArrived = true;
             }
+        }
+        if (currentState == NPCState.MoveInLine) //plays when moving up in line and only after NPC has reached count = 0, completed its path
+        {
+            ChangeState(NPCState.InLine);
+        }
+        if (currentState == NPCState.LeavingStore)
+        {
+            Destroy(this.gameObject);
         }
     }
 
@@ -302,7 +369,6 @@ public class NPC_Controller : MonoBehaviour
         Node[] nodes = FindObjectsOfType<Node>();
         path = AStarManager.instance.GeneratePath(currentNode, target);
         TargetSpot = target;
-        hasArrived = false;  // reset so OnReachedTarget will fire for the new destination
     }
 
     //if the NPC hits a object collider recalcuate another path
@@ -316,6 +382,7 @@ public class NPC_Controller : MonoBehaviour
     //If the NPC wants to buy something, it deletes the object directly from the Grid and adds money to the player's balance.
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        if(currentState == NPCState.LeavingStore || currentState == NPCState.CheckingOut){ return; }
         if (collision.gameObject.GetComponent<ShelfInventoryToggle>() == null)
         {
             return;
@@ -323,45 +390,41 @@ public class NPC_Controller : MonoBehaviour
 
         GameObject stand = collision.gameObject.GetComponent<ShelfInventoryToggle>().controlledGrid;
 
+        if(!viewedShelves.Contains(stand.transform))
+        {
+            viewedShelves.Add(stand.transform);
+        }
+
         TraverseChildren(stand.transform);
     }
 
     //itmes go fast perhaps adding something where NPCs can only view a shelfing once before leaving...?
     //create item trait that says if its been reservered by another NPC or not. Then make final purchase/transaction at cashier.
     private void TraverseChildren(Transform parent)
-{
-    foreach (Transform child in parent)
     {
-        ItemGrid grid = child.GetComponent<ItemGrid>(); // ✅ DECLARED HERE
-
-        if (grid == null)
+        foreach (Transform child in parent)
         {
-            Debug.LogError("ItemGrid missing on child: " + child.name);
-            continue;
-        }
+            ItemGrid grid = child.GetComponent<ItemGrid>(); // ✅ DECLARED HERE
 
-        var itemsToBuy = new List<InventoryItem>();
-
-        foreach (Transform grandchild in child)
-        {
-            if (UnityEngine.Random.value < 0.1f)
+            if (grid == null)
             {
-                InventoryItem item = grandchild.GetComponent<InventoryItem>();
-                if (item != null)
+                Debug.LogError("ItemGrid missing on child: " + child.name);
+                continue;
+            }
+
+            foreach (Transform grandchild in child)
+            {
+                if (UnityEngine.Random.value < 0.1f)
                 {
-                    itemsToBuy.Add(item);
+                    InventoryItem item = grandchild.GetComponent<InventoryItem>();
+                    if (item != null && !item.isTaken)
+                    {
+                        item.isTaken = true;
+                        itemsToBuy.Add(item);
+                    }
                 }
             }
         }
-
-        foreach (InventoryItem item in itemsToBuy)
-        {
-            int cost = item.itemData.sellcost;
-            grid.RemoveItem(item);                // ✅ object-based removal
-            MoneyManager.Instance.AddMoney(cost);
-            Destroy(item.gameObject);
-        }
     }
-}
 
 }

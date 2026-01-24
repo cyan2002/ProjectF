@@ -168,9 +168,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   line:
-  - {fileID: 590641604}
-  - {fileID: 1265880467}
   - {fileID: 900075772}
+  - {fileID: 1265880467}
+  - {fileID: 590641604}
 --- !u!1 &48457953
 GameObject:
   m_ObjectHideFlags: 3
@@ -1005,6 +1005,10 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: 8d4c3ba99deb52a469861377804ec3b7, type: 3}
+    - target: {fileID: 5560369505135155216, guid: 302156e710da94dea8ecbbbba07ffc3b, type: 3}
+      propertyPath: m_Name
+      value: ShelfGrid4
+      objectReference: {fileID: 0}
     - target: {fileID: 5560369505135155219, guid: 302156e710da94dea8ecbbbba07ffc3b, type: 3}
       propertyPath: GridType
       value: Dry
@@ -1443,6 +1447,10 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: 8d4c3ba99deb52a469861377804ec3b7, type: 3}
+    - target: {fileID: 5560369505135155216, guid: 302156e710da94dea8ecbbbba07ffc3b, type: 3}
+      propertyPath: m_Name
+      value: ShelfGrid3
+      objectReference: {fileID: 0}
     - target: {fileID: 5560369505135155219, guid: 302156e710da94dea8ecbbbba07ffc3b, type: 3}
       propertyPath: GridType
       value: Dry
@@ -3647,6 +3655,10 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: 8d4c3ba99deb52a469861377804ec3b7, type: 3}
+    - target: {fileID: 5560369505135155216, guid: 302156e710da94dea8ecbbbba07ffc3b, type: 3}
+      propertyPath: m_Name
+      value: ShelfGrid1
+      objectReference: {fileID: 0}
     - target: {fileID: 5560369505135155219, guid: 302156e710da94dea8ecbbbba07ffc3b, type: 3}
       propertyPath: GridType
       value: Dry
@@ -4973,6 +4985,10 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: 8d4c3ba99deb52a469861377804ec3b7, type: 3}
+    - target: {fileID: 5560369505135155216, guid: 302156e710da94dea8ecbbbba07ffc3b, type: 3}
+      propertyPath: m_Name
+      value: ShelfGrid2
+      objectReference: {fileID: 0}
     - target: {fileID: 5560369505135155219, guid: 302156e710da94dea8ecbbbba07ffc3b, type: 3}
       propertyPath: GridType
       value: Dry

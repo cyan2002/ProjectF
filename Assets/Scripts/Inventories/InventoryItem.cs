@@ -8,6 +8,7 @@ public class InventoryItem : MonoBehaviour
 {
 
     public ItemData itemData;
+    public bool isTaken = false;
 
     public int HEIGHT
     {

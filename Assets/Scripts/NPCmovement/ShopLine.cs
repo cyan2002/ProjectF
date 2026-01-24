@@ -15,7 +15,7 @@ public class ShopLine : MonoBehaviour
     public List<Node> line = new List<Node>();
     //cap on the line
     private int lineCap;
-    
+
     [SerializeField]
     private Queue<NPC_Controller> npcQueue = new Queue<NPC_Controller>();
 
@@ -38,12 +38,17 @@ public class ShopLine : MonoBehaviour
         if (npcQueue.Count == 0)
             return;
 
-        // Update everyone’s target node
+        NPC_Controller frontNPC = npcQueue.Peek();
+        frontNPC.HandleCheckout();
+        LeaveLine(frontNPC);
+
+        // Update everyoneï¿½s target node
         int i = 0;
         foreach (var npc in npcQueue)
         {
             Node newTarget = line[Mathf.Min(i, line.Count - 1)];
             npc.SetPath(newTarget);
+            npc.MoveInLineStateChange();
             i++;
         }
     }
@@ -52,7 +57,7 @@ public class ShopLine : MonoBehaviour
     //returns null if the line is full
     public Node GetNextNodeInLine(NPC_Controller npc)
     {
-        if(npcQueue.Count >= line.Count)
+        if (npcQueue.Count >= line.Count)
         {
             return null;
         }
@@ -92,9 +97,12 @@ public class ShopLine : MonoBehaviour
         int index = npcQueue.Count - 1;
         Node targetNode = line[Mathf.Min(index, line.Count - 1)];
 
-        Debug.Log("hello");
-        Debug.Log(targetNode);
-
         return targetNode;
+    }
+
+    //returns true if the shopping line is full
+    public bool CheckLineFull()
+    {
+        return npcQueue.Count == line.Count;
     }
 }

@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f855074172eccb34798edbeff0b753e0, type: 3}
   m_Name: Pike
   m_EditorClassIdentifier: 
-  width: 2
+  width: 3
   height: 1
   itemIcon: {fileID: 21300000, guid: 502d60ec26fb14cc688a020f84b73d23, type: 3}
   type: Wet

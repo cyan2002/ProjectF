@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 3402099734714783766}
   - component: {fileID: 7940811284817565254}
   m_Layer: 9
-  m_Name: NPC
+  m_Name: NPC 3
   m_TagString: Untagged
   m_Icon: {fileID: 2488908585195742037, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
@@ -50,10 +50,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentNode: {fileID: 0}
   path: []
-  StoreDoor: {fileID: 0}
-  Register: {fileID: 0}
-  pauseTimer: 0
+  TargetSpot: {fileID: 0}
+  stayTime: 0
+  decideTime: 0
+  lineTime: 30
+  hasJoinedLine: 0
+  itemsToBuy: []
+  viewedShelves: []
   speed: 1
+  currentState: 0
+  savedState: 0
 --- !u!50 &947045626641721008
 Rigidbody2D:
   serializedVersion: 4
@@ -142,7 +148,7 @@ SpriteRenderer:
   m_SortingLayerID: 1878214669
   m_SortingLayer: 3
   m_SortingOrder: 0
-  m_Sprite: {fileID: 1858545150, guid: 89ec9271d69194889940d3272f082b95, type: 3}
+  m_Sprite: {fileID: 268767184, guid: 89ec9271d69194889940d3272f082b95, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0

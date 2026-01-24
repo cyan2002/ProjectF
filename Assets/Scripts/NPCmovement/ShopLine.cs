@@ -19,6 +19,8 @@ public class ShopLine : MonoBehaviour
     [SerializeField]
     private Queue<NPC_Controller> npcQueue = new Queue<NPC_Controller>();
 
+    private bool isNear = false;
+
     void Awake()
     {
         if (Instance != null && Instance != this)
@@ -35,7 +37,9 @@ public class ShopLine : MonoBehaviour
     //need something to put in so it doesn't go too fast.
     private void HandleTransaction()
     {
-        if (npcQueue.Count == 0)
+        if (isNear)
+        {
+            if (npcQueue.Count == 0)
             return;
 
         NPC_Controller frontNPC = npcQueue.Peek();
@@ -50,6 +54,7 @@ public class ShopLine : MonoBehaviour
             npc.SetPath(newTarget);
             npc.MoveInLineStateChange();
             i++;
+        }
         }
     }
 
@@ -104,5 +109,21 @@ public class ShopLine : MonoBehaviour
     public bool CheckLineFull()
     {
         return npcQueue.Count == line.Count;
+    }
+
+    void OnTriggerEnter2D(Collider2D collider)
+    {
+        if (collider.CompareTag("Player"))
+        {
+            isNear = true;
+        }
+    }
+
+    void OnTriggerExit2D(Collider2D collider)
+    {
+        if (collider.CompareTag("Player"))
+        {
+            isNear = false;
+        }
     }
 }

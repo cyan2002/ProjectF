@@ -229,18 +229,18 @@ public class InventoryController : MonoBehaviour
             rectTransform.position = Input.mousePosition + new Vector3(x, -y,0);
             //rectTransform.position = new Vector2(0, 0);
         }
+        //if there is no item turn the highlighter off.
         if (selectedItem == null)
         {
-            Debug.Log("turning highlighter off1");
             inventoryHighlight.Show(false);
             return;
         }
 
         Vector2Int? pos = GetTileGridPosition();
 
+        //if the mouse isn't on the grid remove the highlighter.
         if (pos == null)
         {
-            Debug.Log("turning highlighter off2");
             inventoryHighlight.Show(false);
             return;
         }
@@ -248,7 +248,9 @@ public class InventoryController : MonoBehaviour
         Vector2Int positionOnGrid = pos.Value;
         //the below part made it so that when picking up the item, the highlighter was not showing...
         //I think this code just lets the code below not run constantly... If preformance becomes an issue need to fix.
-        //also doesn't update when rotation occurs.
+        //checks if it's been rotatated, if so pass on to allow highlighter to be on.
+        //also checks if the old position is the same as the new one (to not allow constant run of this code.)
+        //finally checks if the highligher is on - this is because when you pick up and item the position stayed the same, but still needed the highlighter to be turned on again
         if (oldPosition == positionOnGrid && !rotated)
         {
             if (inventoryHighlight.checkOn())
@@ -275,7 +277,7 @@ public class InventoryController : MonoBehaviour
         }
         else
         {     
-            Debug.Log("turning highlighter on");
+            //code for actually turning on the highlighter.
             inventoryHighlight.Show(selectedItemGrid.BoundryCheck(positionOnGrid.x,
             positionOnGrid.y,
             selectedItem.WIDTH,
@@ -345,6 +347,7 @@ public class InventoryController : MonoBehaviour
 
         selectedItem.Rotate();
 
+        //simple boolean to allow the highlighter to be refreshed when the item is rotated.
         rotated = true;
     }
 }

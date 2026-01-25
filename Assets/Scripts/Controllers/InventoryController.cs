@@ -190,6 +190,7 @@ public class InventoryController : MonoBehaviour
 
 
     //this returns the tile grid position that mouse is currently over
+    //this affects where the item is placed and the starting block it is.
     private Vector2Int? GetTileGridPosition()
     {
         if (selectedItemGrid == null)
@@ -197,11 +198,12 @@ public class InventoryController : MonoBehaviour
 
         Vector2 position = Input.mousePosition;
 
-        if (selectedItem != null)
-        {
-            position.x -= (selectedItem.WIDTH - 1) * ItemGrid.tileSizeWidth / 2;
-            position.y += (selectedItem.HEIGHT - 1) * ItemGrid.tileSizeHeight / 2;
-        }
+        //for some reason this code was added and was creating an offset for the grid. 
+        //if (selectedItem != null)
+        //{
+        //    position.x -= (selectedItem.WIDTH - 1) * ItemGrid.tileSizeWidth / 2;
+        //    position.y += (selectedItem.HEIGHT - 1) * ItemGrid.tileSizeHeight / 2;
+        //}
 
         return selectedItemGrid.GetTileGridPosition(position);
     }
@@ -214,6 +216,8 @@ public class InventoryController : MonoBehaviour
         //need to check when mouse is out of bounds... to not run code.
         if (selectedItem != null)
         {
+            //this is where the item follows the mouse input
+            //CHANGE HERE TO ADJUST MOUSE BEING IN THE MIDDLE OF THE DRAGGED ITEM VS ON THE LEFT (WHERE IT'S PLACED)
             rectTransform.position = Input.mousePosition;
         }
         if (selectedItem == null)
@@ -223,6 +227,7 @@ public class InventoryController : MonoBehaviour
         }
 
         Vector2Int? pos = GetTileGridPosition();
+
         if (pos == null)
         {
             inventoryHighlight.Show(false);
@@ -266,6 +271,7 @@ public class InventoryController : MonoBehaviour
 
         Vector2Int tileGridPosition = pos.Value;
 
+        //Debug.Log(pos);
 
         if (selectedItem == null)
         {

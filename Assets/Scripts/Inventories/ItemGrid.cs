@@ -129,33 +129,31 @@ public class ItemGrid : MonoBehaviour
     }
 
     //returns the Grid position of the tile where the mouse currently is
-    public Vector2Int GetTileGridPosition(Vector2 mousePosition)
-    {
-        float s = canvasGroup.scaleFactor; // CanvasScaler scale
+    //654
+    //457
+public Vector2Int GetTileGridPosition(Vector2 mousePosition)
+{
+    // Convert screen → local rect space
+    Vector2 localPoint;
+    RectTransformUtility.ScreenPointToLocalPointInRectangle(
+        rectTransform,
+        mousePosition,
+        null,
+        out localPoint
+    );
 
-        Vector2 localPoint;
-        RectTransformUtility.ScreenPointToLocalPointInRectangle(
-            rectTransform,
-            mousePosition,
-            null, // for Screen Space - Overlay
-            out localPoint
-        );
+        //Debug.Log("local Point: " + localPoint);
 
-        // Convert pivot-based coords → top-left coords
-        Vector2 rectSize = rectTransform.rect.size;
-        Vector2 topLeftOrigin = new Vector2(
-            -rectSize.x * rectTransform.pivot.x,
-             rectSize.y * (1 - rectTransform.pivot.y)
-        );
+    // rectPoint is the coordinates relative to the top left, making both positive to calculate it.
+        Vector2 rectPoint = new Vector2(localPoint.x, localPoint.y*-1);
 
-        // Top-left–relative coordinate
-        Vector2 TL = localPoint - topLeftOrigin;
+//Debug.Log("Rect Point: " + rectPoint);
 
-        int x = Mathf.FloorToInt(TL.x / (tileSizeWidth * s));
-        int y = Mathf.FloorToInt(-TL.y / (tileSizeHeight * s));  // NOTICE THE '-' HERE
+    int x = Mathf.FloorToInt(rectPoint.x / tileSizeWidth);
+    int y = Mathf.FloorToInt(rectPoint.y / tileSizeHeight);
 
-        return new Vector2Int(x, y);
-    }
+    return new Vector2Int(x, y);
+}
 
     //places item, but checks if the item will go over borders/out of bounds
     public bool PlaceItem(InventoryItem inventoryItem, int posX, int posY, ref InventoryItem overlapItem)
@@ -204,7 +202,6 @@ public class ItemGrid : MonoBehaviour
             for (int ynum = 0; ynum < inventoryItem.HEIGHT; ynum++)
             {
                 inventoryItemSlot[posX + xnum, posY + ynum] = inventoryItem;
-
             }
         }
 

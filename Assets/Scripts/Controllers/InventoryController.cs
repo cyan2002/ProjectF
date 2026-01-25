@@ -42,6 +42,7 @@ public class InventoryController : MonoBehaviour
 
     //statement of whether the inventory is open or not
     private bool InventoryOpen = false;
+    private bool rotated = false;
 
     private void Awake()
     {
@@ -218,10 +219,19 @@ public class InventoryController : MonoBehaviour
         {
             //this is where the item follows the mouse input
             //CHANGE HERE TO ADJUST MOUSE BEING IN THE MIDDLE OF THE DRAGGED ITEM VS ON THE LEFT (WHERE IT'S PLACED)
-            rectTransform.position = Input.mousePosition;
+            int width = selectedItem.WIDTH;
+            int height = selectedItem.HEIGHT;
+
+            //offset formula to make mouse appear in the top left corner
+            float x = Mathf.Max(0f, 20f * width - 30f);
+            float y = Mathf.Max(0f, 20f * height - 30f);
+
+            rectTransform.position = Input.mousePosition + new Vector3(x, -y,0);
+            //rectTransform.position = new Vector2(0, 0);
         }
         if (selectedItem == null)
         {
+            Debug.Log("turning highlighter off1");
             inventoryHighlight.Show(false);
             return;
         }
@@ -230,12 +240,23 @@ public class InventoryController : MonoBehaviour
 
         if (pos == null)
         {
+            Debug.Log("turning highlighter off2");
             inventoryHighlight.Show(false);
             return;
         }
 
         Vector2Int positionOnGrid = pos.Value;
-        if (oldPosition == positionOnGrid) { return; }
+        //the below part made it so that when picking up the item, the highlighter was not showing...
+        //I think this code just lets the code below not run constantly... If preformance becomes an issue need to fix.
+        //also doesn't update when rotation occurs.
+        if (oldPosition == positionOnGrid && !rotated)
+        {
+            if (inventoryHighlight.checkOn())
+            {
+                Debug.Log("exiting out of method!");
+                return;
+            }
+        }
         oldPosition = positionOnGrid;
         if (selectedItem == null)
         {
@@ -253,11 +274,12 @@ public class InventoryController : MonoBehaviour
             }
         }
         else
-        {
+        {     
+            Debug.Log("turning highlighter on");
             inventoryHighlight.Show(selectedItemGrid.BoundryCheck(positionOnGrid.x,
-                positionOnGrid.y,
-                selectedItem.WIDTH,
-                selectedItem.HEIGHT));
+            positionOnGrid.y,
+            selectedItem.WIDTH,
+            selectedItem.HEIGHT));
             inventoryHighlight.SetSize(selectedItem);
             inventoryHighlight.SetPosition(selectedItemGrid, selectedItem, positionOnGrid.x, positionOnGrid.y);
         }
@@ -322,5 +344,7 @@ public class InventoryController : MonoBehaviour
         if (selectedItem == null) { return; }
 
         selectedItem.Rotate();
+
+        rotated = true;
     }
 }

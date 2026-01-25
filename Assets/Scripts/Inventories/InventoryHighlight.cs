@@ -34,7 +34,7 @@ public class InventoryHighlight : MonoBehaviour
 
     public void SetParent(ItemGrid targetGrid)
     {
-        if(targetGrid == null) { return; }
+        if (targetGrid == null) { return; }
         highlighter.SetParent(targetGrid.GetComponent<RectTransform>());
     }
 
@@ -47,5 +47,10 @@ public class InventoryHighlight : MonoBehaviour
             );
 
         highlighter.localPosition = pos;
+    }
+
+    public bool checkOn()
+    {
+        return highlighter.gameObject.activeSelf;
     }
 }

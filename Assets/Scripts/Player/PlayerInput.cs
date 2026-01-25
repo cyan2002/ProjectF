@@ -19,6 +19,7 @@ public class PlayerInput : MonoBehaviour
     public static event Action HandleJ;
     public static event Action HandleK;
     public static event Action HandleE;
+    public static event Action HandleEscape;
 
     private void Awake()
     {
@@ -74,6 +75,11 @@ public class PlayerInput : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.E))
         {
             HandleE?.Invoke();
+        }
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            HandleEscape?.Invoke();
         }
     }
 }

@@ -104,9 +104,7 @@
 // === NOTE FOR NEXT VISIT ===
 // =======================
 
-//so inventory system is down while I figure this out. I want to change the highlight and item grab so that it picks up on the right most block.
-//I think it revolves around ItemGrid, Inventory Controller and Inventory Highlight scripts. Currently I'm looking at the methods GetTileGridPosition() and GetTileGridPosition(Vector2)
-//both are involving the calculation/translation of mouse position to grid position.
+
 
 
 

@@ -191,6 +191,7 @@ public Vector2Int GetTileGridPosition(Vector2 mousePosition)
     }
 
     //can be called to place item IF you already know that the item will fit
+    //can be called with save data?
     public void PlaceItem(InventoryItem inventoryItem, int posX, int posY)
     {
         RectTransform itemRT = inventoryItem.GetComponent<RectTransform>();

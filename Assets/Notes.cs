@@ -96,9 +96,9 @@
 // === TO DO NEXT ===
 // =======================
 
-//add more items to the shop
-
 //update sprite
+
+//create saving option
 
 // =======================
 // === NOTE FOR NEXT VISIT ===

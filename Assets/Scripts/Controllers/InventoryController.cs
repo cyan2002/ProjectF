@@ -24,6 +24,7 @@ public class InventoryController : MonoBehaviour
         }
     }
 
+    [SerializeField]
     InventoryItem selectedItem;
     InventoryItem overlapItem;
     RectTransform rectTransform;
@@ -51,9 +52,11 @@ public class InventoryController : MonoBehaviour
         PlayerInput.HandleI += OpenInventory;
         PlayerInput.HandleR += RotateItem;
         PlayerInput.HandleLeftClick += LeftClick;
+        PlayerInput.HandleShiftClick += ShiftClick;
         PlayerInput.HandleJ += TestJ;
         PlayerInput.HandleK += TestK;
     }
+
 
     //checks for user input
     //updates item dragger and highlighter
@@ -94,6 +97,78 @@ public class InventoryController : MonoBehaviour
     private void LeftClick()
     {
         LeftMouseButtonPress();
+    }
+
+    //handles shift click function
+    //if user is over an item and shift clicks with two inventories open it will send the item over to the other inventory in the next available spot
+    //bugged - if going from shelf to player inventory, does not seem to account for too much space
+    private void ShiftClick()
+    {
+        //if there is no selectedItemGrid get out
+        if (selectedItemGrid == null) { return; }
+        
+        //if there is a selected item get out (must not be holding it to shift click)
+        if(selectedItem != null) { return; }
+
+        //checking to see if you're over the tileGrid
+        Vector2Int? pos = GetTileGridPosition();
+        if (pos == null) return;
+
+        Vector2Int tileGridPosition = pos.Value;
+
+        //finds all types of ItemGrids (hopefully two to transfer between, if there is not get out)
+        ItemGrid[] grids = FindObjectsOfType<ItemGrid>();
+        int savedNum = 0;
+
+        //checking to see if there are two grids even open
+        if(grids.Length < 2)
+        {
+            return;
+        }
+
+        InventoryItem itemToInsert = null;
+        Vector2Int? posOnGrid = null;
+
+        //Assigns the selected item and picks it up from the grid (removing it from the grid)
+        selectedItem = selectedItemGrid.PickUpItem(tileGridPosition.x, tileGridPosition.y);
+
+        //if the selectedItem is not null (function worked) continue
+        if (selectedItem != null)
+        {
+            //for each item in grid, find the one where it's not the current one being transfered out, that Itemgrid is the one we want to transfer to
+            rectTransform = selectedItem.GetComponent<RectTransform>();
+            for (int i = 0; i < grids.Length; i++)
+            {
+                if (grids[i].gameObject != selectedItemGrid.gameObject)
+                {
+                    //Debug.Log(grids[i].gameObject);
+                    //Debug.Log(selectedGrid.gameObject);
+                    savedNum = i;
+                }
+            }
+        }
+
+        itemToInsert = selectedItem;
+        posOnGrid = grids[savedNum].FindSpaceForObject(itemToInsert);
+
+        if(itemToInsert == null)
+        {
+            return;
+        }
+
+        //making sure there's space on the grid, if not selected is null again and leave
+        if (posOnGrid == null)
+        {
+            //ADD SOUNDS TO INDICATE YOU CAN'T PLACE ITEMS CAUSE OF FULL
+            //had to make another method to return position on the grid.
+            PlaceItem(grids[savedNum].returnPosOnGrid(itemToInsert));
+            return;
+        }
+        rectTransform.SetParent(grids[savedNum].GetComponent<RectTransform>(), false);
+        rectTransform.SetAsLastSibling();
+
+        selectedItem = null;
+        grids[savedNum].PlaceItem(itemToInsert, posOnGrid.Value.x, posOnGrid.Value.y);
     }
 
     private void OpenInventory()
@@ -255,7 +330,6 @@ public class InventoryController : MonoBehaviour
         {
             if (inventoryHighlight.checkOn())
             {
-                Debug.Log("exiting out of method!");
                 return;
             }
         }

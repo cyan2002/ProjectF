@@ -47,6 +47,11 @@ public class ItemGrid : MonoBehaviour
         }
     }
 
+    public Vector2Int returnPosOnGrid(InventoryItem item)
+    {
+        return new Vector2Int(item.onGridPositionX, item.onGridPositionY);
+    }
+
     internal InventoryItem GetItem(int x, int y)
     {
         return inventoryItemSlot[x, y];
@@ -91,6 +96,8 @@ public class ItemGrid : MonoBehaviour
     //returns the vector2 of the first spot where the item can fit
     public Vector2Int? FindSpaceForObject(InventoryItem itemToInsert)
     {
+        if(itemToInsert == null) { return null; }
+
         int height = gridSizeHeight - itemToInsert.HEIGHT + 1;
         int width = gridSizeWidth - itemToInsert.WIDTH + 1;
         for (int y = 0; y < height; y++)

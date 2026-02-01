@@ -20,6 +20,7 @@ public class PlayerInput : MonoBehaviour
     public static event Action HandleK;
     public static event Action HandleE;
     public static event Action HandleEscape;
+    public static event Action HandleShiftClick;
 
     private void Awake()
     {
@@ -57,7 +58,7 @@ public class PlayerInput : MonoBehaviour
             HandleR?.Invoke();
         }
         //picking up and placing items
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0) && !Input.GetKey(KeyCode.LeftShift))
         {
             HandleLeftClick?.Invoke();
         }
@@ -80,6 +81,11 @@ public class PlayerInput : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             HandleEscape?.Invoke();
+        }
+
+        if(Input.GetKey(KeyCode.LeftShift) && Input.GetMouseButtonDown(0))
+        {
+            HandleShiftClick?.Invoke();
         }
     }
 }

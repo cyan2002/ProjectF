@@ -93,12 +93,22 @@
 //NPC Controller Script: 
 
 // =======================
+// === AUDIO ===
+// =======================
+
+//audio works by calling to the Audio Manager (with both SFX and music sound control). Audio manager is a singleton that is created in every scene. 
+//audio information (settings of sound) is saved via Unity's default saving (PlayerPref) class.
+//There is a prefab called "audioboot" that create an audio manager in every scene before loading. 
+//All sorts of objects can access the audio manager to make noises and etc
+//also noises are Data structures (scriptable objects) and therefore will need to be passed as such.
+
+// =======================
 // === TO DO NEXT ===
 // =======================
 
-//update sprite
-
 //create saving option
+
+//add fade in and fade out for scene change and music
 
 // =======================
 // === NOTE FOR NEXT VISIT ===

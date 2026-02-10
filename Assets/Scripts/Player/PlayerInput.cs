@@ -33,6 +33,7 @@ public class PlayerInput : MonoBehaviour
     }
 
     // Update is called once per frame
+    //Debug.Log($"Subscribed: {handler.Method.DeclaringType}.{handler.Method.Name}");
     void Update()
     {
         float horizontal = Input.GetAxisRaw("Horizontal");

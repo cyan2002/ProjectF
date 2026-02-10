@@ -5,6 +5,7 @@ public class PauseManager : MonoBehaviour
     public static bool IsPaused;
 
     [SerializeField] GameObject pauseMenuUI;
+    [SerializeField] GameObject optionsMenuUI;
 
     void Awake()
     {
@@ -26,6 +27,7 @@ public class PauseManager : MonoBehaviour
     public void Resume()
     {
         pauseMenuUI.SetActive(false);
+        optionsMenuUI.SetActive(false);
         Time.timeScale = 1f;
         IsPaused = false;
     }

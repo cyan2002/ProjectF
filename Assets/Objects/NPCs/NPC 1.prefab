@@ -50,10 +50,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentNode: {fileID: 0}
   path: []
-  StoreDoor: {fileID: 0}
-  Register: {fileID: 0}
-  pauseTimer: 0
+  TargetSpot: {fileID: 0}
+  stayTime: 0
+  decideTime: 0
+  lineTime: 30
+  hasJoinedLine: 0
+  itemsToBuy: []
+  viewedShelves: []
   speed: 1
+  currentState: 0
+  savedState: 0
 --- !u!50 &947045626641721008
 Rigidbody2D:
   serializedVersion: 4
@@ -121,7 +127,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 73cab1bdd71a7d945a8faf64404488c3, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

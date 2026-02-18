@@ -25,6 +25,8 @@ public class MoneyManager : MonoBehaviour
 
     public event Action<int> OnMoneyChanged;
 
+    public event Action addedMoney;
+
     private void Awake()
     {
         Money = 5000;
@@ -41,6 +43,7 @@ public class MoneyManager : MonoBehaviour
     {
         Money += amount;
         OnMoneyChanged?.Invoke(Money);
+        addedMoney?.Invoke();
     }
 
     public bool SpendMoney(int amount)

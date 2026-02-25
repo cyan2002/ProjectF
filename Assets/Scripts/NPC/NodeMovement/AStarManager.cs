@@ -16,72 +16,59 @@ public class AStarManager : MonoBehaviour
     //This uses the F score to calculate the best path to the start and end. 
     public List<Node> GeneratePath(Node start, Node end)
     {
-        //creates a new list of nodes to create the path
         List<Node> openSet = new List<Node>();
+        Dictionary<Node, float> gScore = new Dictionary<Node, float>();
+        Dictionary<Node, float> hScore = new Dictionary<Node, float>();
+        Dictionary<Node, Node> cameFrom = new Dictionary<Node, Node>();
 
-        //finds each object of type Node in the scene and assigns a value.
         foreach (Node n in FindObjectsOfType<Node>())
-        {
-            n.gScore = float.MaxValue;
-        }
+            gScore[n] = float.MaxValue;
 
-        //given the start node, sets the gScore and hScore which are used to determining how an NPC moves around
-        start.gScore = 0;
-        start.hScore = Vector2.Distance(start.transform.position, end.transform.position);
+        gScore[start] = 0;
+        hScore[start] = Vector2.Distance(start.transform.position, end.transform.position);
         openSet.Add(start);
 
-        //creates a path based on a gScore and hScore formula, route for the best path from Start to End
         while (openSet.Count > 0)
         {
-            int lowestF = default;
-
+            Node currentNode = openSet[0];
             for (int i = 1; i < openSet.Count; i++)
             {
-                if (openSet[i].FScore() < openSet[lowestF].FScore())
-                {
-                    lowestF = i;
-                }
+                float f = gScore[openSet[i]] + hScore.GetValueOrDefault(openSet[i], 0);
+                float currentF = gScore[currentNode] + hScore.GetValueOrDefault(currentNode, 0);
+                if (f < currentF) currentNode = openSet[i];
             }
 
-            Node currentNode = openSet[lowestF];
             openSet.Remove(currentNode);
 
             if (currentNode == end)
             {
                 List<Node> path = new List<Node>();
-
-                path.Insert(0, end);
-
+                path.Add(end);
                 while (currentNode != start)
                 {
-                    currentNode = currentNode.cameFrom;
+                    currentNode = cameFrom[currentNode];
                     path.Add(currentNode);
                 }
-
                 path.Reverse();
                 return path;
             }
 
             foreach (Node connectedNode in currentNode.connections)
             {
-                float heldGScore = currentNode.gScore + Vector2.Distance(currentNode.transform.position, connectedNode.transform.position);
-
-                if (heldGScore < connectedNode.gScore)
+                float tentativeG = gScore[currentNode] + Vector2.Distance(currentNode.transform.position, connectedNode.transform.position);
+                if (tentativeG < gScore.GetValueOrDefault(connectedNode, float.MaxValue))
                 {
-                    connectedNode.cameFrom = currentNode;
-                    connectedNode.gScore = heldGScore;
-                    connectedNode.hScore = Vector2.Distance(connectedNode.transform.position, end.transform.position);
-
+                    cameFrom[connectedNode] = currentNode;
+                    gScore[connectedNode] = tentativeG;
+                    hScore[connectedNode] = Vector2.Distance(connectedNode.transform.position, end.transform.position);
                     if (!openSet.Contains(connectedNode))
-                    {
                         openSet.Add(connectedNode);
-                    }
                 }
             }
         }
-
-        return null;
-    }
+        Debug.Log($"No path found from {start.name} to {end.name}. Explored {cameFrom.Count} nodes.");
+    return null;
+}
 
     public Node FindNearestNode(Vector2 pos)
     {
@@ -98,7 +85,6 @@ public class AStarManager : MonoBehaviour
                 foundNode = node;
             }
         }
-
         return foundNode;
     }
 

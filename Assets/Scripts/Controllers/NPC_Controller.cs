@@ -35,6 +35,7 @@ public class NPC_Controller : MonoBehaviour
 
     [SerializeField]
     List<Transform> viewedShelves = new List<Transform>();
+    private Rigidbody2D rb;
 
     public float speed = 1f;
 
@@ -60,7 +61,7 @@ public class NPC_Controller : MonoBehaviour
         currentNode = GameObject.Find("StartNode").GetComponent<Node>();
         LineEntry = GameObject.Find("LineEntry").GetComponent<Node>();
 
-        if(StoreDoor == null || currentNode == null || LineEntry == null)
+        if (StoreDoor == null || currentNode == null || LineEntry == null)
         {
             Debug.Log("one of the assigned nodes are null - error!");
         }
@@ -68,6 +69,8 @@ public class NPC_Controller : MonoBehaviour
         ScheduleNextPause();
         stayTime = UnityEngine.Random.Range(90f, 120f);
         decideTime = UnityEngine.Random.Range(50f, 70f);
+
+        rb = GetComponent<Rigidbody2D>();
     }
 
     void ScheduleNextPause()
@@ -287,23 +290,37 @@ public class NPC_Controller : MonoBehaviour
         if (path.Count > 0)
         {
             int x = 0;
-            transform.position = Vector3.MoveTowards(transform.position, new Vector3(path[x].transform.position.x, path[x].transform.position.y, -2), speed * Time.deltaTime);
+            Vector2 direction = (path[x].transform.position - transform.position).normalized;
+
+            // Snap to dominant axis - only move in X or Y, not both
+            if (Mathf.Abs(direction.x) > Mathf.Abs(direction.y))
+                direction = new Vector2(Mathf.Sign(direction.x), 0);
+            else
+                direction = new Vector2(0, Mathf.Sign(direction.y));
+            rb.velocity = direction * speed;
 
             if (Vector2.Distance(transform.position, path[x].transform.position) < 0.05f)
             {
+                Debug.Log(rb.velocity);
+                Debug.Log(path.Count);
                 currentNode = path[x];
                 path.RemoveAt(x);
             }
         }
         else
         {
+            Debug.Log("hello!");
             Node[] nodes = FindObjectsOfType<Node>();
-            while (path == null || path.Count == 0)
+            rb.velocity = Vector2.zero;
+
+            Node destination = null;
+            destination = nodes[UnityEngine.Random.Range(0, nodes.Length)];
+            while (!destination.ObjectPresent && destination != null)
             {
-                //this is where we create a new randomized path when the old one has finished.
-                //where you can decide where to take a break or head to the register. 
-                path = AStarManager.instance.GeneratePath(currentNode, nodes[UnityEngine.Random.Range(0, nodes.Length)]);
+                destination = nodes[UnityEngine.Random.Range(0, nodes.Length)];
             }
+
+            path = AStarManager.instance.GeneratePath(currentNode, destination);
         }
     }
 
@@ -321,8 +338,14 @@ public class NPC_Controller : MonoBehaviour
         if (path.Count > 0)
         {
             int x = 0;
-            transform.position = Vector3.MoveTowards(transform.position,
-                new Vector3(path[x].transform.position.x, path[x].transform.position.y, -2), speed * Time.deltaTime);
+            Vector2 direction = (path[x].transform.position - transform.position).normalized;
+
+            // Snap to dominant axis - only move in X or Y, not both
+            if (Mathf.Abs(direction.x) > Mathf.Abs(direction.y))
+                direction = new Vector2(Mathf.Sign(direction.x), 0);
+            else
+                direction = new Vector2(0, Mathf.Sign(direction.y));
+            rb.velocity = direction * speed;
 
             if (Vector2.Distance(transform.position, path[x].transform.position) < 0.05f)
             {
@@ -332,6 +355,7 @@ public class NPC_Controller : MonoBehaviour
         }
         else
         {
+            rb.velocity = Vector2.zero;
             OnReachedTarget();
         }
     }
@@ -375,7 +399,7 @@ public class NPC_Controller : MonoBehaviour
     //only should play when changing or editing object positions (tanks and shelfs)
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        RecalculatePath();
+        //RecalculatePath();
     }
 
     //detection range for if the NPC wants to buy something/
@@ -383,6 +407,7 @@ public class NPC_Controller : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if(currentState == NPCState.LeavingStore || currentState == NPCState.CheckingOut){ return; }
+
         if (collision.gameObject.GetComponent<ShelfInventoryToggle>() == null)
         {
             return;

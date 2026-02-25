@@ -10,7 +10,7 @@ public class Node : MonoBehaviour
     public float gScore;
     public float hScore;
     private bool NodePresent = false;
-    private bool ObjectPresent = false;
+    public bool ObjectPresent = false;
     private bool onObject = false;
 
     private Rigidbody2D rb2d;
@@ -24,16 +24,16 @@ public class Node : MonoBehaviour
         rb2d = GetComponent<Rigidbody2D>();
         if (!onObject)
         {
-            hit = Physics2D.RaycastAll(transform.position, Vector2.up, .75f);
+            hit = Physics2D.RaycastAll(transform.position, Vector2.up, .35f);
             CheckForNodeOrObject();
 
-            hit = Physics2D.RaycastAll(transform.position, -Vector2.up, .75f);
+            hit = Physics2D.RaycastAll(transform.position, -Vector2.up, .35f);
             CheckForNodeOrObject();
 
-            hit = Physics2D.RaycastAll(transform.position, Vector2.right, .75f);
+            hit = Physics2D.RaycastAll(transform.position, Vector2.right, .35f);
             CheckForNodeOrObject();
 
-            hit = Physics2D.RaycastAll(transform.position, -Vector2.right, .75f);
+            hit = Physics2D.RaycastAll(transform.position, -Vector2.right, .35f);
             CheckForNodeOrObject();
         } 
     }
@@ -47,6 +47,8 @@ public class Node : MonoBehaviour
 
     private void CheckForNodeOrObject()
     {
+        if (hit.Length == 0) return; // no colliders found, nothing to do
+        
         int num = 0;
 
         for (int i = 0; i < hit.Length; i++)
@@ -62,13 +64,21 @@ public class Node : MonoBehaviour
             num = i;
         }
 
+        if (hit[num].collider.gameObject.GetComponent<Node>() == null)
+        {
+            return;
+        }
+
         if (!ObjectPresent && NodePresent)
         {
             connections.Add(hit[num].collider.gameObject.GetComponent<Node>());
         }
 
+        //needs to be reset if I decide to place and pick up tanks.
         NodePresent = false;
         ObjectPresent = false;
+
+        //object present not as expected...
     }
 
     //F Score is the algorithim to determine where NPCs will move. 

@@ -10,8 +10,11 @@ public class Node : MonoBehaviour
     public float gScore;
     public float hScore;
     private bool NodePresent = false;
-    public bool ObjectPresent = false;
+    private bool ObjectPresent = false;
     private bool onObject = false;
+
+    [SerializeField]
+    private bool tester;
 
     private Rigidbody2D rb2d;
     private RaycastHit2D[] hit;

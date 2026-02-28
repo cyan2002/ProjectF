@@ -239,7 +239,7 @@ public class NPC_Controller : MonoBehaviour
         isPaused = true;
         savedState = currentState;
         currentState = NPCState.Idle;
-
+        rb.velocity = Vector2.zero;  // stop movement
         pauseTimer = 0f;
     }
 
@@ -292,30 +292,27 @@ public class NPC_Controller : MonoBehaviour
             int x = 0;
             Vector2 direction = (path[x].transform.position - transform.position).normalized;
 
-            // Snap to dominant axis - only move in X or Y, not both
             if (Mathf.Abs(direction.x) > Mathf.Abs(direction.y))
                 direction = new Vector2(Mathf.Sign(direction.x), 0);
             else
                 direction = new Vector2(0, Mathf.Sign(direction.y));
             rb.velocity = direction * speed;
 
-            if (Vector2.Distance(transform.position, path[x].transform.position) < 0.05f)
+            if (Vector2.Distance(rb.position, path[x].transform.position) < 0.05f)
             {
-                Debug.Log(rb.velocity);
-                Debug.Log(path.Count);
                 currentNode = path[x];
                 path.RemoveAt(x);
             }
         }
         else
         {
-            Debug.Log("hello!");
             Node[] nodes = FindObjectsOfType<Node>();
             rb.velocity = Vector2.zero;
 
             Node destination = null;
             destination = nodes[UnityEngine.Random.Range(0, nodes.Length)];
-            while (!destination.ObjectPresent && destination != null)
+            //issue with nodes not knowing when they have an object present
+            while (destination == null || destination.connections.Count == 0)
             {
                 destination = nodes[UnityEngine.Random.Range(0, nodes.Length)];
             }
@@ -347,7 +344,7 @@ public class NPC_Controller : MonoBehaviour
                 direction = new Vector2(0, Mathf.Sign(direction.y));
             rb.velocity = direction * speed;
 
-            if (Vector2.Distance(transform.position, path[x].transform.position) < 0.05f)
+            if (Vector2.Distance(rb.position, path[x].transform.position) < 0.05f)
             {
                 currentNode = path[x];
                 path.RemoveAt(x);
@@ -393,13 +390,6 @@ public class NPC_Controller : MonoBehaviour
         Node[] nodes = FindObjectsOfType<Node>();
         path = AStarManager.instance.GeneratePath(currentNode, target);
         TargetSpot = target;
-    }
-
-    //if the NPC hits a object collider recalcuate another path
-    //only should play when changing or editing object positions (tanks and shelfs)
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        //RecalculatePath();
     }
 
     //detection range for if the NPC wants to buy something/

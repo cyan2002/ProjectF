@@ -50,7 +50,7 @@ MonoBehaviour:
   connections: []
   gScore: 0
   hScore: 0
-  ObjectPresent: 0
+  tester: 0
 --- !u!50 &3085999840403988200
 Rigidbody2D:
   serializedVersion: 4

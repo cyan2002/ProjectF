@@ -8,6 +8,8 @@ public class Box : MonoBehaviour
     [SerializeField] List<Sprite> boxImages;
     private SpriteRenderer sprite;
 
+    public BoxCollider2D hitbox;
+
     private bool close = false;
 
     //call to Shop Controller -> ShopController.instance.AddMoney (or whatever the function is)
@@ -16,6 +18,7 @@ public class Box : MonoBehaviour
     {
         sprite = GetComponent<SpriteRenderer>();
         sprite.enabled = false;
+        hitbox.enabled = false;
     }
 
     public void AddContents(ItemData ItemToAdd)
@@ -24,25 +27,30 @@ public class Box : MonoBehaviour
 
         if (items.Count == 0)
         {
+            hitbox.enabled = false;
             sprite.enabled = false;
         }
         else if (items.Count < 5)
         {
+            hitbox.enabled = true;
             sprite.sprite = boxImages[0];
             sprite.enabled = true;
         }
         else if (items.Count < 10)
         {
+            hitbox.enabled = true;
             sprite.sprite = boxImages[1];
             sprite.enabled = true;
         }
         else if (items.Count < 15)
         {
+            hitbox.enabled = true;
             sprite.sprite = boxImages[2];
             sprite.enabled = true;
         }
         else
         {
+            hitbox.enabled = true;
             sprite.enabled = true;
         }
     }
@@ -62,6 +70,7 @@ public class Box : MonoBehaviour
             if (items.Count == 0)
             {
                 sprite.enabled = false;
+                hitbox.enabled = false;
             }
         }
     }

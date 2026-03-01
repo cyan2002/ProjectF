@@ -148,6 +148,10 @@ public class NPC_Controller : MonoBehaviour
                 Debug.Log("error!");
             }
         }
+
+        //play purchase sound (NPC is excited)
+        AudioManager.Instance.PlaySFX(2);
+
         ChangeState(NPCState.LeavingStore);
     }
 
@@ -195,6 +199,7 @@ public class NPC_Controller : MonoBehaviour
 
     void LeaveAbruptly()
     {
+        AudioManager.Instance.PlaySFX(3);
         ChangeState(NPCState.LeavingStore);
         //run this only when NPC is leaving abruptly due to impatience.
         ShopLine.Instance.LeaveLine(this);
@@ -236,6 +241,7 @@ public class NPC_Controller : MonoBehaviour
 
     void EnterPause()
     {
+        AudioManager.Instance.PlaySFX(1);
         isPaused = true;
         savedState = currentState;
         currentState = NPCState.Idle;

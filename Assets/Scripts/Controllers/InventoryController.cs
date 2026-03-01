@@ -367,6 +367,8 @@ public class InventoryController : MonoBehaviour
         Vector2Int? pos = GetTileGridPosition();
         if (pos == null) return;
 
+        Debug.Log(pos);
+
         Vector2Int tileGridPosition = pos.Value;
 
         //Debug.Log(pos);

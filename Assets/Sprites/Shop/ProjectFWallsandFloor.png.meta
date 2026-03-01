@@ -141,7 +141,11 @@ TextureImporter:
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape: []
+      physicsShape:
+      - - {x: -24, y: -24}
+        - {x: -24, y: 24}
+        - {x: 24, y: 24}
+        - {x: 24, y: -24}
       tessellationDetail: 0
       bones: []
       spriteID: 8269af7af13d7674a8c3fa7b45548fd0
@@ -155,18 +159,18 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 192
-        y: 96
+        y: 144
         width: 48
-        height: 96
-      alignment: 9
-      pivot: {x: 0.5, y: 0.75}
+        height: 48
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape:
-      - - {x: -24, y: -16}
-        - {x: -24, y: 48}
-        - {x: 24, y: 48}
-        - {x: 24, y: -15}
+      - - {x: -24, y: -24}
+        - {x: -24, y: 24}
+        - {x: 24, y: 24}
+        - {x: 24, y: -24}
       tessellationDetail: 0
       bones: []
       spriteID: cf187cb3fc7864c42a6c28b9944e8455
@@ -179,19 +183,19 @@ TextureImporter:
       name: ProjectFWallsandFloor_3
       rect:
         serializedVersion: 2
-        x: 0
-        y: 96
-        width: 48
-        height: 48
+        x: 272
+        y: 176
+        width: 16
+        height: 16
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape:
-      - - {x: -24, y: 24}
-        - {x: -24, y: 8}
-        - {x: 24, y: 8}
-        - {x: 24, y: 24}
+      - - {x: -8, y: 8}
+        - {x: -8, y: -8}
+        - {x: 8, y: -8}
+        - {x: 8, y: 8}
       tessellationDetail: 0
       bones: []
       spriteID: 587aaccb7a11f37458cd0b79cfe77e56
@@ -204,7 +208,7 @@ TextureImporter:
       name: ProjectFWallsandFloor_4
       rect:
         serializedVersion: 2
-        x: 48
+        x: 0
         y: 96
         width: 48
         height: 48
@@ -213,10 +217,10 @@ TextureImporter:
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape:
-      - - {x: -8, y: -24}
-        - {x: -8, y: 24}
+      - - {x: -24, y: 8}
+        - {x: -24, y: 24}
         - {x: 24, y: 24}
-        - {x: 24, y: -24}
+        - {x: 24, y: 8}
       tessellationDetail: 0
       bones: []
       spriteID: 00c7338012d29fa48bc9213b65ab473a
@@ -229,7 +233,7 @@ TextureImporter:
       name: ProjectFWallsandFloor_5
       rect:
         serializedVersion: 2
-        x: 96
+        x: 48
         y: 96
         width: 48
         height: 48
@@ -238,11 +242,9 @@ TextureImporter:
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape:
-      - - {x: 8, y: -24}
-        - {x: 8, y: 8}
-        - {x: -24, y: 8}
-        - {x: -24, y: 24}
-        - {x: 24, y: 24}
+      - - {x: 24, y: 24}
+        - {x: -8, y: 24}
+        - {x: -8, y: -24}
         - {x: 24, y: -24}
       tessellationDetail: 0
       bones: []
@@ -256,7 +258,7 @@ TextureImporter:
       name: ProjectFWallsandFloor_6
       rect:
         serializedVersion: 2
-        x: 144
+        x: 96
         y: 96
         width: 48
         height: 48
@@ -265,10 +267,13 @@ TextureImporter:
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape:
-      - - {x: -24, y: -24}
+      - - {x: 8, y: 8}
+        - {x: 8, y: -24}
+        - {x: 24, y: -24}
+        - {x: 24, y: 24}
         - {x: -24, y: 24}
-        - {x: -10, y: 24}
-        - {x: -10, y: -24}
+        - {x: -24, y: 24}
+        - {x: -24, y: 8}
       tessellationDetail: 0
       bones: []
       spriteID: 46c26dd0dae21cc4d979ffe04fb5c211
@@ -281,15 +286,19 @@ TextureImporter:
       name: ProjectFWallsandFloor_8
       rect:
         serializedVersion: 2
-        x: 240
+        x: 192
         y: 96
         width: 48
         height: 48
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 0, y: 32, z: 0, w: 0}
       outline: []
-      physicsShape: []
+      physicsShape:
+      - - {x: -24, y: 8}
+        - {x: -24, y: 24}
+        - {x: 24, y: 24}
+        - {x: 24, y: 8}
       tessellationDetail: 0
       bones: []
       spriteID: 9720c4fc9c032d74fa404d2b244ec162
@@ -302,8 +311,8 @@ TextureImporter:
       name: ProjectFWallsandFloor_9
       rect:
         serializedVersion: 2
-        x: 0
-        y: 48
+        x: 240
+        y: 96
         width: 48
         height: 48
       alignment: 0
@@ -327,7 +336,7 @@ TextureImporter:
       name: ProjectFWallsandFloor_10
       rect:
         serializedVersion: 2
-        x: 48
+        x: 0
         y: 48
         width: 48
         height: 48
@@ -335,7 +344,11 @@ TextureImporter:
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape: []
+      physicsShape:
+      - - {x: -24, y: 10}
+        - {x: -24, y: 24}
+        - {x: -10, y: 24}
+        - {x: -10, y: 10}
       tessellationDetail: 0
       bones: []
       spriteID: f1cd26b2520d7174b8abd42f00a73035
@@ -348,7 +361,7 @@ TextureImporter:
       name: ProjectFWallsandFloor_11
       rect:
         serializedVersion: 2
-        x: 96
+        x: 48
         y: 48
         width: 48
         height: 48
@@ -356,7 +369,11 @@ TextureImporter:
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape: []
+      physicsShape:
+      - - {x: -24, y: -24}
+        - {x: -24, y: 24}
+        - {x: 24, y: 24}
+        - {x: 24, y: -24}
       tessellationDetail: 0
       bones: []
       spriteID: 5a94e7f1ef3c4cf4faf4b9ae40b7d3a6
@@ -367,6 +384,31 @@ TextureImporter:
       weights: []
     - serializedVersion: 2
       name: ProjectFWallsandFloor_12
+      rect:
+        serializedVersion: 2
+        x: 96
+        y: 48
+        width: 48
+        height: 48
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape:
+      - - {x: 24, y: -24}
+        - {x: 24, y: 24}
+        - {x: 8, y: 24}
+        - {x: 8, y: -24}
+      tessellationDetail: 0
+      bones: []
+      spriteID: f764d517f84d0eb49b175e2e09d886b7
+      internalID: -740072607
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ProjectFWallsandFloor_13
       rect:
         serializedVersion: 2
         x: 144
@@ -384,27 +426,6 @@ TextureImporter:
         - {x: -10, y: -24}
       tessellationDetail: 0
       bones: []
-      spriteID: f764d517f84d0eb49b175e2e09d886b7
-      internalID: -740072607
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: ProjectFWallsandFloor_13
-      rect:
-        serializedVersion: 2
-        x: 192
-        y: 48
-        width: 48
-        height: 48
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
       spriteID: e11ea4e936fc91440980f5ffab2fd1e9
       internalID: -1443297337
       vertices: []
@@ -415,7 +436,7 @@ TextureImporter:
       name: ProjectFWallsandFloor_14
       rect:
         serializedVersion: 2
-        x: 240
+        x: 192
         y: 48
         width: 48
         height: 48
@@ -436,8 +457,8 @@ TextureImporter:
       name: ProjectFWallsandFloor_15
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
+        x: 240
+        y: 48
         width: 48
         height: 48
       alignment: 0
@@ -461,7 +482,7 @@ TextureImporter:
       name: ProjectFWallsandFloor_16
       rect:
         serializedVersion: 2
-        x: 48
+        x: 0
         y: 0
         width: 48
         height: 48
@@ -470,10 +491,10 @@ TextureImporter:
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape:
-      - - {x: -24, y: -24}
-        - {x: 24, y: -24}
-        - {x: 24, y: -8}
-        - {x: -24, y: -8}
+      - - {x: -24, y: 10}
+        - {x: 24, y: 10}
+        - {x: 24, y: 24}
+        - {x: -24, y: 24}
       tessellationDetail: 0
       bones: []
       spriteID: 2bda338a5b88fea47a92d4c7b68f8151
@@ -484,6 +505,31 @@ TextureImporter:
       weights: []
     - serializedVersion: 2
       name: ProjectFWallsandFloor_17
+      rect:
+        serializedVersion: 2
+        x: 48
+        y: 0
+        width: 48
+        height: 48
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape:
+      - - {x: -24, y: -24}
+        - {x: -24, y: -8}
+        - {x: 24, y: -8}
+        - {x: 24, y: -24}
+      tessellationDetail: 0
+      bones: []
+      spriteID: ecf3330f3c04f7042b70d44b408341ea
+      internalID: -1835311709
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ProjectFWallsandFloor_18
       rect:
         serializedVersion: 2
         x: 96
@@ -503,14 +549,14 @@ TextureImporter:
         - {x: 24, y: -24}
       tessellationDetail: 0
       bones: []
-      spriteID: ecf3330f3c04f7042b70d44b408341ea
-      internalID: -1835311709
+      spriteID: a10b0453934cb3a42887ed81e87312af
+      internalID: 2046462343
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ProjectFWallsandFloor_18
+      name: ProjectFWallsandFloor_19
       rect:
         serializedVersion: 2
         x: 192
@@ -524,14 +570,39 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: a10b0453934cb3a42887ed81e87312af
-      internalID: 2046462343
+      spriteID: 01680eea90026664a8f0a9b9d37b9496
+      internalID: 186450814
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ProjectFWallsandFloor_19
+      name: ProjectFWallsandFloor_7
+      rect:
+        serializedVersion: 2
+        x: 144
+        y: 96
+        width: 48
+        height: 48
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 34, w: 0}
+      outline: []
+      physicsShape:
+      - - {x: -24, y: -24}
+        - {x: -24, y: 24}
+        - {x: -10, y: 24}
+        - {x: -10, y: -24}
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5ed1fdd3871196949875373b18a1b6a0
+      internalID: -864480780
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ProjectFWallsandFloor_20
       rect:
         serializedVersion: 2
         x: 240
@@ -545,8 +616,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 01680eea90026664a8f0a9b9d37b9496
-      internalID: 186450814
+      spriteID: 2a1f99cfe275ba541abfadad4480d441
+      internalID: -1017353051
       vertices: []
       indices: 
       edges: []
@@ -575,6 +646,7 @@ TextureImporter:
       ProjectFWallsandFloor_18: 2046462343
       ProjectFWallsandFloor_19: 186450814
       ProjectFWallsandFloor_2: 739678600
+      ProjectFWallsandFloor_20: -1017353051
       ProjectFWallsandFloor_3: -1615348653
       ProjectFWallsandFloor_4: -1573435065
       ProjectFWallsandFloor_5: 188638496

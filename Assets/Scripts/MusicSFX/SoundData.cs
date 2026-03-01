@@ -6,5 +6,6 @@ using UnityEngine;
 public class SoundData : ScriptableObject
 {
     public AudioClip clip;
+    public int id;
     [Range(0f, 1f)] public float volume = 1f;
 }

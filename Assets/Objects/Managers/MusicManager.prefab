@@ -50,6 +50,10 @@ MonoBehaviour:
   sfxSource: {fileID: 6912633342803476870}
   musicVolume: 1
   sfxVolume: 1
+  soundLibrary:
+  - {fileID: 11400000, guid: 782334a60edae664da11e7385d86c9dd, type: 2}
+  - {fileID: 11400000, guid: 3063f537e0dbcb14e8bca810c3c3a905, type: 2}
+  - {fileID: 11400000, guid: 70e06e0e402d20944be761fa278cd2b8, type: 2}
 --- !u!82 &6912633342803476921
 AudioSource:
   m_ObjectHideFlags: 0

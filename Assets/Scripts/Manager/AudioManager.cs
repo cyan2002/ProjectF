@@ -1,6 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+
+//The audio manager works by having two audio sources on the object and since it's a singleton, it can be accessed anywhere in the scene.
+//Just use the methods in this script to play any audio clips.
+
 public class AudioManager : MonoBehaviour
 {
     public static AudioManager Instance;
@@ -16,12 +20,21 @@ public class AudioManager : MonoBehaviour
     private const string MUSIC_KEY = "MusicVolume";
     private const string SFX_KEY = "SFXVolume";
 
+    [SerializeField] private List<SoundData> soundLibrary;
+    private Dictionary<int, SoundData> soundDictionary;
+
     private void Awake()
     {
         if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
             return;
+        }
+
+        soundDictionary = new Dictionary<int, SoundData>();
+        foreach (var entry in soundLibrary)
+        {
+            soundDictionary[entry.id] = entry;
         }
 
         Instance = this;
@@ -45,9 +58,17 @@ public class AudioManager : MonoBehaviour
         musicSource.Play();
     }
 
-    public void PlaySFX(SoundData clip)
+    //method for playing SFX
+    public void PlaySFX(int idNum)
     {
-        sfxSource.PlayOneShot(clip.clip, sfxVolume);
+        if (soundDictionary.TryGetValue(idNum, out SoundData data))
+        {
+            sfxSource.PlayOneShot(data.clip, sfxVolume);
+        }
+        else
+        {
+            Debug.LogWarning($"Sound ID {idNum} not found in library!");
+        }
     }
 
     private void LoadVolumes()
@@ -81,6 +102,18 @@ public class AudioManager : MonoBehaviour
         sfxVolume = volume;
         sfxSource.volume = volume;
         PlayerPrefs.SetFloat(SFX_KEY, volume);
+    }
+
+    public void PauseAudio()
+    {
+        sfxSource.Pause();
+        musicSource.Pause();
+    }
+
+    public void ResumeAudio()
+    {
+        sfxSource.UnPause();
+        musicSource.UnPause();
     }
 }
 

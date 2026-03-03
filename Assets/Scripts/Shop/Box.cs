@@ -90,4 +90,16 @@ public class Box : MonoBehaviour
             close = false;
         }
     }
+
+    void OnEnable()
+    {
+        if (ShopController.Instance != null)
+            ShopController.Instance.ShippingBox = this;
+    }
+
+    void OnDisable()
+    {
+        if (ShopController.Instance != null)
+            ShopController.Instance.ShippingBox = null;
+    }
 }

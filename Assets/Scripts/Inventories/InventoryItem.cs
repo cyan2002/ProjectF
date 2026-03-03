@@ -50,10 +50,10 @@ public class InventoryItem : MonoBehaviour
 
         GetComponent<Image>().sprite = itemData.itemIcon;
 
-        float scale = GetComponentInParent<CanvasScaler>().scaleFactor;
+        //float scale = GetComponentInParent<CanvasScaler>().scaleFactor;
 
-        float tw = ItemGrid.tileSizeWidth * scale;
-        float th = ItemGrid.tileSizeHeight * scale;
+        float tw = ItemGrid.tileSizeWidth; //* scale;
+        float th = ItemGrid.tileSizeHeight; //* scale;
 
         // Use WIDTH and HEIGHT so rotation is accounted for
         Vector2 size = new Vector2(

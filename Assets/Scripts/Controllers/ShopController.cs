@@ -7,33 +7,26 @@ public class ShopController : MonoBehaviour
     public static ShopController Instance { get; private set; }
     public InventoryItem itemPrefab;
 
-    public GameObject ShopCanvas;
-
-    public Box ShippingBox;
-
-    private bool ShopActive = false;
+    public Box ShippingBox; //find in scene
 
     private void Awake()
     {
         Instance = this;
-        ShopCanvas.gameObject.SetActive(false);
 
         //Event from PlayerInput
-        PlayerInput.HandleB += ShopToggle;
         PlayerInput.HandleE += PlaceInInventory;
-    }
 
-    void ShopToggle(){
-        //open inventory
-        if (!ShopActive)
+        Box[] all = FindObjectsByType<Box>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        Box found = System.Array.Find(all, t => t.name == "Box");
+
+        if (found != null)
         {
-            ShopCanvas.gameObject.SetActive(true);
-            ShopActive = true;
+            ShippingBox = found;
         }
-        else if(ShopActive)
+        else
         {
-            ShopCanvas.gameObject.SetActive(false);
-            ShopActive = false;
+            //will play in the first scene because there is no box
+            //Debug.Log("couldn't find box!");
         }
     }
 

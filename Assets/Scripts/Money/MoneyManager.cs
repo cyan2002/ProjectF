@@ -36,7 +36,6 @@ public class MoneyManager : MonoBehaviour
             return;
         }
         Instance = this;
-        DontDestroyOnLoad(gameObject);
     }
 
     public void AddMoney(int amount)

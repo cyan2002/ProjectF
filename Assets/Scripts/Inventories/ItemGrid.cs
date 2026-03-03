@@ -65,13 +65,6 @@ public class ItemGrid : MonoBehaviour
         {
             Debug.LogError($"No CanvasScaler found in parents of {name}");
         }
-        
-        uiCamera = Camera.main;
-
-        if (uiCamera == null)
-        {
-            Debug.LogError("Main Camera not found! Is it tagged 'MainCamera'?");
-        }
 
         rectTransform = GetComponent<RectTransform>();
         Init(gridSizeWidth, gridSizeHeight);

@@ -33,6 +33,7 @@ public class ShelfInventoryToggle : MonoBehaviour
             controlledGrid.SetActive(false);
             InventoryOpen = false;
         }
+        
     }
 
     private void OnTriggerEnter2D(Collider2D collision)

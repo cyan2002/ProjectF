@@ -2,6 +2,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 //attaches to that item or player with that inventory
 public class InventoryController : MonoBehaviour
@@ -9,6 +11,7 @@ public class InventoryController : MonoBehaviour
     public static InventoryController Instance { get; private set; }
     //[HideInInspector]
     public ItemGrid selectedItemGrid;
+    //find in scene
     public Transform itemsLayerTransform;
 
     //whenever you make a call to selectedItemGrid it comes with functions attached
@@ -31,19 +34,25 @@ public class InventoryController : MonoBehaviour
 
     [SerializeField] List<ItemData> items;
     [SerializeField] GameObject itemPrefab;
-    [SerializeField] Transform canvasTransform;
+    //will need to change depending on which canvas you want to access
+    //canvasTransform below is player canvas (player inventory)
+    //shop canvas can be accessed in the shop scene via shop manager
+    [SerializeField] public RectTransform canvasTransform; //gets set in the shop manager
 
     //for toggling the inventory off and on
-    [SerializeField] GameObject inventoryObject;
+    [SerializeField] GameObject inventoryObject; //find in scene
     //used for shop purchases, since the mouse makes selectedItemGrid null when not hovering over, adding items would be impossible since the grid is null
     //this varaible would bypass that and allow item entry even when inventory is not selected.
-    [SerializeField] ItemGrid selectedGrid;
+    [SerializeField] ItemGrid selectedGrid; //find in scene
 
     InventoryHighlight inventoryHighlight;
 
     //statement of whether the inventory is open or not
     private bool InventoryOpen = false;
     private bool rotated = false;
+
+    //for dragging items between inventories
+    public Canvas dragCanvas; // assign Canvas_Drag in Inspector
 
     private void Awake()
     {
@@ -53,10 +62,18 @@ public class InventoryController : MonoBehaviour
         PlayerInput.HandleR += RotateItem;
         PlayerInput.HandleLeftClick += LeftClick;
         PlayerInput.HandleShiftClick += ShiftClick;
-        PlayerInput.HandleJ += TestJ;
-        PlayerInput.HandleK += TestK;
+        //testing purpose
+        //PlayerInput.HandleJ += TestJ;
+        //PlayerInput.HandleK += TestK;
     }
 
+    private void Start()
+    {
+        if (ShopManager.Instance != null)
+        {
+            canvasTransform = ShopManager.Instance.shopInventoryCanvas.GetComponent<RectTransform>();
+        }
+    }
 
     //checks for user input
     //updates item dragger and highlighter
@@ -74,25 +91,25 @@ public class InventoryController : MonoBehaviour
         }
     }
 
-    private void TestJ()
-    {
-        //creating a random item that is assigned to the mouse position, can be placed into an inventory after
+    //private void TestJ()
+    //{
+    //creating a random item that is assigned to the mouse position, can be placed into an inventory after
         //USED FOR TESTING
         //only create if the item selected is null
-        if (selectedItem == null)
-        {
-            CreateRandomItem();
-        }
-    }
+    //    if (selectedItem == null)
+     //   {
+    //        CreateRandomItem();
+     //   }
+  //  }
 
-    private void TestK()
-    {
+    //private void TestK()
+   // {
         //only insert if not holding another item
-        if (selectedItem == null)
-        {
-            InsertRandomItem();
-        }
-    }
+     //   if (selectedItem == null)
+     //   {
+          //  InsertRandomItem();
+     //   }
+    //}
 
     private void LeftClick()
     {
@@ -187,16 +204,16 @@ public class InventoryController : MonoBehaviour
     }
 
     //adds a random Item to the inventory, placing it into the next available spot - USE FOR PICKING UP PACKAGES OF SUPPLIES IN GAME
-    private void InsertRandomItem()
-    {
+    //private void InsertRandomItem()
+    //{
         //this gets caught if mouse is not over the inventory, for inserting random item I want this to run either way...
-        if (selectedItemGrid == null) { return; }
+    //    if (selectedItemGrid == null) { return; }
 
-        CreateRandomItem();
-        InventoryItem itemToInsert = selectedItem;
-        selectedItem = null;
-        InsertItem(itemToInsert);
-    }
+    //    CreateRandomItem();
+    //    InventoryItem itemToInsert = selectedItem;
+     //   selectedItem = null;
+    //    InsertItem(itemToInsert);
+    //}
 
     //inserts an item into the inventory
     //USE THIS FUNCTION TO ADD ITEMS AFTER PURCHASE
@@ -217,18 +234,18 @@ public class InventoryController : MonoBehaviour
 
     //creates a random item from the list of items given
     //for testing purposes
-    private void CreateRandomItem()
-    {
-        InventoryItem inventoryItem = Instantiate(itemPrefab).GetComponent<InventoryItem>();
-        selectedItem = inventoryItem;
+    //private void CreateRandomItem()
+    //{
+    //    InventoryItem inventoryItem = Instantiate(itemPrefab).GetComponent<InventoryItem>();
+    //    selectedItem = inventoryItem;
 
-        rectTransform = inventoryItem.GetComponent<RectTransform>();
-        rectTransform.SetParent(canvasTransform);
-        rectTransform.SetAsLastSibling();
+    //    rectTransform = inventoryItem.GetComponent<RectTransform>();
+    //    rectTransform.SetParent(canvasTransform);
+    //    rectTransform.SetAsLastSibling();
 
-        int selectedItemID = UnityEngine.Random.Range(0, items.Count);
-        inventoryItem.Set(items[selectedItemID]);
-    }
+   //     int selectedItemID = UnityEngine.Random.Range(0, items.Count);
+   //     inventoryItem.Set(items[selectedItemID]);
+  //  }
 
     //same as CreateRandomItem; however, it's not random, so it's just create the item given the item
     public bool purchaseItem(ItemData item)
@@ -367,8 +384,6 @@ public class InventoryController : MonoBehaviour
         Vector2Int? pos = GetTileGridPosition();
         if (pos == null) return;
 
-        Debug.Log(pos);
-
         Vector2Int tileGridPosition = pos.Value;
 
         //Debug.Log(pos);
@@ -412,8 +427,7 @@ public class InventoryController : MonoBehaviour
             //to avoid item from being hidden
             rectTransform.SetParent(itemsLayerTransform, false);
             rectTransform.SetAsLastSibling();
-        }
-        
+        }  
     }
 
     //rotates the item is R is pressed, only rotates if the selected item is not null (there is an item to rotate)
@@ -425,5 +439,17 @@ public class InventoryController : MonoBehaviour
 
         //simple boolean to allow the highlighter to be refreshed when the item is rotated.
         rotated = true;
+    }
+
+    void StartDrag(GameObject item)
+    {
+        // Move item to drag canvas so it renders on top
+        item.transform.SetParent(dragCanvas.transform);
+    }
+
+    void EndDrag(GameObject item, Transform targetSlot)
+    {
+        // Move item to its destination canvas
+        item.transform.SetParent(targetSlot);
     }
 }

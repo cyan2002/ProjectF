@@ -103,17 +103,37 @@
 //also noises are Data structures (scriptable objects) and therefore will need to be passed as such.
 
 // =======================
+// === SCENE CHANGES ===
+// =======================
+
+//I've added a master scene that contains objects that will be used throughout the whole game.
+//current list of things:
+//Scene Loader
+//Player (with dependables, see below)
+//managers (Money and Music)
+//Global lights (as opposed to scene lights which I'll add directly by scene)
+//Player canvas (inventory and highlighter)
+//Dragging canvas (for dragging inventory things to and from other inventories - ensuring items are always above the canvas and we can see them)
+
+//player related stuff goes onto the Master Scene
+//objects that are connected between player (dependenables) in the shop are assigned automatically. If nothing can be found null is applied and nothing happens.
+//also, since this is a singleton, when objects are awake they can access the variables here and assign them. For instance, the shop canvas is assigned via the shop manager in the shop scene when it is awake
+//the shop manager has the shop canvas because it lives in the same scene and I set it to that via drag and drop.
+//for now the Player had all the dependables and they've been taken care of individually. It wasn't too much of a mess actually
+
+
+
+// =======================
 // === TO DO NEXT ===
 // =======================
 
 //create saving option
 
-//add fade in and fade out for scene change and music
+//add fade in and fade out for scene change, additional of scene changes all together
 
 // =======================
 // === NOTE FOR NEXT VISIT ===
 // =======================
-
 
 
 

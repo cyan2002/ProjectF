@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 148113974393787615}
   - component: {fileID: 197369552941309537}
+  - component: {fileID: 8243373813828707252}
   m_Layer: 0
   m_Name: AudioBoot
   m_TagString: Untagged
@@ -45,3 +46,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   audioManagerPrefab: {fileID: 6912633342803476920, guid: d3aa007b8e8520a48be7d88375e9f696, type: 3}
+--- !u!114 &8243373813828707252
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 44925722722026738}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 65c3883c3d3a8d84c83fbd74fe88a141, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

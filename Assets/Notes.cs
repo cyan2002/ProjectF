@@ -121,15 +121,22 @@
 //the shop manager has the shop canvas because it lives in the same scene and I set it to that via drag and drop.
 //for now the Player had all the dependables and they've been taken care of individually. It wasn't too much of a mess actually
 
+//I mainly used chatGPT for the purposes of play testing the scenes. There are two main scripts that deal with heavy scene loading and etc.
+//"PlayFromMaster.cs" contains a boolean that you must change in order to allow for playtesting.
+//When I refer to play testing I mean loading that master scene before the current scene loads so that the player and time and etc shows up.
+//true is playtesting, false is real deal.
+//"sceneloader.cs" is a bit more complicated and I'll dive into at some point, but the gist is that it helps load past masters and handles fade in and fade out transitions. 
+//other scripts such as SceneTransition actually hold an obect in the scene and use the scene loader to change scenes with fade in and fade out.
+
 
 
 // =======================
 // === TO DO NEXT ===
 // =======================
 
-//create saving option
+//finish making street and home sprites
 
-//add fade in and fade out for scene change, additional of scene changes all together
+//once transitions are done, figure out saving
 
 // =======================
 // === NOTE FOR NEXT VISIT ===

@@ -9,6 +9,15 @@ EditorBuildSettings:
     path: Assets/Scenes/TitleScreen.unity
     guid: 30dc95df7d8f740f1baef49fd34ac0ad
   - enabled: 1
+    path: Assets/Scenes/Master.unity
+    guid: 5430ea8d74491b24f94a58827a68189a
+  - enabled: 1
     path: Assets/Scenes/Shop.unity
     guid: 2cda990e2423bbf4892e6590ba056729
+  - enabled: 1
+    path: Assets/Scenes/Street.unity
+    guid: d35fc190686532349a6ba48bfaeb9388
+  - enabled: 1
+    path: Assets/Scenes/PlayerHouse.unity
+    guid: 320e73305a41a32409fe88b384673791
   m_configObjects: {}

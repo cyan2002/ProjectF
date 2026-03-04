@@ -17,14 +17,20 @@ public class SceneLoader : MonoBehaviour
         Instance = this;
     }
 
+    //there's some fancy code here that basically says if it can't find a file in the edtior preferences then go with the default
+    //the code is to help load the scenes directly rather than having to play from the title screen during testing since the master scene must load before any other scene is played.
     void Start()
     {
         if (SceneManager.sceneCount <= 1)
         {
-            string devScene = PlayerPrefs.GetString("DevStartScene", "");
-            string sceneToLoad = !string.IsNullOrEmpty(devScene)
-                ? System.IO.Path.GetFileNameWithoutExtension(devScene)
-                : startingScene;
+            string sceneToLoad = startingScene; // default
+
+        #if UNITY_EDITOR
+            string devScene = UnityEditor.EditorPrefs.GetString("DevStartScene", "");
+            if (!string.IsNullOrEmpty(devScene))
+                sceneToLoad = System.IO.Path.GetFileNameWithoutExtension(devScene);
+        #endif
+
             StartCoroutine(LoadStartingScene(sceneToLoad));
         }
     }

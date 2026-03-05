@@ -8,9 +8,14 @@ public class ShelfInventoryToggle : MonoBehaviour
     private bool InventoryOpen = false;
     public GameObject controlledGrid;
 
-    private void Start()
+    private void OnEnable()
     {
         PlayerInput.HandleE += ToggleShelf;
+    }
+
+    private void OnDisable()
+    {
+        PlayerInput.HandleE -= ToggleShelf;
     }
 
     public ItemGrid ReturnGrid()

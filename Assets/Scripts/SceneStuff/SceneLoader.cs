@@ -9,37 +9,36 @@ using UnityEngine.SceneManagement;
 public class SceneLoader : MonoBehaviour
 {
     public static SceneLoader Instance;
-    [SerializeField] private string startingScene = "Shop";
+    [SerializeField] private string startingScene;
     public GameObject fadePanel;
+    public bool isTransitioning = false; // prevent overlapping transitions
 
     void Awake()
     {
         Instance = this;
     }
 
-    //there's some fancy code here that basically says if it can't find a file in the edtior preferences then go with the default
-    //the code is to help load the scenes directly rather than having to play from the title screen during testing since the master scene must load before any other scene is played.
     void Start()
     {
         if (SceneManager.sceneCount <= 1)
         {
-            string sceneToLoad = startingScene; // default
+            string sceneToLoad = startingScene;
 
-        #if UNITY_EDITOR
+#if UNITY_EDITOR
             string devScene = UnityEditor.EditorPrefs.GetString("DevStartScene", "");
             if (!string.IsNullOrEmpty(devScene))
                 sceneToLoad = System.IO.Path.GetFileNameWithoutExtension(devScene);
-        #endif
-
+#endif
             StartCoroutine(LoadStartingScene(sceneToLoad));
         }
     }
 
-    // Initial load
     IEnumerator LoadStartingScene(string sceneName)
     {
         fadePanel.SetActive(true);
         yield return SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
+        // wait an extra frame for scene objects to initialize
+        yield return null;
         CanvasGroup cg = fadePanel.GetComponent<CanvasGroup>();
         float timer = 0f;
         while (timer < 1f)
@@ -51,9 +50,16 @@ public class SceneLoader : MonoBehaviour
         fadePanel.SetActive(false);
     }
 
-    // Scene transitions
     public void TransitionToScene(string loadScene, string unloadScene, string spawnID)
     {
+        if (isTransitioning) return;
+        isTransitioning = true;
+
+        // Trim any accidental whitespace
+        loadScene = loadScene.Trim();
+        unloadScene = unloadScene.Trim();
+        spawnID = spawnID.Trim();
+
         StartCoroutine(TransitionCoroutine(loadScene, unloadScene, spawnID));
     }
 
@@ -69,17 +75,35 @@ public class SceneLoader : MonoBehaviour
             yield return null;
         }
 
+        // Unload old scene
+        Scene sceneToUnloadRef = default;
+        for (int i = 0; i < SceneManager.sceneCount; i++)
+        {   
+            if (SceneManager.GetSceneAt(i).name == unloadScene)
+            {
+                sceneToUnloadRef = SceneManager.GetSceneAt(i);
+                break;
+            }
+        }
+
+        if (sceneToUnloadRef.IsValid() && sceneToUnloadRef.isLoaded)
+        {
+            yield return SceneManager.UnloadSceneAsync(sceneToUnloadRef);
+            yield return null;
+        }
+        // silently skip if already unloaded
+
         // Load new scene
         yield return SceneManager.LoadSceneAsync(loadScene, LoadSceneMode.Additive);
+        yield return null;
 
         // Move player to spawn point
         SpawnPoint[] spawnPoints = FindObjectsByType<SpawnPoint>(FindObjectsSortMode.None);
         SpawnPoint spawn = System.Array.Find(spawnPoints, s => s.spawnID == spawnID);
         if (spawn != null)
             GameObject.FindWithTag("Player").transform.position = spawn.transform.position;
-
-        // Unload old scene
-        yield return SceneManager.UnloadSceneAsync(unloadScene);
+        else
+            Debug.LogWarning("SpawnPoint not found: " + spawnID);
 
         // Fade in
         while (cg.alpha > 0f)
@@ -87,11 +111,8 @@ public class SceneLoader : MonoBehaviour
             cg.alpha -= Time.deltaTime;
             yield return null;
         }
-        fadePanel.SetActive(false);
-    }
-}
 
-public class SpawnPoint : MonoBehaviour
-{
-    public string spawnID; // e.g. "from_shop", "from_house"
+        fadePanel.SetActive(false);
+        isTransitioning = false;
+    }
 }

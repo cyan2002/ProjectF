@@ -128,15 +128,20 @@
 //"sceneloader.cs" is a bit more complicated and I'll dive into at some point, but the gist is that it helps load past masters and handles fade in and fade out transitions. 
 //other scripts such as SceneTransition actually hold an obect in the scene and use the scene loader to change scenes with fade in and fade out.
 
+//there were some issues with scene loading, but should be fixed. Turns out you really show enable or disable input for objects or else you'll get multiple readings across scenes.
+
 
 
 // =======================
 // === TO DO NEXT ===
 // =======================
 
-//finish making street and home sprites
+//add a time component
+//-goal
+//-time affecting light (add lighting)
+//-time affecting NPC, shop opening and closing.
 
-//once transitions are done, figure out saving
+//save option
 
 // =======================
 // === NOTE FOR NEXT VISIT ===

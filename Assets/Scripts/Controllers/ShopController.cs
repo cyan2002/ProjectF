@@ -41,7 +41,11 @@ public class ShopController : MonoBehaviour
     //}
 
     private void PlaceInInventory(){
-        ShippingBox.DumpIntoPlayer();
+        if(ShippingBox != null)
+        {
+            ShippingBox.DumpIntoPlayer();
+        }
+        return;
     }
 
     public void AddToBox(ItemData ItemsToAdd)

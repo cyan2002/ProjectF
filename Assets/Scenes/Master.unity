@@ -2093,7 +2093,7 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 0.32, y: 0.32}
+    oldSize: {x: 0.6666667, y: 0.6666667}
     newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
@@ -2283,8 +2283,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1067209401}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -2.99, y: 1.24, z: 0}
-  m_LocalScale: {x: 2, y: 2, z: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1388403649}
@@ -2745,7 +2745,7 @@ GameObject:
   - component: {fileID: 1261398601}
   - component: {fileID: 1261398600}
   m_Layer: 5
-  m_Name: PlayerCanvas
+  m_Name: GeneralCanvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3997,6 +3997,7 @@ GameObject:
   - component: {fileID: 1777571692}
   - component: {fileID: 1777571691}
   - component: {fileID: 1777571690}
+  - component: {fileID: 1777571693}
   m_Layer: 5
   m_Name: Clock
   m_TagString: Untagged
@@ -4036,7 +4037,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f0e2fef00674f074387eabc96b7f7700, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dayLengthInMinutes: 10
+  dayLengthInMinutes: 0.5
   startHour: 8
   timeOfDay: 0
   dayNumber: 1
@@ -4138,6 +4139,109 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1777571688}
   m_CullTransparentMesh: 1
+--- !u!114 &1777571693
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1777571688}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 755f62d13dad475489537971be63b92b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  clock: {fileID: 1777571690}
+  globalLight: {fileID: 1696020387}
+  intensityCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0.30729675
+      inSlope: 0.03277552
+      outSlope: 0.03277552
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 8.539707
+      value: 0.5871901
+      inSlope: 0.26098794
+      outSlope: 0.26098794
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 9.438202
+      value: 1.026734
+      inSlope: 0.25188634
+      outSlope: 0.25188634
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 15.439564
+      value: 1.114188
+      inSlope: -0.10401933
+      outSlope: -0.10401933
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 18.9951
+      value: 0.32268643
+      inSlope: -0.11598005
+      outSlope: -0.11598005
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 24.021042
+      value: 0.27569845
+      inSlope: -0.00934909
+      outSlope: -0.00934909
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  lightColorGradient:
+    serializedVersion: 2
+    key0: {r: 1, g: 1, b: 1, a: 1}
+    key1: {r: 1, g: 1, b: 1, a: 1}
+    key2: {r: 0, g: 0, b: 0, a: 0}
+    key3: {r: 0, g: 0, b: 0, a: 0}
+    key4: {r: 0, g: 0, b: 0, a: 0}
+    key5: {r: 0, g: 0, b: 0, a: 0}
+    key6: {r: 0, g: 0, b: 0, a: 0}
+    key7: {r: 0, g: 0, b: 0, a: 0}
+    ctime0: 0
+    ctime1: 65535
+    ctime2: 0
+    ctime3: 0
+    ctime4: 0
+    ctime5: 0
+    ctime6: 0
+    ctime7: 0
+    atime0: 0
+    atime1: 65535
+    atime2: 0
+    atime3: 0
+    atime4: 0
+    atime5: 0
+    atime6: 0
+    atime7: 0
+    m_Mode: 0
+    m_NumColorKeys: 2
+    m_NumAlphaKeys: 2
 --- !u!1 &1983168429
 GameObject:
   m_ObjectHideFlags: 0
@@ -4264,6 +4368,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   startingScene: Shop
   fadePanel: {fileID: 634955758}
+  isTransitioning: 0
 --- !u!1 &2073562968
 GameObject:
   m_ObjectHideFlags: 0

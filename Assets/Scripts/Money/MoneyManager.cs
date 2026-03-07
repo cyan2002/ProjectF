@@ -22,6 +22,7 @@ public class MoneyManager : MonoBehaviour
     //Write-only inside the class
     //Prevents cheating / bugs
     public int Money { get; private set; }
+    public int MoneyEarned { get; private set; }
 
     public event Action<int> OnMoneyChanged;
 
@@ -29,7 +30,8 @@ public class MoneyManager : MonoBehaviour
 
     private void Awake()
     {
-        Money = 5000;
+        Money = 1000;
+        MoneyEarned = 0;
         if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
@@ -41,6 +43,10 @@ public class MoneyManager : MonoBehaviour
     public void AddMoney(int amount)
     {
         Money += amount;
+        //temp goal
+        MoneyEarned += amount;
+        GameManager.Instance.UpdateGoalUI();
+
         OnMoneyChanged?.Invoke(Money);
         addedMoney?.Invoke();
     }

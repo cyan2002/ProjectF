@@ -3327,6 +3327,7 @@ MonoBehaviour:
   parentObject: {fileID: 1613288931}
   minSpawnTime: 15
   maxSpawnTime: 20
+  currentOpen: 0
 --- !u!1001 &281407575
 PrefabInstance:
   m_ObjectHideFlags: 0

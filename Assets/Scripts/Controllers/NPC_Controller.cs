@@ -39,6 +39,8 @@ public class NPC_Controller : MonoBehaviour
 
     public float speed = 1f;
 
+    private Vector2 desiredVelocity = Vector2.zero;
+
     //different states of the NPCs, spawn in as shopping
     public enum NPCState
     {
@@ -123,6 +125,11 @@ public class NPC_Controller : MonoBehaviour
         HandleRandomPause();
     }
 
+    private void FixedUpdate()
+    {
+        rb.velocity = desiredVelocity; // ✅ physics applied here
+    }
+
     //called in shopline when E is pressed
     public void MoveInLineStateChange()
     {
@@ -197,7 +204,8 @@ public class NPC_Controller : MonoBehaviour
         }
     }
 
-    void LeaveAbruptly()
+    //when shop closes this plays - items not purchased
+    public void LeaveAbruptly()
     {
         AudioManager.Instance.PlaySFX(3);
         ChangeState(NPCState.LeavingStore);
@@ -245,7 +253,7 @@ public class NPC_Controller : MonoBehaviour
         isPaused = true;
         savedState = currentState;
         currentState = NPCState.Idle;
-        rb.velocity = Vector2.zero;  // stop movement
+        desiredVelocity = Vector2.zero; //stop movement
         pauseTimer = 0f;
     }
 
@@ -302,7 +310,7 @@ public class NPC_Controller : MonoBehaviour
                 direction = new Vector2(Mathf.Sign(direction.x), 0);
             else
                 direction = new Vector2(0, Mathf.Sign(direction.y));
-            rb.velocity = direction * speed;
+            desiredVelocity = direction * speed;
 
             if (Vector2.Distance(rb.position, path[x].transform.position) < 0.05f)
             {
@@ -313,7 +321,7 @@ public class NPC_Controller : MonoBehaviour
         else
         {
             Node[] nodes = FindObjectsOfType<Node>();
-            rb.velocity = Vector2.zero;
+            desiredVelocity = Vector2.zero;
 
             Node destination = null;
             destination = nodes[UnityEngine.Random.Range(0, nodes.Length)];
@@ -348,7 +356,7 @@ public class NPC_Controller : MonoBehaviour
                 direction = new Vector2(Mathf.Sign(direction.x), 0);
             else
                 direction = new Vector2(0, Mathf.Sign(direction.y));
-            rb.velocity = direction * speed;
+            desiredVelocity = direction * speed;
 
             if (Vector2.Distance(rb.position, path[x].transform.position) < 0.05f)
             {
@@ -358,7 +366,7 @@ public class NPC_Controller : MonoBehaviour
         }
         else
         {
-            rb.velocity = Vector2.zero;
+            desiredVelocity = Vector2.zero;
             OnReachedTarget();
         }
     }

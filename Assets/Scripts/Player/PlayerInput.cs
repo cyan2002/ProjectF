@@ -6,10 +6,11 @@ using System;
 public class PlayerInput : MonoBehaviour
 {
     public static PlayerInput Instance { get; private set; }
-    
+
     //both varaibles below must be changed when opening and closing an inventory in each individual script
     public string ActiveInventory { get; set; } = "NA";
     public bool canOpen { get; set; } = true;
+    private Vector2 lastMove;
 
     public static event Action<Vector2> onMove;
     public static event Action HandleB;
@@ -41,7 +42,12 @@ public class PlayerInput : MonoBehaviour
 
         Vector2 move = new Vector2(horizontal, vertical);
 
-        onMove?.Invoke(move);
+        // ✅ Only fire when movement actually changes
+        if (move != lastMove)
+        {
+            lastMove = move;
+            onMove?.Invoke(move);
+        }
 
         //Shop Open
         if (Input.GetKeyDown(KeyCode.B))
@@ -84,9 +90,18 @@ public class PlayerInput : MonoBehaviour
             HandleEscape?.Invoke();
         }
 
-        if(Input.GetKey(KeyCode.LeftShift) && Input.GetMouseButtonDown(0))
+        if (Input.GetKey(KeyCode.LeftShift) && Input.GetMouseButtonDown(0))
         {
             HandleShiftClick?.Invoke();
+        }
+    }
+    
+    private void OnApplicationFocus(bool hasFocus)
+    {
+        if (!hasFocus)
+        {
+            lastMove = Vector2.zero;
+            onMove?.Invoke(Vector2.zero);
         }
     }
 }

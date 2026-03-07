@@ -1,14 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEditor;
 using UnityEditor.SceneManagement;
-using UnityEngine;
 
 //for playtesting or real deal
 [InitializeOnLoad]
 public static class PlayFromMaster
 {
-    private static bool skipTitleScreen = true;
+    private static bool skipTitleScreen = false;
 
     static PlayFromMaster()
     {

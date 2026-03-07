@@ -16,15 +16,21 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private Rigidbody2D rb;
     [SerializeField] private new Animator animation;
 
-    void Start(){
+    private void OnEnable()
+    {
         PlayerInput.onMove += HandleMove;
+    }
+
+    private void OnDisable()
+    {
+        PlayerInput.onMove -= HandleMove;
     }
 
     void HandleMove(Vector2 input){
         moveInput = input;
     }
 
-    void Update(){
+    void FixedUpdate(){
         move(moveInput);
     }
 
@@ -37,7 +43,8 @@ public class PlayerMovement : MonoBehaviour
             animation.SetBool("IsMoving", true);
         }
         //updating speed
-        rb.velocity = new Vector2(movement.x * speed, movement.y * speed);
+        Vector2 newPosition = rb.position + movement * speed * Time.fixedDeltaTime;
+        rb.MovePosition(newPosition);
 
         findFacing(movement);
         Flip(movement);

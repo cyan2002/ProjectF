@@ -1,8 +1,14 @@
 ﻿using UnityEngine;
 using TMPro;
+using System.Collections;
+using System.Collections.Generic;
+using System;
 
 public class Clock : MonoBehaviour
 {
+    public static event Action<int> OnHourChanged;
+    public static event Action<int> OnDayChanged;
+
     private void Awake()
     {
         clockText = this.gameObject.GetComponent<TextMeshProUGUI>();
@@ -37,14 +43,20 @@ public class Clock : MonoBehaviour
         {
             timeOfDay -= 24f;
             dayNumber++;
+            OnDayChanged?.Invoke(dayNumber);
         }
 
         int currentHour = Hour;
         int currentMinute = Minute;
 
-        if (currentHour != lastHour || currentMinute != lastMinute)
+        if (currentHour != lastHour)
         {
             lastHour = currentHour;
+            OnHourChanged?.Invoke(currentHour);
+        }
+
+        if (currentMinute != lastMinute)
+        {
             lastMinute = currentMinute;
             UpdateClockUI();
         }

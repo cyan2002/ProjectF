@@ -6,11 +6,13 @@ using System;
 
 public class Clock : MonoBehaviour
 {
+    public static Clock Instance { get; private set; }
     public static event Action<int> OnHourChanged;
     public static event Action<int> OnDayChanged;
-
+    
     private void Awake()
     {
+        Instance = this;
         clockText = this.gameObject.GetComponent<TextMeshProUGUI>();
     }
 

@@ -94,21 +94,21 @@ public class InventoryController : MonoBehaviour
     //private void TestJ()
     //{
     //creating a random item that is assigned to the mouse position, can be placed into an inventory after
-        //USED FOR TESTING
-        //only create if the item selected is null
+    //USED FOR TESTING
+    //only create if the item selected is null
     //    if (selectedItem == null)
-     //   {
+    //   {
     //        CreateRandomItem();
-     //   }
-  //  }
+    //   }
+    //  }
 
     //private void TestK()
-   // {
-        //only insert if not holding another item
-     //   if (selectedItem == null)
-     //   {
-          //  InsertRandomItem();
-     //   }
+    // {
+    //only insert if not holding another item
+    //   if (selectedItem == null)
+    //   {
+    //  InsertRandomItem();
+    //   }
     //}
 
     private void LeftClick()
@@ -123,9 +123,9 @@ public class InventoryController : MonoBehaviour
     {
         //if there is no selectedItemGrid get out
         if (selectedItemGrid == null) { return; }
-        
+
         //if there is a selected item get out (must not be holding it to shift click)
-        if(selectedItem != null) { return; }
+        if (selectedItem != null) { return; }
 
         //checking to see if you're over the tileGrid
         Vector2Int? pos = GetTileGridPosition();
@@ -138,7 +138,7 @@ public class InventoryController : MonoBehaviour
         int savedNum = 0;
 
         //checking to see if there are two grids even open
-        if(grids.Length < 2)
+        if (grids.Length < 2)
         {
             return;
         }
@@ -168,7 +168,7 @@ public class InventoryController : MonoBehaviour
         itemToInsert = selectedItem;
         posOnGrid = grids[savedNum].FindSpaceForObject(itemToInsert);
 
-        if(itemToInsert == null)
+        if (itemToInsert == null)
         {
             return;
         }
@@ -206,12 +206,12 @@ public class InventoryController : MonoBehaviour
     //adds a random Item to the inventory, placing it into the next available spot - USE FOR PICKING UP PACKAGES OF SUPPLIES IN GAME
     //private void InsertRandomItem()
     //{
-        //this gets caught if mouse is not over the inventory, for inserting random item I want this to run either way...
+    //this gets caught if mouse is not over the inventory, for inserting random item I want this to run either way...
     //    if (selectedItemGrid == null) { return; }
 
     //    CreateRandomItem();
     //    InventoryItem itemToInsert = selectedItem;
-     //   selectedItem = null;
+    //   selectedItem = null;
     //    InsertItem(itemToInsert);
     //}
 
@@ -243,9 +243,9 @@ public class InventoryController : MonoBehaviour
     //    rectTransform.SetParent(canvasTransform);
     //    rectTransform.SetAsLastSibling();
 
-   //     int selectedItemID = UnityEngine.Random.Range(0, items.Count);
-   //     inventoryItem.Set(items[selectedItemID]);
-  //  }
+    //     int selectedItemID = UnityEngine.Random.Range(0, items.Count);
+    //     inventoryItem.Set(items[selectedItemID]);
+    //  }
 
     //same as CreateRandomItem; however, it's not random, so it's just create the item given the item
     public bool purchaseItem(ItemData item)
@@ -318,7 +318,7 @@ public class InventoryController : MonoBehaviour
             float x = Mathf.Max(0f, 20f * width - 30f);
             float y = Mathf.Max(0f, 20f * height - 30f);
 
-            rectTransform.position = Input.mousePosition + new Vector3(x, -y,0);
+            rectTransform.position = Input.mousePosition + new Vector3(x, -y, 0);
             //rectTransform.position = new Vector2(0, 0);
         }
         //if there is no item turn the highlighter off.
@@ -367,7 +367,7 @@ public class InventoryController : MonoBehaviour
             }
         }
         else
-        {     
+        {
             //code for actually turning on the highlighter.
             inventoryHighlight.Show(selectedItemGrid.BoundryCheck(positionOnGrid.x,
             positionOnGrid.y,
@@ -427,7 +427,7 @@ public class InventoryController : MonoBehaviour
             //to avoid item from being hidden
             rectTransform.SetParent(itemsLayerTransform, false);
             rectTransform.SetAsLastSibling();
-        }  
+        }
     }
 
     //rotates the item is R is pressed, only rotates if the selected item is not null (there is an item to rotate)
@@ -451,5 +451,11 @@ public class InventoryController : MonoBehaviour
     {
         // Move item to its destination canvas
         item.transform.SetParent(targetSlot);
+    }
+
+    //called at new scene load, to make sure highlighter isn't lost within a scene
+    public void ResetHighlighterParent()
+    {
+        inventoryHighlight.ResetParent();
     }
 }

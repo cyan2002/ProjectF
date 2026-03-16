@@ -13,10 +13,19 @@ public class ShopManager : MonoBehaviour
     {
         Instance = this;
         shopMenu.gameObject.SetActive(false);
-        PlayerInput.HandleB += ShopToggle;
 
         //inventory controller wants the whole canvas, not just the shop UI
         InventoryController.Instance.canvasTransform = shopInventoryCanvas.GetComponent<RectTransform>();
+    }
+
+    void OnEnable()
+    {
+        PlayerInput.HandleB += ShopToggle;
+    }
+
+    void OnDisable()
+    {
+        PlayerInput.HandleB -= ShopToggle;
     }
 
     void ShopToggle()

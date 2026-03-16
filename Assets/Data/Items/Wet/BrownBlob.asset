@@ -18,3 +18,4 @@ MonoBehaviour:
   type: Wet
   cost: 25
   sellcost: 45
+  itemID: 8

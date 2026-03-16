@@ -10,7 +10,7 @@ public class ItemGrid : MonoBehaviour
     public const float tileSizeHeight = 80;
 
     //list of items in the inventory
-    InventoryItem[,] inventoryItemSlot;
+    public InventoryItem[,] inventoryItemSlot;
 
     RectTransform rectTransform;
 
@@ -18,10 +18,11 @@ public class ItemGrid : MonoBehaviour
 
     private Camera uiCamera;
 
-    [SerializeField] int gridSizeWidth = 10;
-    [SerializeField] int gridSizeHeight = 9;
+    public int gridSizeWidth = 10;
+    public int gridSizeHeight = 9;
 
-    [SerializeField] string GridType;
+    public string GridType;
+    public string GridID;
 
     //to removes item, it only gives u the location of the press
     //we need to find the origin and cycle from that origin to properly remove the item
@@ -43,6 +44,21 @@ public class ItemGrid : MonoBehaviour
             for (int iy = 0; iy < item.HEIGHT; iy++)
             {
                 inventoryItemSlot[item.onGridPositionX + ix, item.onGridPositionY + iy] = null;
+            }
+        }
+    }
+
+    public void ClearGrid()
+    {
+        for (int x = 0; x < gridSizeWidth; x++)
+        {
+            for (int y = 0; y < gridSizeHeight; y++)
+            {
+                if (inventoryItemSlot[x, y] != null)
+                {
+                    Destroy(inventoryItemSlot[x, y].gameObject);
+                    inventoryItemSlot[x, y] = null;
+                }
             }
         }
     }

@@ -5,6 +5,8 @@ using UnityEngine;
 public class InventoryHighlight : MonoBehaviour
 {
     [SerializeField] RectTransform highlighter;
+    //original parent set, so that when a new scene is loaded, it resets the highlighter back into the master scene
+    public GameObject originalParent;
 
     public void Show(bool b)
     {
@@ -36,6 +38,11 @@ public class InventoryHighlight : MonoBehaviour
     {
         if (targetGrid == null) { return; }
         highlighter.SetParent(targetGrid.GetComponent<RectTransform>());
+    }
+
+    public void ResetParent()
+    {
+        highlighter.SetParent(originalParent.transform);
     }
 
     public void SetPosition(ItemGrid targetGrid, InventoryItem targetItem, int posX, int posY)

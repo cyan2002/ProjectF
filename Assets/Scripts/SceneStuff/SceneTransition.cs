@@ -28,7 +28,8 @@ public class SceneTransition : MonoBehaviour
     {
         if (inRange && !SceneLoader.Instance.isTransitioning)
         {
-            Debug.Log(sceneToUnload);
+            SaveManager.Instance.SaveAllGrids();
+            InventoryController.Instance.ResetHighlighterParent();
             SceneLoader.Instance.TransitionToScene(sceneToLoad, sceneToUnload, spawnPointID);
         }
     }

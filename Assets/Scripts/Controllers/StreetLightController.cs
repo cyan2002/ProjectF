@@ -6,21 +6,22 @@ public class StreetLightController : MonoBehaviour
 {
     public UnityEngine.Rendering.Universal.Light2D light;
 
-    void Start()
+    private void updateLights()
     {
-        if (Clock.Instance.timeOfDay > 7 && Clock.Instance.timeOfDay < 20)
+        if (Clock.Instance.timeOfDay <= 7 || Clock.Instance.timeOfDay >= 18)
         {
-            light.enabled = false;
+            light.enabled = true;
         }
         else
         {
-            light.enabled = true;
+            light.enabled = false;
         }
     }
 
     void OnEnable()
     {
         Clock.OnHourChanged += LightSwitch;
+        updateLights();
     }
 
     void OnDisable()
@@ -38,11 +39,5 @@ public class StreetLightController : MonoBehaviour
         {
             light.enabled = true;
         }
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }

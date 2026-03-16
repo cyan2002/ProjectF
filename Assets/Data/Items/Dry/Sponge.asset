@@ -18,3 +18,4 @@ MonoBehaviour:
   type: Dry
   cost: 5
   sellcost: 10
+  itemID: 4

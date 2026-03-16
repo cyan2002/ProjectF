@@ -8,7 +8,7 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance;
     public GameObject WinScreen;
 
-    [SerializeField] public int goalDeadlineDay = 10;
+    [SerializeField] public int goalDeadlineDay = 7;
     [SerializeField] private float moneyGoal = 10000f;
     public bool goalCompleted = false;
 

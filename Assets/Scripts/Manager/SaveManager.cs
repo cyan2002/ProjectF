@@ -2,24 +2,41 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System.Collections;
 
 [System.Serializable]
 public class SavedItem
 {
-    public string itemDataName; // matches the ScriptableObject name
+    public string itemDataName;
     public int posX;
     public int posY;
     public bool rotated;
     public string itemID;
-    public string GridID; // "Player", "Tank", "Shelf", etc.
+    public string GridID;
 }
 
+[System.Serializable]
+public class WorldSaveData
+{
+    public string sceneName;
+    public float playerPosX;
+    public float playerPosY;
+    public int money;
+    public float timeOfDay;
+    public int day;
+}
 
-//contains the actual data for each saved item (Position, grid type, etc)
 [System.Serializable]
 public class InventorySaveData
 {
     public List<SavedItem> items = new List<SavedItem>();
+}
+
+[System.Serializable]
+public class FullSaveData
+{
+    public WorldSaveData world = new WorldSaveData();
+    public InventorySaveData inventory = new InventorySaveData();
 }
 
 public class SaveManager : MonoBehaviour
@@ -29,7 +46,12 @@ public class SaveManager : MonoBehaviour
     [SerializeField] ItemDatabase itemDatabase;
     [SerializeField] GameObject itemPrefab;
 
-    private string SavePath => Application.persistentDataPath + "/inventory.json";
+    public bool isLoadingFromSave = false;
+
+    // In-memory grid cache for cross-scene travel within a session
+    private InventorySaveData sessionGridData = new InventorySaveData();
+
+    private string SavePath => Application.persistentDataPath + "/save.json";
 
     void Awake()
     {
@@ -52,30 +74,115 @@ public class SaveManager : MonoBehaviour
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
-    // Called after a new scene loads — restore items into its grids
-    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    // -------------------------
+    // Scene Load
+    // -------------------------
+
+void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+{
+    Debug.Log($"OnSceneLoaded: {scene.name}, isLoadingFromSave: {isLoadingFromSave}");
+    
+    if (scene.name == "Master") return;
+
+    if (isLoadingFromSave)
     {
-        //Debug.Log("loading!");
         LoadAllGrids();
+        WorldSaveData world = LoadWorldState();
+        Debug.Log($"Saved scene: {world.sceneName}, loaded scene: {scene.name}, money: {world.money}, time: {world.timeOfDay}");
+        StartCoroutine(RestoreWorldState(world, scene.name));
+    }
+    else
+    {
+        LoadGridsFromSession();
+    }
+}
+
+IEnumerator RestoreWorldState(WorldSaveData world, string loadedSceneName)
+{
+    yield return null;
+
+    Debug.Log($"RestoreWorldState running. MoneyManager null: {MoneyManager.Instance == null}, Clock null: {Clock.Instance == null}");
+
+    if (world.sceneName == loadedSceneName)
+    {
+        Debug.Log($"Scene match — restoring money: {world.money}, time: {world.timeOfDay}");
+        
+        GameObject player = GameObject.FindWithTag("Player");
+        if (player != null)
+        {
+            Rigidbody2D rb = player.GetComponent<Rigidbody2D>();
+            Vector2 savedPos = new Vector2(world.playerPosX, world.playerPosY);
+            if (rb != null) rb.position = savedPos;
+            else player.transform.position = savedPos;
+        }
+
+        if (MoneyManager.Instance != null)
+            MoneyManager.Instance.SetMoney(world.money);
+        else
+            Debug.LogWarning("MoneyManager.Instance is null");
+
+        if (Clock.Instance != null)
+            Clock.Instance.SetClock(world.timeOfDay, world.day);
+        else
+            Debug.LogWarning("Clock.Instance is null");
+    }
+    else
+    {
+        Debug.LogWarning($"Scene mismatch — world.sceneName: {world.sceneName}, loadedSceneName: {loadedSceneName}");
     }
 
-    public void SaveAllGrids()
-    {
-        // Load existing save data so we don't wipe other scenes' data
-        InventorySaveData saveData = LoadFromDisk();
+    isLoadingFromSave = false;
+}
 
-        // Get all grids currently in the scene
+    // -------------------------
+    // World State
+    // -------------------------
+
+    public void SaveWorldState(Vector2 playerPos, int money, float timeOfDay, int day)
+    {
+        FullSaveData fullData = LoadFullFromDisk();
+
+        // Find the actual game scene, not Master
+        string sceneName = "";
+        for (int i = 0; i < SceneManager.sceneCount; i++)
+        {
+            Scene s = SceneManager.GetSceneAt(i);
+            if (s.name != "Master")
+            {
+                sceneName = s.name;
+                break;
+            }
+        }
+
+        fullData.world.sceneName = sceneName;
+        fullData.world.playerPosX = playerPos.x;
+        fullData.world.playerPosY = playerPos.y;
+        fullData.world.money = money;
+        fullData.world.timeOfDay = timeOfDay;
+        fullData.world.day = day;
+
+        SaveToDisk(fullData);
+    }
+
+    public WorldSaveData LoadWorldState()
+    {
+        return LoadFullFromDisk().world;
+    }
+
+    // -------------------------
+    // Session Grid Save / Load (memory only, not disk)
+    // -------------------------
+
+    public void SaveGridsToSession()
+    {
         ItemGrid[] grids = FindObjectsByType<ItemGrid>(FindObjectsInactive.Include, FindObjectsSortMode.None);
 
-        // Remove any saved entries that belong to grids in THIS scene
-        // (we're about to re-save them fresh)
         HashSet<string> currentGridIDs = new HashSet<string>();
         foreach (ItemGrid grid in grids)
             currentGridIDs.Add(grid.GridID);
 
-        saveData.items.RemoveAll(i => currentGridIDs.Contains(i.GridID));
+        sessionGridData.items.RemoveAll(i => currentGridIDs.Contains(i.GridID));
 
-        // Now re-add current state of each grid
         foreach (ItemGrid grid in grids)
         {
             List<InventoryItem> seen = new List<InventoryItem>();
@@ -88,7 +195,7 @@ public class SaveManager : MonoBehaviour
                     if (item == null || seen.Contains(item)) continue;
                     seen.Add(item);
 
-                    saveData.items.Add(new SavedItem
+                    sessionGridData.items.Add(new SavedItem
                     {
                         itemID = item.itemData.itemID,
                         GridID = grid.GridID,
@@ -99,26 +206,19 @@ public class SaveManager : MonoBehaviour
                 }
             }
         }
-
-        SaveToDisk(saveData);
     }
 
-    public void LoadAllGrids()
+    public void LoadGridsFromSession()
     {
-        if (!File.Exists(SavePath)) return;
-
-        InventorySaveData saveData = LoadFromDisk();
-
-        // Build a lookup of gridID → ItemGrid for grids in this scene
         ItemGrid[] grids = FindObjectsByType<ItemGrid>(FindObjectsInactive.Include, FindObjectsSortMode.None);
         Dictionary<string, ItemGrid> gridLookup = new Dictionary<string, ItemGrid>();
         foreach (ItemGrid grid in grids)
         {
-            grid.ClearGrid(); // ← wipe first
+            grid.ClearGrid();
             gridLookup[grid.GridID] = grid;
         }
 
-        foreach (SavedItem savedItem in saveData.items)
+        foreach (SavedItem savedItem in sessionGridData.items)
         {
             if (!gridLookup.ContainsKey(savedItem.GridID)) continue;
 
@@ -130,32 +230,127 @@ public class SaveManager : MonoBehaviour
                 continue;
             }
 
-            // Instantiate and set up the item
             InventoryItem newItem = Instantiate(itemPrefab).GetComponent<InventoryItem>();
             newItem.rotated = savedItem.rotated;
             newItem.Set(data);
 
-            // Apply rotation visually if needed
             if (savedItem.rotated)
                 newItem.GetComponent<RectTransform>().rotation = Quaternion.Euler(0, 0, 90f);
 
-            // Place directly — no overlap check needed since we saved valid positions
             targetGrid.PlaceItem(newItem, savedItem.posX, savedItem.posY);
         }
     }
 
-    void SaveToDisk(InventorySaveData data)
+    // -------------------------
+    // Disk Grid Save / Load (explicit save button only)
+    // -------------------------
+
+    public void SaveAllGrids()
+    {
+        FullSaveData fullData = LoadFullFromDisk();
+
+        ItemGrid[] grids = FindObjectsByType<ItemGrid>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+
+        HashSet<string> currentGridIDs = new HashSet<string>();
+        foreach (ItemGrid grid in grids)
+            currentGridIDs.Add(grid.GridID);
+
+        fullData.inventory.items.RemoveAll(i => currentGridIDs.Contains(i.GridID));
+
+        foreach (ItemGrid grid in grids)
+        {
+            List<InventoryItem> seen = new List<InventoryItem>();
+
+            for (int x = 0; x < grid.gridSizeWidth; x++)
+            {
+                for (int y = 0; y < grid.gridSizeHeight; y++)
+                {
+                    InventoryItem item = grid.inventoryItemSlot[x, y];
+                    if (item == null || seen.Contains(item)) continue;
+                    seen.Add(item);
+
+                    fullData.inventory.items.Add(new SavedItem
+                    {
+                        itemID = item.itemData.itemID,
+                        GridID = grid.GridID,
+                        posX = item.onGridPositionX,
+                        posY = item.onGridPositionY,
+                        rotated = item.rotated
+                    });
+                }
+            }
+        }
+
+        SaveToDisk(fullData);
+    }
+
+    public void LoadAllGrids()
+    {
+        if (!File.Exists(SavePath)) return;
+
+        FullSaveData fullData = LoadFullFromDisk();
+
+        ItemGrid[] grids = FindObjectsByType<ItemGrid>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        Dictionary<string, ItemGrid> gridLookup = new Dictionary<string, ItemGrid>();
+        foreach (ItemGrid grid in grids)
+        {
+            grid.ClearGrid();
+            gridLookup[grid.GridID] = grid;
+        }
+
+        foreach (SavedItem savedItem in fullData.inventory.items)
+        {
+            if (!gridLookup.ContainsKey(savedItem.GridID)) continue;
+
+            ItemGrid targetGrid = gridLookup[savedItem.GridID];
+            ItemData data = itemDatabase.GetByID(savedItem.itemID);
+            if (data == null)
+            {
+                Debug.LogWarning($"ItemData not found for ID: {savedItem.itemID}");
+                continue;
+            }
+
+            InventoryItem newItem = Instantiate(itemPrefab).GetComponent<InventoryItem>();
+            newItem.rotated = savedItem.rotated;
+            newItem.Set(data);
+
+            if (savedItem.rotated)
+                newItem.GetComponent<RectTransform>().rotation = Quaternion.Euler(0, 0, 90f);
+
+            targetGrid.PlaceItem(newItem, savedItem.posX, savedItem.posY);
+        }
+    }
+
+    // -------------------------
+    // Disk I/O
+    // -------------------------
+
+    void SaveToDisk(FullSaveData data)
     {
         string json = JsonUtility.ToJson(data, true);
         File.WriteAllText(SavePath, json);
     }
 
-    InventorySaveData LoadFromDisk()
+    FullSaveData LoadFullFromDisk()
     {
         if (!File.Exists(SavePath))
-            return new InventorySaveData();
+            return new FullSaveData();
 
         string json = File.ReadAllText(SavePath);
-        return JsonUtility.FromJson<InventorySaveData>(json);
+        return JsonUtility.FromJson<FullSaveData>(json);
+    }
+
+    public bool SaveExists()
+    {
+        return File.Exists(SavePath);
+    }
+
+    public void DeleteSave()
+    {
+        if (File.Exists(SavePath))
+        {
+            File.Delete(SavePath);
+            Debug.Log("Save file deleted.");
+        }
     }
 }

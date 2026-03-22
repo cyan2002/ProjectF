@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class PauseManager : MonoBehaviour
 {
+    public static PauseManager Instance { get; private set; }
     public static bool IsPaused;
 
     [SerializeField] GameObject pauseMenuUI;
@@ -10,6 +11,12 @@ public class PauseManager : MonoBehaviour
     void Awake()
     {
         PlayerInput.HandleEscape += HandlePause;
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        Instance = this;
     }
 
     public void HandlePause()

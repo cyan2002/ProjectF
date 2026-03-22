@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
+//handles goal
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;

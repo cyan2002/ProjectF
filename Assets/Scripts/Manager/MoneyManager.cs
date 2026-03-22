@@ -63,10 +63,18 @@ public class MoneyManager : MonoBehaviour
 
     private bool CanAfford(int amount)
     {
-        if(amount > Money)
+        if (amount > Money)
         {
             return false;
         }
         else { return true; }
+    }
+
+    public void SetMoney(int amount)
+    {
+        Money = amount;
+        GameManager.Instance.UpdateGoalUI();
+        OnMoneyChanged?.Invoke(Money); //when money changes to update GUI
+        //addedMoney?.Invoke(); only play this when the player gains money
     }
 }

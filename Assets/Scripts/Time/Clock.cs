@@ -9,7 +9,7 @@ public class Clock : MonoBehaviour
     public static Clock Instance { get; private set; }
     public static event Action<int> OnHourChanged;
     public static event Action<int> OnDayChanged;
-    
+
     private void Awake()
     {
         Instance = this;
@@ -68,5 +68,11 @@ public class Clock : MonoBehaviour
     {
         if (clockText == null) return;
         clockText.text = $"Day {dayNumber} — {Hour:00}:{Minute:00}";
+    }
+
+    public void SetClock(float time, int day)
+    {
+        timeOfDay = time;
+        dayNumber = day;
     }
 }

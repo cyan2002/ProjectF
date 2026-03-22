@@ -3,13 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-//script helps load scenes from the title screen to play
 public class SceneLoader : MonoBehaviour
 {
     public static SceneLoader Instance;
     [SerializeField] private string startingScene;
     public GameObject fadePanel;
-    public bool isTransitioning = false; // prevent overlapping transitions
+    public bool isTransitioning = false;
 
     void Awake()
     {
@@ -35,7 +34,6 @@ public class SceneLoader : MonoBehaviour
     {
         fadePanel.SetActive(true);
         yield return SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
-        // wait an extra frame for scene objects to initialize
         yield return null;
         CanvasGroup cg = fadePanel.GetComponent<CanvasGroup>();
         float timer = 0f;
@@ -53,12 +51,20 @@ public class SceneLoader : MonoBehaviour
         if (isTransitioning) return;
         isTransitioning = true;
 
-        // Trim any accidental whitespace
         loadScene = loadScene.Trim();
         unloadScene = unloadScene.Trim();
         spawnID = spawnID.Trim();
 
         StartCoroutine(TransitionCoroutine(loadScene, unloadScene, spawnID));
+    }
+
+    // Separate transition used when loading from save
+    public void TransitionToSceneFromSave(string loadScene, string unloadScene)
+    {
+        if (isTransitioning) return;
+        isTransitioning = true;
+
+        StartCoroutine(LoadFromSaveCoroutine(loadScene, unloadScene));
     }
 
     IEnumerator TransitionCoroutine(string loadScene, string unloadScene, string spawnID)
@@ -76,7 +82,7 @@ public class SceneLoader : MonoBehaviour
         // Unload old scene
         Scene sceneToUnloadRef = default;
         for (int i = 0; i < SceneManager.sceneCount; i++)
-        {   
+        {
             if (SceneManager.GetSceneAt(i).name == unloadScene)
             {
                 sceneToUnloadRef = SceneManager.GetSceneAt(i);
@@ -89,19 +95,69 @@ public class SceneLoader : MonoBehaviour
             yield return SceneManager.UnloadSceneAsync(sceneToUnloadRef);
             yield return null;
         }
-        // silently skip if already unloaded
 
         // Load new scene
         yield return SceneManager.LoadSceneAsync(loadScene, LoadSceneMode.Additive);
         yield return null;
 
-        // Move player to spawn point
-        SpawnPoint[] spawnPoints = FindObjectsByType<SpawnPoint>(FindObjectsSortMode.None);
-        SpawnPoint spawn = System.Array.Find(spawnPoints, s => s.spawnID == spawnID);
-        if (spawn != null)
-            GameObject.FindWithTag("Player").transform.position = spawn.transform.position;
-        else
-            Debug.LogWarning("SpawnPoint not found: " + spawnID);
+        // Move player to spawn point — skip if loading from save
+        if (!SaveManager.Instance.isLoadingFromSave)
+        {
+            SpawnPoint[] spawnPoints = FindObjectsByType<SpawnPoint>(FindObjectsSortMode.None);
+            SpawnPoint spawn = System.Array.Find(spawnPoints, s => s.spawnID == spawnID);
+            if (spawn != null)
+                GameObject.FindWithTag("Player").transform.position = spawn.transform.position;
+            else
+                Debug.LogWarning("SpawnPoint not found: " + spawnID);
+        }
+
+        // Fade in
+        while (cg.alpha > 0f)
+        {
+            cg.alpha -= Time.deltaTime;
+            yield return null;
+        }
+
+        fadePanel.SetActive(false);
+        isTransitioning = false;
+    }
+
+    IEnumerator LoadFromSaveCoroutine(string loadScene, string unloadScene)
+    {
+        // Fade out
+        fadePanel.SetActive(true);
+        CanvasGroup cg = fadePanel.GetComponent<CanvasGroup>();
+        cg.alpha = 0f;
+        while (cg.alpha < 1f)
+        {
+            cg.alpha += Time.deltaTime;
+            yield return null;
+        }
+
+        // Unload current scene
+        Scene sceneToUnloadRef = default;
+        for (int i = 0; i < SceneManager.sceneCount; i++)
+        {
+            if (SceneManager.GetSceneAt(i).name == unloadScene)
+            {
+                sceneToUnloadRef = SceneManager.GetSceneAt(i);
+                break;
+            }
+        }
+
+        if (sceneToUnloadRef.IsValid() && sceneToUnloadRef.isLoaded)
+        {
+            yield return SceneManager.UnloadSceneAsync(sceneToUnloadRef);
+            yield return null;
+        }
+
+        // Set flag AFTER unload, BEFORE load
+        // OnSceneLoaded will now see isLoadingFromSave as true for the new scene
+        SaveManager.Instance.isLoadingFromSave = true;
+
+        // Load saved scene
+        yield return SceneManager.LoadSceneAsync(loadScene, LoadSceneMode.Additive);
+        yield return null;
 
         // Fade in
         while (cg.alpha > 0f)

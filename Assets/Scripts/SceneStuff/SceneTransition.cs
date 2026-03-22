@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -12,8 +11,6 @@ public class SceneTransition : MonoBehaviour
 
     private bool inRange = false;
 
-    //there was an issue with both objects listening to press E which is why scene to unload was giving bad values.
-    //make sure you use onenable and ondisable
     private void OnEnable()
     {
         PlayerInput.HandleE += pressE;
@@ -28,7 +25,8 @@ public class SceneTransition : MonoBehaviour
     {
         if (inRange && !SceneLoader.Instance.isTransitioning)
         {
-            SaveManager.Instance.SaveAllGrids();
+            // Save grids to session memory only — not disk
+            SaveManager.Instance.SaveGridsToSession();
             InventoryController.Instance.ResetHighlighterParent();
             SceneLoader.Instance.TransitionToScene(sceneToLoad, sceneToUnload, spawnPointID);
         }
@@ -37,16 +35,12 @@ public class SceneTransition : MonoBehaviour
     void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("Player"))
-        {
             inRange = true;
-        }
     }
 
     private void OnTriggerExit2D(Collider2D collision)
     {
         if (collision.CompareTag("Player"))
-        {
             inRange = false;
-        }
     }
 }

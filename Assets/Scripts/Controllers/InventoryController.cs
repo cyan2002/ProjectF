@@ -193,11 +193,13 @@ public class InventoryController : MonoBehaviour
         //toggling player inventory
         if (!InventoryOpen)
         {
+            PlayerMovement.Instance.BlockMovement();
             inventoryObject.SetActive(true);
             InventoryOpen = true;
         }
         else if (InventoryOpen)
         {
+            PlayerMovement.Instance.UnblockMovement();
             inventoryObject.SetActive(false);
             InventoryOpen = false;
         }

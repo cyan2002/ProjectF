@@ -4,9 +4,16 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
+    public static PlayerMovement Instance { get; private set; }
+
     //declaring my variables.
     public float speed;
     private bool isFacingRight = true;
+    public int moveBlockers = 0;
+    public void BlockMovement() => moveBlockers++;
+    public void UnblockMovement() => moveBlockers = Mathf.Max(0, moveBlockers - 1);
+    public bool canMove => moveBlockers == 0;
+
     private RaycastHit2D hit;
 
     private Vector2 moveInput;
@@ -15,6 +22,11 @@ public class PlayerMovement : MonoBehaviour
     public string tankFace;
     [SerializeField] private Rigidbody2D rb;
     [SerializeField] private new Animator animation;
+
+    void Awake()
+    {
+        Instance = this;
+    }
 
     private void OnEnable()
     {
@@ -30,7 +42,14 @@ public class PlayerMovement : MonoBehaviour
         moveInput = input;
     }
 
-    void FixedUpdate(){
+    void FixedUpdate()
+    {
+        if (!canMove)
+        {
+            rb.velocity = Vector2.zero;
+            animation.SetBool("IsMoving", false);
+            return;
+        }
         move(moveInput);
     }
 

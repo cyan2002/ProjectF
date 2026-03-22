@@ -26,15 +26,18 @@ public class ShelfInventoryToggle : MonoBehaviour
     void ToggleShelf(){
         if (PlayerInRange && !InventoryOpen)
         {
+            PlayerMovement.Instance.BlockMovement();
             controlledGrid.SetActive(true);
             InventoryOpen = true;
         }
         else if(PlayerInRange && InventoryOpen){
+            PlayerMovement.Instance.UnblockMovement();
             controlledGrid.SetActive(false);
             InventoryOpen = false;
         }
         else if(!PlayerInRange && InventoryOpen)
         {
+            PlayerMovement.Instance.UnblockMovement();
             controlledGrid.SetActive(false);
             InventoryOpen = false;
         }

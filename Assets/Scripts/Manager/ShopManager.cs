@@ -33,11 +33,13 @@ public class ShopManager : MonoBehaviour
         //open inventory
         if (!ShopActive)
         {
+            PlayerMovement.Instance.BlockMovement();
             shopMenu.gameObject.SetActive(true);
             ShopActive = true;
         }
         else if (ShopActive)
         {
+            PlayerMovement.Instance.UnblockMovement();
             shopMenu.gameObject.SetActive(false);
             ShopActive = false;
         }

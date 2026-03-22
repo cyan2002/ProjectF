@@ -2758,6 +2758,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 2
+  moveBlockers: 0
   facing: right
   tankFace: 
   rb: {fileID: 1067209411}
@@ -3290,6 +3291,7 @@ Transform:
   - {fileID: 422516610}
   - {fileID: 580142733}
   - {fileID: 217770912}
+  - {fileID: 1318984556}
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -3752,6 +3754,55 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1284440432}
   m_CullTransparentMesh: 1
+--- !u!1 &1318984555
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1318984556}
+  - component: {fileID: 1318984557}
+  m_Layer: 0
+  m_Name: TimeManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1318984556
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1318984555}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1193042330}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1318984557
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1318984555}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0e2fef00674f074387eabc96b7f7700, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dayLengthInMinutes: 10
+  startHour: 8
+  timeOfDay: 0
+  dayNumber: 1
+  clockText: {fileID: 1777571691}
 --- !u!1 &1388403648
 GameObject:
   m_ObjectHideFlags: 0
@@ -5044,7 +5095,6 @@ GameObject:
   - component: {fileID: 1777571689}
   - component: {fileID: 1777571692}
   - component: {fileID: 1777571691}
-  - component: {fileID: 1777571690}
   - component: {fileID: 1777571693}
   m_Layer: 5
   m_Name: Clock
@@ -5073,23 +5123,6 @@ RectTransform:
   m_AnchoredPosition: {x: -1988.1094, y: -42}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 1, y: 1}
---- !u!114 &1777571690
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1777571688}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f0e2fef00674f074387eabc96b7f7700, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  dayLengthInMinutes: 10
-  startHour: 8
-  timeOfDay: 0
-  dayNumber: 1
-  clockText: {fileID: 0}
 --- !u!114 &1777571691
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5199,7 +5232,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 755f62d13dad475489537971be63b92b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  clock: {fileID: 1777571690}
+  clock: {fileID: 1318984557}
   globalLight: {fileID: 1696020387}
   intensityCurve:
     serializedVersion: 2

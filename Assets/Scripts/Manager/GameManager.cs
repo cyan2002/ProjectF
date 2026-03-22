@@ -10,7 +10,7 @@ public class GameManager : MonoBehaviour
     public GameObject WinScreen;
 
     [SerializeField] public int goalDeadlineDay = 7;
-    [SerializeField] private float moneyGoal = 10000f;
+    [SerializeField] private float moneyGoal = 20000f;
     public bool goalCompleted = false;
 
     [SerializeField] private TextMeshProUGUI goalText;
@@ -46,22 +46,26 @@ public class GameManager : MonoBehaviour
 
     private void HandleTimeChanged(int day)
     {
-        switch (day)
+        if (day == goalDeadlineDay)
         {
-            //temp win case after 10 days and holding 10 grand
-            case 10:
-                if (MoneyManager.Instance.Money > moneyGoal)
-                {
-                    goalCompleted = true;
-                    PlayWinScreen();
-                }
-                else
-                {
-                    goalCompleted = false;
-                }
-                break;
+            if (MoneyManager.Instance.Money > moneyGoal)
+            {
+                goalCompleted = true;
+                PlayWinScreen();
+            }
+            else
+            {
+                goalCompleted = false;
+            }
         }
-
+        else
+        {
+            if (MoneyManager.Instance.Money > moneyGoal)
+            {
+                goalCompleted = true;
+                PlayWinScreen();
+            }
+        }
     }
 
     public void UpdateGoalUI()

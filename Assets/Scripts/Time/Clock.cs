@@ -13,7 +13,7 @@ public class Clock : MonoBehaviour
     private void Awake()
     {
         Instance = this;
-        clockText = this.gameObject.GetComponent<TextMeshProUGUI>();
+        //clockText = this.gameObject.GetComponent<TextMeshProUGUI>();
     }
 
     public float dayLengthInMinutes = 10f;

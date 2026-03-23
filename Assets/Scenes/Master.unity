@@ -2651,7 +2651,7 @@ BoxCollider2D:
   m_Offset: {x: -0.01159811, y: -0.061925143}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
+    pivot: {x: 0.49577525, y: 0.812632}
     oldSize: {x: 0.6666667, y: 0.6666667}
     newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
@@ -3799,7 +3799,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dayLengthInMinutes: 10
-  startHour: 8
+  startHour: 3
   timeOfDay: 0
   dayNumber: 1
   clockText: {fileID: 1777571691}

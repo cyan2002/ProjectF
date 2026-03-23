@@ -4,23 +4,25 @@ using UnityEngine;
 
 public class StreetLightController : MonoBehaviour
 {
-    public UnityEngine.Rendering.Universal.Light2D light;
+    public UnityEngine.Rendering.Universal.Light2D streetLight;
 
+    //method only used once when intitializing the scene
     private void updateLights()
     {
         if (Clock.Instance.timeOfDay <= 7 || Clock.Instance.timeOfDay >= 18)
         {
-            light.enabled = true;
+            streetLight.enabled = true;
         }
         else
         {
-            light.enabled = false;
+            streetLight.enabled = false;
         }
     }
 
     void OnEnable()
     {
         Clock.OnHourChanged += LightSwitch;
+        streetLight = this.GetComponent<UnityEngine.Rendering.Universal.Light2D>();
         updateLights();
     }
 
@@ -31,13 +33,13 @@ public class StreetLightController : MonoBehaviour
 
     void LightSwitch(int hour)
     {
-        if (hour == 7) //lights off
+        if (hour <= 7) //lights off
         {
-            light.enabled = false;
+            streetLight.enabled = false;
         }
-        else if(hour == 18) //lights on
+        else if(hour >= 18) //lights on
         {
-            light.enabled = true;
+            streetLight.enabled = true;
         }
     }
 }

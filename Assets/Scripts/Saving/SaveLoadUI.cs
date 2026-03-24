@@ -39,7 +39,12 @@ public class SaveLoadUI : MonoBehaviour
 
     public void OnLoadPressed()
     {
-        PauseManager.Instance.Resume();
+        //need to fix it, so that Save and Pause Manager exist in the title screen...
+        if (PauseManager.Instance != null)
+        {
+            PauseManager.Instance.Resume();
+        }
+
         if (!SaveManager.Instance.SaveExists()) return;
 
         WorldSaveData world = SaveManager.Instance.LoadWorldState();

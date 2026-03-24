@@ -9,7 +9,7 @@ using UnityEditor.SceneManagement;
 [InitializeOnLoad]
 public static class PlayFromMaster
 {
-    private static bool skipTitleScreen = true;
+    private static bool skipTitleScreen = false;
 
     static PlayFromMaster()
     {

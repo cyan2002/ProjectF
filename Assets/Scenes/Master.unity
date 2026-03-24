@@ -3799,7 +3799,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dayLengthInMinutes: 10
-  startHour: 3
+  startHour: 8
   timeOfDay: 0
   dayNumber: 1
   clockText: {fileID: 1777571691}
@@ -5493,7 +5493,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d150e0112efd27d4e9d87cd1aaa8f077, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startingScene: Shop
+  startingScene: PlayerHouse
   fadePanel: {fileID: 634955758}
   isTransitioning: 0
 --- !u!1 &2073562968

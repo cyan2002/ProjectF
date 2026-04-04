@@ -13,9 +13,6 @@ public class ShopController : MonoBehaviour
     {
         Instance = this;
 
-        //Event from PlayerInput
-        PlayerInput.HandleE += PlaceInInventory;
-
         Box[] all = FindObjectsByType<Box>(FindObjectsInactive.Include, FindObjectsSortMode.None);
         Box found = System.Array.Find(all, t => t.name == "Box");
 
@@ -30,14 +27,24 @@ public class ShopController : MonoBehaviour
         }
     }
 
+    private void OnEnable()
+    {
+        PlayerInput.HandleE += PlaceInInventory;
+    }
+
+    private void OnDisable()
+    {
+        PlayerInput.HandleE -= PlaceInInventory;
+    }
+
     //private void testAdd()
     //{
-        //addItemsToInventory();
+    //addItemsToInventory();
     //}
 
     //private void addItemsToInventory()
     //{
-        //InventoryController.Instance.purchaseItem(items[0]);
+    //InventoryController.Instance.purchaseItem(items[0]);
     //}
 
     private void PlaceInInventory(){

@@ -46,7 +46,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (!canMove)
         {
-            rb.velocity = Vector2.zero;
+            rb.linearVelocity = Vector2.zero;
             animation.SetBool("IsMoving", false);
             return;
         }

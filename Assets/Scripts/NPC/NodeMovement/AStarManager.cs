@@ -21,7 +21,7 @@ public class AStarManager : MonoBehaviour
         Dictionary<Node, float> hScore = new Dictionary<Node, float>();
         Dictionary<Node, Node> cameFrom = new Dictionary<Node, Node>();
 
-        foreach (Node n in FindObjectsOfType<Node>())
+        foreach (Node n in FindObjectsByType<Node>())
             gScore[n] = float.MaxValue;
 
         gScore[start] = 0;
@@ -75,7 +75,7 @@ public class AStarManager : MonoBehaviour
         Node foundNode = null;
         float minDistance = float.MaxValue;
 
-        foreach (Node node in FindObjectsOfType<Node>())
+        foreach (Node node in FindObjectsByType<Node>())
         {
             float currentDistance = Vector2.Distance(pos, node.transform.position);
 
@@ -93,7 +93,7 @@ public class AStarManager : MonoBehaviour
         Node foundNode = null;
         float maxDistance = default;
 
-        foreach (Node node in FindObjectsOfType<Node>())
+        foreach (Node node in FindObjectsByType<Node>())
         {
             float currentDistance = Vector2.Distance(pos, node.transform.position);
             if (currentDistance > maxDistance)
@@ -108,6 +108,6 @@ public class AStarManager : MonoBehaviour
 
     public Node[] AllNodes()
     {
-        return FindObjectsOfType<Node>();
+        return FindObjectsByType<Node>();
     }
 }

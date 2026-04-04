@@ -58,7 +58,6 @@ public class SaveManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject);
         }
         else
         {
@@ -80,7 +79,7 @@ public class SaveManager : MonoBehaviour
 
 void OnSceneLoaded(Scene scene, LoadSceneMode mode)
 {
-    Debug.Log($"OnSceneLoaded: {scene.name}, isLoadingFromSave: {isLoadingFromSave}");
+    //Debug.Log($"OnSceneLoaded: {scene.name}, isLoadingFromSave: {isLoadingFromSave}");
     
     if (scene.name == "Master") return;
 

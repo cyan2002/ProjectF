@@ -14,7 +14,7 @@ public class CarController : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        rb.velocity = new Vector2(-speed, 0f);
+        rb.linearVelocity = new Vector2(-speed, 0f);
         carLight.enabled = false;
     }
     // Update is called once per frame

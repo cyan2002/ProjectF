@@ -134,7 +134,7 @@ public class InventoryController : MonoBehaviour
         Vector2Int tileGridPosition = pos.Value;
 
         //finds all types of ItemGrids (hopefully two to transfer between, if there is not get out)
-        ItemGrid[] grids = FindObjectsOfType<ItemGrid>();
+        ItemGrid[] grids = FindObjectsByType<ItemGrid>();
         int savedNum = 0;
 
         //checking to see if there are two grids even open

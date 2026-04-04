@@ -127,7 +127,7 @@ public class NPC_Controller : MonoBehaviour
 
     private void FixedUpdate()
     {
-        rb.velocity = desiredVelocity; // ✅ physics applied here
+        rb.linearVelocity = desiredVelocity; // ✅ physics applied here
     }
 
     //called in shopline when E is pressed
@@ -320,7 +320,7 @@ public class NPC_Controller : MonoBehaviour
         }
         else
         {
-            Node[] nodes = FindObjectsOfType<Node>();
+            Node[] nodes = FindObjectsByType<Node>();
             desiredVelocity = Vector2.zero;
 
             Node destination = null;
@@ -338,7 +338,7 @@ public class NPC_Controller : MonoBehaviour
     //Called when the map changes and the NPC must recalculate it's path
     public void RecalculatePath()
     {
-        Node[] nodes = FindObjectsOfType<Node>();
+        Node[] nodes = FindObjectsByType<Node>();
         path = AStarManager.instance.GeneratePath(currentNode, nodes[UnityEngine.Random.Range(0, nodes.Length)]);
         CreatePath();
     }
@@ -401,7 +401,7 @@ public class NPC_Controller : MonoBehaviour
 
     public void SetPath(Node target)
     {
-        Node[] nodes = FindObjectsOfType<Node>();
+        Node[] nodes = FindObjectsByType<Node>();
         path = AStarManager.instance.GeneratePath(currentNode, target);
         TargetSpot = target;
     }

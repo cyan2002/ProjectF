@@ -16,7 +16,7 @@ public class TankPlacement : MonoBehaviour
 
     void Start()
     {
-        allNodes = FindObjectsOfType<Node>();
+        allNodes = FindObjectsByType<Node>();
     }
 
     void Update()

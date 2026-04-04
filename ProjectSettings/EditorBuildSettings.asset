@@ -20,4 +20,5 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Street.unity
     guid: d35fc190686532349a6ba48bfaeb9388
-  m_configObjects: {}
+  m_configObjects:
+    com.unity.input.settings.actions: {fileID: -944628639613478452, guid: df696a80d106e3e4498233ad697336cb, type: 3}
